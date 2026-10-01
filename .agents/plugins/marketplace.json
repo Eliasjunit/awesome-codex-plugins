@@ -1129,6 +1129,21 @@
       "icon": "./plugins/hashgraph-online/hol-guard-plugin/assets/icon.png"
     },
     {
+      "name": "homie",
+      "displayName": "Homie",
+      "source": {
+        "source": "local",
+        "path": "./plugins/homie-rocks/homie"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development & Workflow",
+      "description": "Makes and remixes multiplayer web games, music and video, then publishes them from a studio site with public rooms on your own Cloudflare account.",
+      "icon": "./plugins/homie-rocks/homie/assets/icon.svg"
+    },
+    {
       "name": "codex-honcho",
       "displayName": "Honcho",
       "source": {

@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-01",
-  "total": 249,
+  "total": 250,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -768,6 +768,16 @@
       "category": "Development & Workflow",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/hashgraph-online/hol-guard-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Homie",
+      "url": "https://github.com/homie-rocks/homie",
+      "owner": "homie-rocks",
+      "repo": "homie",
+      "description": "Makes and remixes multiplayer web games, music and video, then publishes them from a studio site with public rooms on your own Cloudflare account.",
+      "category": "Development & Workflow",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/homie-rocks/homie/HEAD/plugins/homie/.codex-plugin/plugin.json"
     },
     {
       "name": "Honcho",

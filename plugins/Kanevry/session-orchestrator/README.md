@@ -39,6 +39,8 @@ You need **Node.js 24 or later**, a git repository, and one of the four agents b
 | **Cursor IDE** | `git clone` the repo, `npm install`, then `node scripts/cursor-install.mjs /path/to/your/project` ([guide](docs/cursor-setup.md)). |
 | **Pi** | `pi install npm:session-orchestrator` ([guide](docs/pi-setup.md)). |
 
+After a clone-based install (Codex CLI, Cursor IDE, or contributing), run `npx husky` once: `.npmrc` sets `ignore-scripts=true` (SEC-020), which skips the `prepare` script that would otherwise activate the git hooks.
+
 ## Quick Start
 
 **1. Run `/bootstrap` once in your project.** It creates the minimum structure and writes `.orchestrator/bootstrap.lock`. `/session` refuses to start until that file exists.
@@ -93,7 +95,7 @@ When you type `/session feature`:
 .claude/STATE.md                    # wave progress and deviations (harness-specific directory)
 ```
 
-The plugin is **50 skills, 26 slash commands, 14 typed subagents and 27 hook files across 10 event types**. A slash command is a skill whose frontmatter says `user-invocable: true` (24 of them) or one of the two remaining `commands/*.md` files (`/session`, `/templates-ack`) — one definition per name, so nothing is listed twice in the `/` picker. Skills, commands and agents are Markdown with YAML frontmatter; the code that dispatches, validates and records runs in `scripts/lib/*.mjs` and `hooks/*.mjs`. There is no build step and no compiled artifact — when a session does something you did not expect, you can open the file that decided it. Full inventory: [`docs/components.md`](docs/components.md).
+The plugin is **52 skills, 28 slash commands, 14 typed subagents and 29 hook files across 10 event types**. A slash command is a skill whose frontmatter says `user-invocable: true` (26 of them) or one of the two remaining `commands/*.md` files (`/session`, `/templates-ack`) — one definition per name, so nothing is listed twice in the `/` picker. Skills, commands and agents are Markdown with YAML frontmatter; the code that dispatches, validates and records runs in `scripts/lib/*.mjs` and `hooks/*.mjs`. There is no build step and no compiled artifact — when a session does something you did not expect, you can open the file that decided it. Full inventory: [`docs/components.md`](docs/components.md).
 
 ## Why it is built this way
 
@@ -101,7 +103,7 @@ The plugin is **50 skills, 26 slash commands, 14 typed subagents and 27 hook fil
 - **Checks run between waves, not only at the end.** A mistake caught after wave 2 costs one wave. The same mistake found at `/close` has already been copied into every wave after it. Findings below the configured confidence threshold are not shown to you.
 - **A crash does not lose the session.** `STATE.md` records which wave finished and what deviated from the plan. The next `/session` offers to continue from the last completed wave.
 - **Two sessions in one working copy is treated as a real risk.** Two people, or two of your own sessions, in the same checkout share one git index, one filesystem and one `STATE.md`, and neither can see the other's uncommitted work. A heartbeat session lock, per-agent file-scope manifests, and the PSA rules in [`.claude/rules/parallel-sessions.md`](https://github.com/Kanevry/session-orchestrator/blob/main/.claude/rules/parallel-sessions.md) exist for exactly that case.
-- **Guards run where the harness supports them, and the table below says where it does not.** A destructive-command policy — 11 rules block, 4 warn — and file-scope enforcement run as real hooks on Claude Code, as bridges on Cursor and Pi, and as instructions only on Codex. Details: [`docs/components.md`](docs/components.md#other-surfaces).
+- **Guards run where the harness supports them, and the table below says where it does not.** A destructive-command policy — 12 rules block, 4 warn — and file-scope enforcement run as real hooks on Claude Code, as bridges on Cursor and Pi, and as instructions only on Codex. Details: [`docs/components.md`](docs/components.md#other-surfaces).
 - **What it learns is opt-in and readable.** Every session appends a record. After 5 or more sessions, `/evolve analyze` proposes patterns with a confidence score; you read them and delete the ones you disagree with. Nothing is applied without you.
 - **GitLab and GitHub, both fully.** It detects which one your remote points at and drives issues and merge/pull requests for either.
 
@@ -111,7 +113,7 @@ How this compares to other orchestrators, with measured results kept separate fr
 
 | Feature | Claude Code | Codex CLI | Cursor IDE | Pi |
 |---|---|---|---|---|
-| All 26 commands | Native slash commands | Generated skills (`$session-orchestrator:<name>`) | Native `.cursor/commands` slash commands | Prompt templates |
+| All 28 commands | Native slash commands | Generated skills (`$session-orchestrator:<name>`) | Native `.cursor/commands` slash commands | Prompt templates |
 | Parallel agents | Agent tool | Multi-agent roles | Sequential only | Sequential (parallel planned) |
 | Session persistence | `.claude/STATE.md` | `.codex/STATE.md` | `.cursor/STATE.md` | `.pi/STATE.md` |
 | Scope enforcement | Active PreToolUse hook; blocking in `strict`, reporting in `warn` | Instructions only; no compatible `apply_patch` handler | `preToolUse` + `beforeShellExecution` bridge; scope blocking requires `strict`; `afterFileEdit` is post-hoc | `tool_call` bridge; scope blocking requires `strict` |
