@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
-  "last_updated": "2026-09-30",
-  "total": 248,
+  "last_updated": "2026-10-01",
+  "total": 249,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -1778,6 +1778,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/Sevi-py/coolify-codex-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Court Rules",
+      "url": "https://github.com/foklepoint/court-rules-codex-plugin",
+      "owner": "foklepoint",
+      "repo": "court-rules-codex-plugin",
+      "description": "Search U.S. federal and state court filing rules, judge standing orders, local rules and court holidays through the hosted Court Rules MCP server, with a skill that cites the court's own document.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/foklepoint/court-rules-codex-plugin/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Data Product Builder for dbt",

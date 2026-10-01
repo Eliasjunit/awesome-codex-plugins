@@ -14,10 +14,15 @@ Depth is `lean` by default; honor requested
 When detached execution is requested, select the
 [physical authoring route](references/detached-plan-format.md) before writing.
 
-Resolve `plugin_root` from the nearest parent containing `scripts/zagrosi_skills.py`:
+Resolve `plugin_root` from this loaded `SKILL.md`'s enclosing plugin directory
+containing `scripts/zagrosi_skills.py`, never from the target repo. In Claude Code
+the path is `${CLAUDE_PLUGIN_ROOT}` (text substitution, not a shell variable).
+Use Python 3.11+ (`python3` below; `python` or `py -3` on Windows).
+For a chat-only brief, first save the user's requirements unchanged as `spec.md`
+in the chosen planning directory; keep the implementation contract separate.
 
 ```bash
-python3 {plugin_root}/scripts/zagrosi_skills.py plan-setup --file "{spec_file}" --plugin-root "{plugin_root}" --depth "{depth}"
+python3 "{plugin_root}/scripts/zagrosi_skills.py" plan-setup --file "{spec_file}" --plugin-root "{plugin_root}" --depth "{depth}"
 ```
 
 For detached authoring, add `--for-detached`; setup then leaves physical artifacts
@@ -49,7 +54,7 @@ Load only applicable packs: [auth](references/domain-auth.md),
 Run one bundled postflight:
 
 ```bash
-python3 {plugin_root}/scripts/zagrosi_skills.py postflight --phase plan --planning-dir "{planning_dir}" --depth "{depth}" --strict
+python3 "{plugin_root}/scripts/zagrosi_skills.py" postflight --phase plan --planning-dir "{planning_dir}" --depth "{depth}" --strict
 ```
 
 For detached execution, also run the physical compatibility check in that route

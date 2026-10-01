@@ -2621,6 +2621,21 @@
       "icon": "./plugins/Sevi-py/coolify-codex-plugin/assets/icon.png"
     },
     {
+      "name": "court-rules",
+      "displayName": "Court Rules",
+      "source": {
+        "source": "local",
+        "path": "./plugins/foklepoint/court-rules-codex-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Search U.S. federal and state court filing rules, judge standing orders, local rules and court holidays through the hosted Court Rules MCP server, with a skill that cites the court's own document.",
+      "icon": "./plugins/foklepoint/court-rules-codex-plugin/assets/icon.svg"
+    },
+    {
       "name": "dataproduct-builder-dbt",
       "displayName": "Data Product Builder for dbt",
       "source": {
