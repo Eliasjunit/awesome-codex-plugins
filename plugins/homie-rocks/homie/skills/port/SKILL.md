@@ -99,6 +99,10 @@ Non-negotiable, every port:
    Death respawns; it never ends a person's round.
 3. **Bots** fill every empty seat, play by the same rules through the same inputs,
    and are beatable. An arriving person takes a bot's body where it stands.
+   **Make your bots honour the skill dial** (servers, NETPLAY.md section 17): give
+   `BotBrain` `skill: () => room.skillOf(body)` (reaction, aim and commitment follow
+   the party's vote) and use `jitter`, `engages` and `standoff` for the rest of a
+   bot's choices. `createRoom` keeps a hybrid server's AI seats and labels them AI.
 4. **Host handoff.** Everything the rules need is in the checkpoint; a promoted
    browser continues the SAME round (clock, scores, world).
 5. **Controls mean the same thing every second.** Input is read on the camera's
@@ -114,7 +118,10 @@ Non-negotiable, every port:
    body about 14% of the screen's height) or lay the arena out for portrait.
    Your own body is unmistakable at a glance (a ring or highlight plus "You").
 7. **The big screen** (`/<id>/tv`) is a spectator: no body, no personal prompts,
-   an overview or director camera, readable from across a room.
+   an overview or director camera, readable from across a room. **A watcher**
+   (`/<id>/watch`) follows one player: point the camera at `room.viewBody()` (your
+   own local body when it is your seat) and the HUD at its numbers, and fall back to
+   the overview when it is null (the recipe's section 8).
 8. **The probe.** Call `exposePort` (see the recipe): the checks cannot judge a
    game that does not report where its player is.
 9. Randomness that changes the world happens on the host only. Names people type

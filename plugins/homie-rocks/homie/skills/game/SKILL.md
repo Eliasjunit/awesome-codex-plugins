@@ -22,7 +22,13 @@ is none, use the `studio-setup` skill first.
 - **Make an existing single-player web game multiplayer:** use the `port` skill (it
   grades the port, brings the game in, and proves it with the owner tests).
 - **Remix a directory game:** `directory_search`, then `game_remix` returns
-  `npx --no-install homie-studio game remix <source.json> --id <new id>`.
+  `npx --no-install homie-studio game remix <source.json> --id <new id>`. The new game's
+  game.json gets `remixOf`: "Remix of <game> by <studio>" with a link back to the original's
+  page, shown under its name on its landing and in its credits. Keep it, whatever else
+  changes. A source whose licence says `no-remix` is refused: say so, and offer to make a
+  game of their own like it instead. A game's own licence is game.json `"license"`:
+  `"remix-with-credit"` (the default), `"remix-freely"` or `"no-remix"` (or
+  `{ "kind": "…", "spdx": "MIT" }`), the owner's pick.
 - Some names are protected (the homie.rocks house games): `game_make` and
   `studio_publish` refuse them. Pick your own name, or ask the name's owner
   with `studio_request_grant` (only the owner can approve, in their browser).
@@ -44,6 +50,36 @@ Make it the game the person asked for, in small steps:
   (`roundSeconds`) and the code in agreement.
 - Phones get touch (the drag from the lower left), computers get keys; keep the centre
   of the screen clear during play; names people type are drawn as text only.
+- **Watch any player.** Anyone can watch a live room at `/<id>/watch?room=<room>` and switch
+  between the players' views (a strip of names, keys 1-9, Auto). Draw the camera and HUD
+  from `net.viewSeat` (your own seat when playing; the followed player when watching; `null`:
+  the overview), call `net.spotlight(seat)` on a hit, a kill or a goal so Auto cuts to it,
+  and expose `scores` (`[{ seat, score }]`) for the strip and the leader. Gem Rush does all
+  three. A game that never reads `viewSeat` is watched as its overview. Hidden hands or
+  roles: `game.json` `"watch": "overview"` (the whole room only), or `false` (no watch
+  door). NETPLAY.md section 16.
+
+  ```ts
+  const view = net.offline ? 0 : net.viewSeat;           // whose camera and HUD this browser draws
+  const body = view === null ? null : bodyOfSeat(view);   // the followed body, sampled like every other
+  camera.follow(body ?? arenaCentre);                     // null: the overview camera
+  hud.mark(view);                                         // their row, their score; "You" only when it is you
+  ```
+- **Make your bots honour the skill dial** (servers, NETPLAY.md section 17). A studio's servers
+  can keep AI seats in every room (hybrid), and the party votes how strong the AI plays: 1
+  Rookie to 5 Maxed, each `{ reactionMs, aimNoise, aggression, positioning }`. Read it per
+  bot with `net.skillOf(slot)` (Fair when nobody voted) and declare what the game does:
+  `createNetplay({ …, caps: ['skill', 'agents'] })`, with a `Roster({ …, policy: () =>
+  net.policy })` whose join passes `p.agent` (a game on `createRoom` has all of it). Gem
+  Rush's `stepBots` is the worked example:
+
+  ```ts
+  const s = net.skillOf(b.slot);                      // the room's dial for this bot
+  if (now - eye.at >= s.reactionMs) eye = aimAt(pick(b, s), 200 * s.aimNoise);   // reaction, aim (a miss costs it again)
+  if (rivalNear && Math.random() < s.aggression * 0.8 * dt) bump(b);              // aggression
+  // positioning: weight the hot spot's targets by (1.5 - s.positioning): 0 leaves it to people, 1 fights for it
+  ```
+  Never let a bot's name pass for a person's: an AI's name already ends in " · AI".
 - Update `game.json` `name` and `blurb`, and the `<title>`.
 
 ## Progress that lasts: cloud saves
@@ -171,7 +207,8 @@ page epic" means all of this, in this order:
    light, where the studio's dark tint would turn the picture grey. `hero/wide.jpg` is also the game's
    picture on every card and in the directory, so pick a frame that reads small.
 3. **Credits**: `landing.credits` names who made what (`[{ "role": "Music", "name": "..." }]`). A port
-   keeps its `credits.json` (the original, its author and licence, every part inside); never drop one.
+   keeps its `credits.json` (the original, its author and licence, every part inside); a remix keeps
+   game.json `remixOf`; never drop either.
 4. **The look**: the studio's `site/theme.json` colours; `landing.theme` gives this game its own
    `accent` and `glow` on its page, when two games of one studio should not look alike.
 5. **A band of its own**, when the game has something to say that the template does not (a soundtrack, a
