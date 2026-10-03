@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-03",
-  "total": 256,
+  "total": 257,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -1698,6 +1698,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/lulucatdev/codex-be-serious/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Codex Discord Bridge",
+      "url": "https://github.com/yaffalhakim1/codex-discord-bridge",
+      "owner": "yaffalhakim1",
+      "repo": "codex-discord-bridge",
+      "description": "Control Codex CLI from Discord with a Rust serenity bridge that streams agent output live and turns approval requests into buttons.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/yaffalhakim1/codex-discord-bridge/HEAD/codex-packages/codex-discord-bridge/.codex-plugin/plugin.json"
     },
     {
       "name": "Codex Mem",
