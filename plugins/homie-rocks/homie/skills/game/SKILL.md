@@ -1,6 +1,9 @@
 ---
 name: game
-description: Make or remix a multiplayer web game inside a Homie studio — every browser renders the game, strangers meet in public rooms, bots fill empty seats, rounds end and restart — prove it with two browsers finishing a round, and give it an epic landing page (a full-bleed hero from its own footage or art, the pitch, Play, phone / computer / TV, live rooms, how to play, credits). Use when someone in a Homie studio (a folder with studio.json) asks for a new game, a change to a game, a remix of a game from the Homie directory, or a better page for a game ("make my game's landing page epic").
+description: Make or remix a multiplayer web game inside a Homie studio — every browser renders the game, strangers meet in public rooms, bots fill empty seats, rounds end and restart — prove it with two browsers finishing a round, and give it an epic landing page (a full-bleed hero from its own footage or art, the pitch, Play, phone / computer / TV, live rooms, how to play, credits). Use when someone in a Homie studio (a folder with studio.json) asks for a new game, a change to a game, a remix of a game from the Homie directory, a game whose own AI decides (opponents picking tactics, an NPC's reaction, a director's call, a turn's move), or a better page for a game ("make my game's landing page epic").
+compatibility: Node 22 and Chrome. The studio's pinned Wrangler runs the dev site; the GitHub CLI (gh) opens a pull request when the studio publishes that way; Ollama with clef-flash, optional, answers a game's AI decisions on this computer under dev (downloaded only after the person's yes).
+metadata:
+  providers: cloudflare github ollama
 ---
 
 # Make or remix a game
@@ -17,8 +20,10 @@ is none, use the `studio-setup` skill first.
   changes it goes into it in the same change, with a dated line under Latest, and the page is redrawn
   (`npx --no-install homie-studio codex <id>`). A big change to a game without one: plan it first.
 - **New game:** call the Homie MCP tool `game_make` (id, name) for the exact command
-  and rules, then run `npx --no-install homie-studio game new <id> --from gem-rush --name "<Name>"`.
-  The id becomes the game's address (`/<id>/`); lowercase, digits, hyphens.
+  and rules, then run `npx --no-install homie-studio game new <id> --from gem-rush --name "<Name>"`
+  (`--from gem-rush-3d` for a 3D game: three.js with free library models; `--from hero-rush-3d` for a 3D game with
+  animated characters that run, jump and swing). The id becomes the game's
+  address (`/<id>/`); lowercase, digits, hyphens.
 - **Make an existing single-player web game multiplayer:** use the `port` skill (it
   grades the port, brings the game in, and proves it with the owner tests).
 - **Remix a directory game:** `directory_search`, then `game_remix` returns
@@ -90,7 +95,50 @@ Make it the game the person asked for, in small steps:
   `useAgents(room.net, vocab, { view, decide })` from `@homie-rocks/studio/agents`: `view(slot)` is game state
   only (seats, never names; under 2 KB), `decide(view)` is the scripted floor, the hands read
   `agents.goalOf(slot)` and call `agents.done(slot)`, and lines are bubbles from `agents.on('say')`. Ember Vale
-  (`--from ember-vale`) is the worked example. The brain itself is the owner's switch (the `servers` skill).
+  (`--from ember-vale`) is the worked example. The brain itself is the owner's switch (the `servers` skill);
+  `homie-studio agents try <id> --view view.json --ask <ask>` shows what it would decide in one moment.
+- **Let the game decide with AI** (NETPLAY.md section 20), when its opponents pick a tactic, an NPC reacts from a
+  fixed set, a director calls a wave or the pressure, or a turn needs a move: `"decide": true` in game.json (opt-in;
+  the deploy binds Workers AI), then on the host `net.decide(state, questions, { floor })` (from
+  `@homie-rocks/studio/netplay`, or `room.net` with the port kit). Cloudflare's Clef answers in the room with option
+  ids, yes or no, and levels, never text: Choice (2 to 26 ids), yes/no (`noul`), Score (2 to 10 levels). It always
+  resolves: the game's synchronous `floor` answers whenever the model cannot (no AI, not opted in, over the day's
+  budget, paced, slow, not the host), so the floor must play well by itself.
+
+  ```ts
+  const d = await net.decide({ heroes: heroes.map((h) => ({ hp: h.hp, down: h.down })) }, {   // game state and seats, never names; < 2 KB
+    tactic: { type: 'choice', instructions: 'How should the slimes hunt?', criteria: { chase: 'Rush the nearest hero', regroup: 'Gather round the King' } },
+    wave: { type: 'noul', instructions: 'Should a wave come now?' },
+  }, { floor: () => ({ tactic: 'chase', wave: false }) });
+  apply(d.picks);                                          // d.by: 'ai' | 'local' (Clef on this computer, dev) | 'floor'
+  ```
+  Ask per beat (every 5 to 10 s), per turn or on an event, never per frame: about a quarter of a second a round
+  trip and about 4 neurons for three questions, from the AI brains' day the guides share (8,000 by default; one room
+  asking every second would spend about 15,000 an hour). The room allows one ask every 3 s and 20 a minute. On a
+  kids server (`net.policy.kids`) keep it gentle: offer no cruel option and cap the pressure. A decision moves the
+  game's own world, never a person and never the party's skill dial. Ember Vale's slimes' director is the worked
+  example (it ships `"decide": false`). Under `npm run dev` it answers with Clef on this computer when Ollama has
+  `clef-flash`, else from the floor; downloading `clef-flash` (about 11 GB) is the person's yes, never yours.
+- **Room chat and speech bubbles** (NETPLAY.md section 19; `chat/CHAT.md`). Every game has room chat on its
+  play page with no code: reactions that float up every screen, quick lines, and typing where the rules allow.
+  Give it the game's own voice in `game.json` `"chat"`: `"lines"` (up to 12 quick lines, short and kind:
+  `{ "gg": "Good game!", "gem": "Grab that gem!" }`), up to 3 extra `"emoji"` (`{ "gem": "💎" }`), and the
+  defaults that suit its players (`"mode": "lines"` for a game for children; the owner can change any of it).
+  Draw what players say over their characters with the port kit, after the name labels:
+
+  ```ts
+  const bubbles = createBubbles({ measure: (t) => { ctx.font = BUBBLE_FONT; return ctx.measureText(t).width; } });
+  net.on('say', (s) => bubbles.say(s.seat, s.text, { id: s.id, kind: s.kind }));
+  net.on('unchat', (e) => e.ids.forEach((id) => bubbles.remove(id)));
+  paintBubbles(ctx, bubbles.place(speakers.map((p) => ({ key: p.seat, x: p.labelX, y: p.labelTop, self: p.mine }))));
+  ```
+  A game's own chat keys (a quick-line wheel): `net.sayLine('gg')`, `net.react('fire')`. Never draw a name or a
+  message as markup. **Where chat sits:** the Chat pill rides the room button's band (`screen.share` below; a
+  round icon on a phone), and the strip of new lines shows for a moment at the bottom left. If the game's HUD or
+  controls are there, put the strip where it has room in `game.json` `"screen": { "chat": { "at": "top-right",
+  "y": 110 } }` (a corner, `top-center` or `bottom-center`; `x` / `y` in pixels; per device: `desk`, `phone`,
+  `sideways`, `tv`), or keep new lines in the Chat sheet with `"lines": "sheet-only"` (the pill counts them).
+  Never turn typing off to make room: place the strip instead (`chat/CHAT.md` has every field).
 - Update `game.json` `name` and `blurb`, and the `<title>`.
 
 ## Progress that lasts: cloud saves
@@ -179,8 +227,28 @@ Then make it good, not just working:
 
 - **Sound**: the `sound` skill makes the game's effects and a synthesized theme for free and wires
   them in (`sound.play('coin')` where it happens, in every browser). A silent game is not finished.
-- **Look**: the `art` skill makes the cover from a real frame and, with a budget, painted backdrops
-  and textures.
+- **Look**: first the decisions (the `style` skill: render style, palette, light, camera, fonts, budgets; automatic
+  from the person's words, drawn in the codex), then the models (the `models` skill: the engine and the free CC0
+  starter library first, the person's own files with their licence, generated props and characters only on their own
+  fal account under a budget), the characters' rigs and clips (the `animate` skill), then the `art` skill's cover from a real frame and, with a budget, painted backdrops and
+  textures. "Make the look better" goes through `style` and `models` before any painting.
+- **Match the brief's tone**: a cozy, calm or gentle brief is not a fight. Score together (in `gem-rush-3d`,
+  game.json `"scoring": "together"`: one total the room fills, no places), make contact gentle or none, and give the
+  bots friendly names; keep rivals, rankings and knocks for briefs that ask for competition.
+- **A place, not a board**: a 3D game's play area reads as somewhere. Give it a heart the theme names (a den, a
+  campfire, a well, a market stall) built in the game's style, a few solid features players move round, and
+  something to do within a few steps of any spot, so a phone's close view is never bare ground. Look at the computer
+  and phone frames before you call it done.
+- **Models in code**: a three.js game loads every model through `@homie-rocks/studio/assets` (`createModels()`,
+  `instance(url)`, `placeholder(size)`): it refuses unsafe or oversized files and decodes the phone-sized format
+  `assets add` writes. Read colours and fonts from the game's `style.json` instead of hard-coding them, so the
+  locked palette reaches the world and the HUD. `games/<id>/assets/manifest.json` records every model's origin and
+  licence; keep it true (`assets add` and `assets remove`, never a hand-copied .glb), and `assets check <id>`
+  before a deploy. The `gem-rush-3d` starter (`game new <id> --from gem-rush-3d`) is Gem Rush in 3D with library
+  models: start a 3D game from it. With characters that move (people, heroes, fighters, creatures), start from
+  `hero-rush-3d` instead: animated CC0 heroes through `@homie-rocks/studio/animate` (idle, walk, run, jump, a swing,
+  hits, a cheer), one shared clip library per skeleton, a jump and a swing tuned in the Game Lab. The `animate` skill
+  has rigs, clips, retargeting and feel.
 - **Playtest**: the `playtest` skill plays it on a computer and a phone held both ways, measures the
   first ten seconds, the look, the UI, the real sound and a round, runs the owner tests, and hands a
   blind review to a fresh reviewer. Fix what it ranks first; run it again.
@@ -223,9 +291,12 @@ page epic" means all of this, in this order:
    (and `tv` if it differs), `players` (what a player is called: `{ "one": "pilot", "many": "pilots" }`),
    `hero.alt` (what the footage shows, for a screen reader), `hero.focus` (`"50% 35%"` keeps the action
    in frame on a phone), `hero.tint` (0 to 80: more when the art is bright and the title hard to read).
-   A game whose picture is white or cream (a light arena) takes `"scheme": "light"`: its landing is drawn
-   light, where the studio's dark tint would turn the picture grey. `hero/wide.jpg` is also the game's
-   picture on every card and in the directory, so pick a frame that reads small.
+   A game with a `style.json` gets its landing in that palette by itself (its paper, ink and accents,
+   light or dark as its paper is), so a bright game is not shown on the studio's dark page; leave
+   `scheme` and `theme` out unless the person wants something else. A game without one whose picture is
+   white or cream (a light arena) takes `"scheme": "light"`: its landing is drawn light, where the studio's
+   dark tint would turn the picture grey. `hero/wide.jpg` is also the game's picture on every card and in
+   the directory, and the play page's arrival card while the game loads, so pick a frame that reads small.
 3. **Credits**: `landing.credits` names who made what (`[{ "role": "Music", "name": "..." }]`). A port
    keeps its `credits.json` (the original, its author and licence, every part inside); a remix keeps
    game.json `remixOf`; never drop either.
@@ -235,11 +306,21 @@ page epic" means all of this, in this order:
    mode, a season): `site/partials/game-<id>.html`, a short section in the page's own classes
    (`<p class="kicker">`, `<h2>`, `<p class="lead">`, `<a class="ghost">`).
 
-**The play page's room button** (Invite, Big screen, the room code) sits top right. If the game draws a
-score, a timer or a bar there, move it in game.json: `"screen": { "share": { "desk": "bottom-left",
-"phone": { "at": "top-left", "y": 56 } } }` (a corner or `top-center`, per device: `desk`, `phone`,
-`sideways`; `x` / `y` move it in, in pixels; `"label": false` keeps it a small icon). Look at
-`/<id>/play` on a computer and a phone, both ways up, while a round is on.
+**The play page's first seconds**: from the first paint it shows the game's arrival card (its title, pitch,
+hero still, a progress line and `landing.controls` for the device) until the game says it is playable, never a
+blank screen (`SITE.md`, "The play page"). Its words and picture are the landing's, so give the landing its
+`pitch`, `controls` and a hero still. A game that keeps loading after the room's first state (models,
+textures, a baked world) passes `arrival: 'game'` to `createNetplay`, calls `net.loading(p, 'the heroes')`
+while it loads and `net.playable()` once its world and the player's own body are drawn, so nobody sees
+stand-ins (NETPLAY.md section 21); the starters do. `perf` measures it: `load.look` (the first meaningful
+frame) and `load.playable`.
+
+**The play page's room button** (Invite, Big screen, the room code) sits top right, with the Chat pill
+beside it. If the game draws a score, a timer or a bar there, move them in game.json: `"screen": { "share":
+{ "desk": "bottom-left", "phone": { "at": "top-left", "y": 56 } } }` (a corner or `top-center`, per device:
+`desk`, `phone`, `sideways`; `x` / `y` move it in, in pixels; `"label": false` keeps both small icons). Room
+chat's strip of new lines moves with `"screen": { "chat": … }` (above). Look at `/<id>/play` on a computer and
+a phone, both ways up, while a round is on and somebody says something in chat.
 
 Then `npm run build`, `npm run dev`, and look at `http://127.0.0.1:8787/<id>/` as a stranger would:
 a computer (1440 wide) and a phone (390 wide, and turned sideways), from the top, scrolling to the end.

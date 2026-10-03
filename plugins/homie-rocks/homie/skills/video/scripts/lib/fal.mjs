@@ -55,9 +55,26 @@ export async function unitPrice(model) {
  */
 const TOKENS_PER_SECOND = { '480p': 10_304, '720p': 22_103, '1080p': 54_673 };
 
-/** How many billing units this input asks for, for the unit fal names. Unknown shapes are refused, never guessed. */
-export function unitsFor(model, input, unit) {
+/**
+ * How many billing units this input asks for, for the unit fal names. Unknown shapes are refused, never guessed.
+ * `credits`: for a partner endpoint billed in credits (Tripo: "credits" at US$0.01), its credit table from the models
+ * skill's dated registry, e.g. { base: 40, texture: 10 }: the base, plus each add-on whose input is switched on.
+ */
+export function unitsFor(model, input, unit, { credits = null } = {}) {
   const u = unit.toLowerCase();
+  if (/^(generations?|requests?|calls?)$/.test(u)) return { units: 1, basis: `1 ${u.replace(/s$/, '')}` };
+  if (/^credits?$/.test(u)) {
+    if (!credits || !Number.isFinite(Number(credits.base))) throw new Error(`fal bills ${model} in credits and the models registry has no credit table for it; check the model page and price it by hand`);
+    let n = Number(credits.base);
+    const on = [];
+    for (const [k, add] of Object.entries(credits)) {
+      if (k === 'base' || k === 'note') continue;
+      // An add-on counts when its input is on, or when the input leaves it to a default of true (Tripo's texture).
+      const v = input[k] ?? credits.defaults?.[k];
+      if (v === true || (typeof v === 'string' && v && v !== 'false') || (typeof v === 'number' && v > 0)) { n += Number(add) || 0; on.push(k); }
+    }
+    return { units: n, basis: `${n} credits (${credits.base} base${on.length ? ` + ${on.join(', ')}` : ''})` };
+  }
   const n = Number(input.num_images ?? 1);
   if (/^images?$/.test(u)) {
     // Image models that price per image bill a 4K image as two (fal's model pages); never quote it as one.
@@ -89,10 +106,43 @@ export function unitsFor(model, input, unit) {
   throw new Error(`fal bills ${model} per "${unit}", which this script does not know how to count; check the model page and price it by hand`);
 }
 
-export async function priceOf(model, input) {
+/**
+ * The price of one call. `addons`: a per-call endpoint whose page adds dollars for options (Meshy: textures, rigging,
+ * an animation), from the models registry: { base, <input key>: usd, defaults: { <key>: true } }. The quote is the
+ * pricing API's own figure or the page's base, whichever is higher (the two have disagreed), plus every add-on whose
+ * input is on (or left to a default that is on). Never lower than either source.
+ */
+export async function priceOf(model, input, opts = {}) {
   const p = await unitPrice(model);
-  const { units, basis } = unitsFor(model, input, p.unit);
-  return { model, unit: p.unit, unitPrice: p.unitPrice, units, usd: +(units * p.unitPrice).toFixed(4), basis };
+  const { units, basis } = unitsFor(model, input, p.unit, opts);
+  let usd = units * p.unitPrice;
+  let said = basis;
+  if (opts.addons) {
+    const a = opts.addons;
+    const base = Math.max(usd, Number(a.base) || 0);
+    const on = [];
+    let add = 0;
+    for (const [k, v] of Object.entries(a)) {
+      if (k === 'base' || k === 'defaults' || k === 'note') continue;
+      const val = input[k] ?? a.defaults?.[k];
+      if (val === true || (typeof val === 'number' && val > 0) || (typeof val === 'string' && val && val !== 'false')) { add += Number(v) || 0; on.push(`${k} +US$${Number(v).toFixed(2)}`); }
+    }
+    usd = base + add;
+    said = `${basis}: US$${base.toFixed(2)}${on.length ? ` + ${on.join(' + ')}` : ''}`;
+  }
+  return { model, unit: p.unit, unitPrice: p.unitPrice, units, usd: +usd.toFixed(4), basis: said };
+}
+
+/**
+ * The media in an answer: a video, images, or a 3D model (Tripo's model_mesh / model_urls.glb, Rodin's model_mesh,
+ * Hunyuan's model_glb, Meshy's model_glb or model_urls.glb; a rigged character's rigged_character_glb first). Only the
+ * main file: previews and variants stay behind (the whole answer is kept in <out>.json).
+ */
+export function mediaUrls(result) {
+  if (result?.video?.url) return [result.video.url];
+  if (Array.isArray(result?.images) && result.images.length) return result.images.map((i) => i.url).filter(Boolean);
+  const mesh = result?.rigged_character_glb?.url ?? result?.model_mesh?.url ?? result?.model_glb?.url ?? result?.model_urls?.glb?.url ?? result?.mesh?.url ?? result?.model?.url ?? null;
+  return mesh ? [mesh] : [];
 }
 
 const MIME = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.mp3': 'audio/mpeg', '.wav': 'audio/wav', '.mp4': 'video/mp4' };
@@ -165,7 +215,7 @@ export async function run(model, input, { out, base, uploads, price, onAccepted,
   const ans = await retry(() => fetch(queued.response_url, { headers: auth() }));
   const result = await ans.json();
   if (!ans.ok) throw new Error(`result answered ${ans.status}: ${JSON.stringify(result).slice(0, 300)}`);
-  const urls = result.video?.url ? [result.video.url] : (result.images ?? []).map((i) => i.url);
+  const urls = mediaUrls(result);
   if (!urls.length) throw new Error(`no media in the answer: ${JSON.stringify(result).slice(0, 300)}`);
   const files = [];
   for (let i = 0; i < urls.length; i++) {

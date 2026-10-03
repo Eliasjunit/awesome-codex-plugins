@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-03",
-  "total": 251,
+  "total": 253,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -2050,6 +2050,16 @@
       "install_url": "https://raw.githubusercontent.com/mbanderas/costguard/HEAD/.codex-plugin/plugin.json"
     },
     {
+      "name": "Magic Hour",
+      "url": "https://github.com/magichourhq/skills",
+      "owner": "magichourhq",
+      "repo": "skills",
+      "description": "Create and finish AI images and videos through Magic Hour's MCP or API with reusable media workflows, output review, and account-credit requirements.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/magichourhq/skills/HEAD/.codex-plugin/plugin.json"
+    },
+    {
       "name": "MATLAB Simulink Tools",
       "url": "https://github.com/summer521521/MATLAB_Simulink_plugin",
       "owner": "summer521521",
@@ -2228,6 +2238,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/tim-osterhus/codex-remotion-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Resume Tailor",
+      "url": "https://github.com/olegvg/resume-tailor-plugin",
+      "owner": "olegvg",
+      "repo": "resume-tailor-plugin",
+      "description": "Tailor resumes and application text to job descriptions, or create candidate profiles from supplied career evidence.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/olegvg/resume-tailor-plugin/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "ru-text",

@@ -1,6 +1,9 @@
 ---
 name: studio-setup
-description: Set up a Homie studio (one repository with games/, music/, videos/ and posts/, and a site with public game rooms on the studio's own Cloudflare, free plan, no payment method) by a built-in checklist that never jumps ahead: setup status first (accounts and tools, what each unlocks, the exact fix), name the studio, see a working game, make one small change, plan the game into its Game Codex, build it (alone or with parallel agents) with progress the person can watch, playtest, put it online and list it in the homie.rocks directory. Use when someone asks to set up, create or start a studio or a game studio, asks what they need or whether they are set up, or says "set up a game studio called X" (with or without "and make a multiplayer game").
+description: "Set up a Homie studio (one repository with games/, music/, videos/ and posts/, and a site with public game rooms on the studio's own Cloudflare, free plan, no payment method) by a built-in checklist that never jumps ahead: setup status first (accounts and tools, what each unlocks, the exact fix), name the studio, see a working game, make one small change, plan the game into its Game Codex, build it (alone or with parallel agents) with progress the person can watch, playtest, put it online and list it in the homie.rocks directory. Use when someone asks to set up, create or start a studio or a game studio, asks what they need or whether they are set up, or says \"set up a game studio called X\" (with or without \"and make a multiplayer game\")."
+compatibility: Node 22. Reads, and offers only when a feature needs them, each provider's own tools (Wrangler (Cloudflare, pinned in the studio), the GitHub CLI, the ElevenLabs CLI, a fal key, Ollama for Clef on this computer, and as an option the stripe CLI's Stripe Projects). The plugin's providers.json lists them.
+metadata:
+  providers: cloudflare github elevenlabs fal stripe ollama
 ---
 
 # Set up a studio
@@ -71,14 +74,23 @@ few seconds, and never prints a key:
      ○ GitHub (optional): a private backup and publishing by pull request
      ○ ElevenLabs (optional): songs and game scores, on your own plan
      ○ fal (optional): painted art and generated video, on your own account, under a budget
+     ○ Clef on this computer (optional, inside a studio): AI guides and game decisions under dev, free
    ```
 
 4. **Never block on an optional row.** Say what it unlocks and that it can wait until that feature is
    wanted; the skill that needs it (`music`, `art`, `video`) offers it then. A "do this now" row you can
    do (`fix.run`, like `npx wrangler login` or `brew install ffmpeg`): offer it, and run it when they
    agree. A row the person does on their own (`fix.open`) can be done any time, even while they wait
-   for something else: give them the link.
+   for something else: give them the link. The "Clef on this computer" row is the person's download:
+   say its size first (`ollama pull clef-flash`, about 11 GB) and run it only after their yes.
 5. Run it again whenever they say they did something, and tick the row.
+
+**Each provider's own tools, lazily.** Homie works through each provider's own CLI, plugin or MCP
+server (Wrangler for Cloudflare, the GitHub CLI, ElevenLabs' CLI, fal's MCP server), never a copy of
+their code: the plugin's `providers.json` lists them, with what stays Homie's (budgets and receipts,
+the kids rules, the owner's one-tap asks, secrets never in the chat, the rights notes). Offer one only
+when the person wants what it unlocks, in the skill that needs it; they approve every install and sign
+in on the provider's own page.
 
 **The status line (Claude Code only).** The moment the studio exists (end of step 1), add one line to
 your reply offering it: "Want the build's progress as a line under the prompt? Say yes and I'll turn it
@@ -213,6 +225,33 @@ Music, Videos, Rooms and Posts, each once the studio has something in it, in the
    once, on the link it gives). `setup status` remembers which.
 4. `npx --no-install homie-studio check <id> --url <the live site>`: the same two-browser proof, live.
 
+### Another way: Cloudflare (and ElevenLabs) through Stripe Projects
+
+`npx wrangler login` stays the way. Offer this only when the person has **no Cloudflare account** (and wants songs but
+has no ElevenLabs either), and would rather have both made for them in one go: Stripe Projects
+(docs.stripe.com/projects), Stripe's CLI plugin, makes or links provider accounts on the person's own Stripe sign-in
+and hands the credentials to the studio folder. It is a prototype in this version (`setup --via stripe-projects`).
+
+1. Say it in two lines: Stripe signs them in; Cloudflare makes a free account for their Stripe email (or, if they
+   have one, shows its own approval page once); no payment method, free plans only; they accept Cloudflare's terms
+   (and ElevenLabs': whose free plan has **no commercial licence**, so songs made on it are not for sale).
+2. `npx --no-install homie-studio setup --via stripe-projects [--with elevenlabs] --dry-run`: what it would do.
+3. Run it without `--dry-run`. It stops at each step that is the person's and says which, as `needs`:
+   - `stripe-cli` / `projects-plugin`: run the command it names (the person approves the install);
+   - `projects-init`: run `stripe projects init --yes`; Stripe opens its sign-in in their browser. It must be **their
+     own** Stripe account (a new free one is fine). If the Stripe CLI on this computer is signed in to some other
+     account (a work or client one), stop and ask; never use it;
+   - `accept-terms`: ask the person; only after their yes, run it again with `--accept-tos`;
+   - `link-cloudflare`: run `stripe projects link cloudflare`; their browser shows Cloudflare's approval page;
+   - `paid`: stop. Nothing paid is ever added; this is theirs to decide in Stripe Projects, not yours.
+4. When it answers ok, `npm run deploy` as usual: Wrangler deploys with the Projects token.
+
+What it keeps where: the Cloudflare account id goes in `studio.json` (`cloudflare.auth: "stripe-projects"`); the token
+stays in Projects' vault and the git-ignored `.env` it syncs, and the toolkit hands it to Wrangler itself. Follow
+Projects' own rules: never print, read out or `cat` an env value (`stripe projects env --json` lists names only), never
+commit `.env`, `.env.*` or `.projects/vault/` (the command checks `.gitignore`), never hand-edit `.projects/`. If a
+later deploy says the token is not accepted: `stripe projects env --pull` in the studio folder, then deploy again.
+
 The live address `deploy` prints is on `workers.dev`, which names the person's Cloudflare account;
 `deploy` keeps it in `.studio/local.json` (git-ignored). Never write it into a committed file. A custom
 domain goes in `studio.json` as `cloudflare.domain`.
@@ -263,6 +302,7 @@ there (checked by SHA-256, at the same addresses); `homie-studio media move --dr
   unless the person asked for it.
 - Never put a key, token or password in the studio or in chat.
 - Never touch Cloudflare resources the studio did not create.
-- Never add a payment method, buy anything or turn on a paid plan for the person.
+- Never add a payment method, buy anything or turn on a paid plan for the person (in Stripe Projects too: no
+  `--confirm-paid-service`, no `stripe projects billing`, no `upgrade`).
 - Never use `~/.homie`; the studio needs no Homie box.
 - Never ask the person to type a command.

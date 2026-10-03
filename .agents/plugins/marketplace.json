@@ -3021,6 +3021,21 @@
       "icon": "./plugins/mbanderas/costguard/assets/icon.png"
     },
     {
+      "name": "magic-hour",
+      "displayName": "Magic Hour",
+      "source": {
+        "source": "local",
+        "path": "./plugins/magichourhq/skills"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Create and finish AI images and videos through Magic Hour's MCP or API with reusable media workflows, output review, and account-credit requirements.",
+      "icon": "./plugins/magichourhq/skills/assets/logo.svg"
+    },
+    {
       "name": "matlab-simulink-tools",
       "displayName": "MATLAB Simulink Tools",
       "source": {
@@ -3281,6 +3296,21 @@
       "category": "Tools & Integrations",
       "description": "Build parameterized Remotion videos in Codex with the official Remotion docs MCP, composition scaffolding, and a data-driven launch-video workflow.",
       "icon": "./plugins/tim-osterhus/codex-remotion-plugin/assets/remotion-composer-icon.svg"
+    },
+    {
+      "name": "resume-tailor",
+      "displayName": "Resume Tailor",
+      "source": {
+        "source": "local",
+        "path": "./plugins/olegvg/resume-tailor-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Tailor resumes and application text to job descriptions, or create candidate profiles from supplied career evidence.",
+      "icon": "./plugins/olegvg/resume-tailor-plugin/assets/icon.svg"
     },
     {
       "name": "ru-text",

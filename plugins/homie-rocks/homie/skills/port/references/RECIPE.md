@@ -280,11 +280,17 @@ Pick the multiplayer shape that keeps the game's feel:
   (`P.rubberBand`). A stranger knocked about before they have found the controls
   leaves; so does one who never scores.
 - A body a person leaves keeps playing as a bot where it stands.
+- Tactics that change with the fight (rush, flank, regroup, a wave now) can come from the
+  studio's AI: `room.net.decide(state, questions, { floor })` on the host every few
+  seconds (NETPLAY.md section 20; game.json `"decide": true`). The hands stay
+  BotBrain's, at the party's dial; the floor is the tactic the game always played.
 
 ## 8. The big screen
 
 Its join card (QR and address) sits bottom-right; if that covers the game's own HUD,
-move it with `game.json` `"screen": { "join": "top-left" }` (any corner).
+move it with `game.json` `"screen": { "join": "top-left" }` (any corner). Room chat's
+lines sit in a corner the card leaves free; `"screen": { "chat": { "tv": { "at": "top-right" } } }`
+moves them (and `"phone"` / `"desk"` move the play page's strip of new lines: `chat/CHAT.md`).
 
 
 `/<id>/tv` opens the room as a spectator (`room.mySeat()` is null) with a QR code

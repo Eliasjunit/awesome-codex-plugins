@@ -5,11 +5,12 @@ music and video, and publishes them from a studio that runs on your own Cloudfla
 on the free plan.
 
 - **Skills** (`skills/`): `studio-setup`, `plan`, `parallel`, `game`, `port`, `publish`,
-  `office`, `servers`, `sound`, `music`, `art`, `video`, `playtest`, `perf` and `lab`.
+  `office`, `servers`, `shop`, `sound`, `music`, `art`, `style`, `models`, `video`, `playtest`, `perf` and `lab`.
 - **MCP server** (`.mcp.json`): the Homie MCP server at `https://homie.rocks/mcp`, which has
   creator tools only. Nothing in this folder runs a command on install.
 - **The Homie mod** (`hooks/`, `mod/`): a Claude Code mod (Claude Code 2.1.287 or later, the CLI and
   the desktop app's Code tab). Below: what it adds, and everything it does.
+- **The providers' own tools** (`providers.json`): see below.
 - **Manifests:** `.claude-plugin/plugin.json` (Claude Code), `.codex-plugin/plugin.json`
   (Codex), and `plugin.json` (the agent-plugins standard). They say the same thing, and
   `test/manifests.test.mjs` checks that they do. Codex reads the skills and the MCP server and
@@ -18,6 +19,36 @@ on the free plan.
 Install it, and read what a studio is and what it costs, in the
 [repository's README](https://github.com/homie-rocks/homie#readme). Report a vulnerability
 as [SECURITY.md](SECURITY.md) says.
+
+## The providers' own tools
+
+Homie works through each provider's own CLI, plugin, MCP server and skills, on the creator's own
+account, and keeps only its own layer on top: budgets and receipts, the kids rules, secrets never in the
+chat, the owner's one-tap asks, phone budgets, and the rights and licence notes. Nothing here installs by
+itself. `providers.json` lists each provider's tools (checked 2026-10-03), the skills that use them, and
+what stays Homie's; `plugin.json` points at it (`extensions["rocks.homie"].providers`). Each skill names
+its providers in its own frontmatter (`metadata.providers`, and `compatibility` in words), and a skill
+that uses a provider's MCP server declares it for Codex in `agents/openai.yaml`, so Codex can wire it
+when the skill is used. A skill offers a provider's tool only when the person wants what it unlocks; the
+person approves every install and signs in on the provider's own page.
+
+| Provider | What Homie's skills use | Offered when the person wants it |
+| --- | --- | --- |
+| Cloudflare | Wrangler, pinned in the studio (`login`, `--device` where no browser opens; `deploy`, D1, R2, secrets, `ai models list`) | Cloudflare's plugin (`cloudflare/skills`: its skills and API MCP server), its docs MCP server |
+| ElevenLabs | ElevenLabs' CLI (`elevenlabs auth login`; music, stems, speech to text, the subscription) | ElevenLabs' plugin (`elevenlabs/plugin`: its skills and hosted MCP server), `npx skills add elevenlabs/skills` |
+| fal | fal's MCP server to find models and read schemas and prices; the skills' scripts for paid runs (priced, capped, receipted, resumable) | fal's CLI (`fal auth login`, `fal keys create`) to make the key |
+| Tripo | Tripo's models on fal (`tripo3d/...`) | none: Tripo's own CLI and MCP server bill a separate account |
+| GitHub | the GitHub CLI (`gh auth login --web`, `gh pr create`) | GitHub's MCP server (`github@claude-plugins-official`) |
+| Stripe | Stripe's MCP server (the shop's catalog, tax settings and sales, as the owner signed it in, a sandbox first); the shop's key only through `homie-studio shop connect` | Stripe's agent plugin (`stripe agent setup`: its MCP server and skills) once a studio sells; Stripe Projects (`setup --via stripe-projects`) as an option for Cloudflare and ElevenLabs |
+| Ollama | Clef on the person's own computer, when Ollama already has `clef-flash`: `dev`'s AI guides, chat review and game decisions, and `agents sit --brain local`, free (detection reads `/api/version` and `/api/tags`, loopback only) | `ollama pull clef-flash` (about 11 GB), only after the person's yes to that size |
+
+Stripe is the `shop` skill's, with its own rules for Stripe's tools: never a webhook or an API key through the MCP
+(the mod refuses a write that would hand a signing secret back), Stripe's own confirmation link for a refund it
+holds, and live mode only when the owner says so.
+
+The AI guides think with Cloudflare's Clef decision model on the studio's own Workers AI (the `servers` skill), and a
+game may ask it for its own decisions (`net.decide`, the `game` skill). Under `dev`, Clef can run on the person's own
+computer through Ollama instead; nothing downloads it by itself, and the mod holds a pull until the person says yes.
 
 ## The Homie mod
 
@@ -50,6 +81,18 @@ Inside a studio (a folder with `studio.json` at or above where Claude Code runs)
     Today's, whether each build replays the same frames, and the game's JavaScript per frame in
     both. Read from `.studio/lab/`; nothing is run.
   - **Parts:** see below.
+  - **Art:** art direction (the `style` and `models` skills), per game, newest first: the phase
+    strip (`Style ✓ → Cast 3/7 → Rigs → Animations → In game`), the look line, the style
+    decisions with their state (`·` auto, `~` steered, `●` pinned by use, `■` locked) and who set
+    them, a palette's colours, the cast (route, licence, state, cost, **STALE** when made under an
+    older decision), the scene budgets as bars (draw calls, triangles, picture memory, first-play
+    download; red when over), the spend against the art budget, and licence problems with their
+    fix. **Lock** on a decision is your word (`homie-studio style lock`); **Unlock** first asks,
+    with what goes stale and what remaking it costs (`style blast`), and unlocks only on Proceed.
+    Its Characters section lists each rigged character with its skeleton family, bones and clips (how many
+    retargeted onto it, which verbs it lacks) and a skinning bar: a full room's skinned vertices a frame on
+    a phone. Read from `.studio/art/<game>/latest.json`, which the studio's toolkit writes after every
+    `style`, `assets` and `anim` command; the tab rereads it while it is open.
 - **The parts pane** (`/parts`): when Claude builds in parallel (the `parallel` skill), each agent
   with its time, tool calls, files changed and last step, and the build feed's checks for each
   part. It opens by itself when two agents run at once.
@@ -59,7 +102,13 @@ Inside a studio (a folder with `studio.json` at or above where Claude Code runs)
 - **Instant commands** (no Claude turn; they print links or open a pane, and never open a
   browser): `/studio [tab]`, `/play [game]`, `/watch [room|game]`, `/rooms`, `/build`,
   `/codex [game]`, `/deploy-status`, `/perf-numbers [game]` (the perf skill owns `/perf`),
-  `/parts`, `/arcade [game]`.
+  `/parts`, `/arcade [game]`, and for art direction `/look [game]` (the look and the style
+  decisions; it opens the Art tab, since the style skill owns `/style`), `/lock <decision> [game]`
+  (your typed words lock it), `/assets [game]` (the cast, the spend, licence problems),
+  `/cast [game]` (the characters: skeleton, bones, source, clips, and what skinning a full room costs on a
+  phone), `/clips [game]` (each character's clips against the verbs the game needs, and the command that adds
+  what is missing), `/lineup [game]` (the last lineup's flags and where its pictures are; it never renders one) and
+  `/rights [game]` (licence problems with their fixes, and the game's `RIGHTS.md`).
 - **Guards:** a call is held in Claude Code's own question dialog (Proceed or Cancel), with what
   would change drawn above it and in full in the Hold pane:
   - an edit (Edit, Write, MultiEdit, NotebookEdit) to a file `studio.json` `"protect"` lists, with
@@ -68,16 +117,55 @@ Inside a studio (a folder with `studio.json` at or above where Claude Code runs)
     `studio_deploy`, a song or video `publish`), with where it goes, what it creates, the commits
     and files since the last deploy, uncommitted changes, new games, the last checks and who is
     playing;
-  - a paid media call (fal, ElevenLabs: the skills' `gen`, `render` and `stems` with `--yes`, a
-    request straight at their APIs, a connector's generating tool) that would pass `studio.json`
-    `"budget"`, the build's budget or the job's cap, or whose cost cannot be read first, with the
-    estimate from the skill's own `--dry-run`.
+  - a paid media call (fal, ElevenLabs, Tripo: the skills' `gen`, `render` and `stems` with `--yes`,
+    the models skill's `prop` and `mood` with `--yes`, a request straight at their APIs, a
+    generating command of the provider's own CLI (`elevenlabs music compose`, `elevenlabs
+    text-to-speech`, `fal api`, `genmedia run`, `tripo make` and the like; their help, `--dry-run`,
+    sign-in, pricing and listings are free), a generating tool of their own MCP server or a
+    connector (a run or a job; finding a model, its schema or its price, and an ElevenLabs
+    `estimate_only`, are free)) that would pass `studio.json` `"budget"`, the build's budget or the
+    job's cap (a game's models share `art/<game>-models/budget.json`), or whose cost cannot be read
+    first, with the estimate from the skill's own `--dry-run`;
+  - a change to the studio's Cloudflare account outside its deploy, inside a studio: Wrangler
+    deleting something (a Worker, a D1 database, an R2 bucket or object, a KV namespace or key, a
+    queue, a secret), a `secret put` or `bulk` (to Cloudflare, a secret put is a deployment), a
+    version rolled out or rolled back by hand, a migration applied or SQL that writes, on the live
+    database (`--remote`); and the same through Cloudflare's own MCP servers or a claude.ai
+    Cloudflare connector (the API server's `execute` sending anything but a GET or a GraphQL read;
+    a tool that deletes, updates, edits, puts, deploys or rolls back; a database query that
+    writes). The studio's deploy records what it creates in `studio.json` and never touches what it
+    did not create; these go around that record. The hold names the studio's own Worker, database
+    or bucket when the change does. Creating something new and reading anything are not held, and
+    `--local` never is;
+  - a Clef model downloaded through Ollama (`ollama pull clef-flash`, about 11 GB; `clef`, the 27B,
+    about 18 GB; a request at Ollama's `/api/pull` naming one), with its size, anywhere: Homie never
+    downloads a model by itself. `ollama run` of a Clef model is held only when Ollama's own list on
+    this computer (`/api/tags`) does not have it yet. Other models and Ollama's other commands are not
+    held.
   Cancel, a dismissed question, and a run with nobody to ask (`claude -p`) all refuse the call,
   with a reason Claude can act on. The guards hold even in bypass-permissions mode.
+- **Refused outright** (nobody is asked; the reason says what to do instead):
+  - an Edit, Write or MultiEdit to `games/<id>/codex/decisions.json` that changes the value or the
+    state of a decision the person locked, or leaves the file unreadable while one is locked: a
+    locked decision changes only through `homie-studio style set … --unlock --reason`, after the
+    person saw what goes stale (`style blast`);
+  - a production deploy while a public game (not private or invite-only, its source not closed)
+    ships an asset whose `assets/manifest.json` entry has no licence, a kind the studio does not
+    know, TurboSquid's licence, CC BY without an attribution line, or a licence that forbids
+    handing the file on (Quaternius, Mixamo, a EULA, a bought asset, "other") with a remix other
+    than `none` or `reference`. When every asset is licensed, the deploy's hold says so;
+  - a `git add` or `git commit` that would put a file over 5 MB under `games/` into git (what is
+    staged is read from git itself), naming each file and its size: big files go to the studio's
+    R2, raw models stay in `art/<slug>/raw/`;
+  - a write through Stripe's MCP (`stripe_api_write`, from Stripe's plugin, `claude mcp add` or the
+    Claude app's connector) that makes a webhook endpoint, or an event destination with its signing
+    secret included: Stripe answers the secret in that call, so it would land in the conversation.
+    `homie-studio shop connect` makes the shop's webhook instead, and the secret goes straight to the
+    Worker. Reads, the catalog's writes and turning an endpoint off go through.
 - **Secrets out of tool output:** before Claude reads any tool's result, keys and tokens come
   out: office and stats keys (`hsk_`), progress keys (`hbk_`), agent passes (`hap_…`, whose public
-  id stays), Cloudflare tokens and keys, fal, ElevenLabs, Anthropic, OpenAI, GitHub, npm, Stripe,
-  AWS and Google keys, bearer tokens, private keys, and any `NAME=value` whose name says key,
+  id stays), Cloudflare tokens and keys, fal, ElevenLabs, Anthropic, OpenAI, GitHub, npm, Stripe
+  keys and webhook signing secrets, AWS and Google keys, bearer tokens, private keys, and any `NAME=value` whose name says key,
   token or secret and whose value looks like one. A one-time owner link goes to the person in
   the Studio pane (Rooms, "Links for you"); Claude reads that it is there.
 - **Homie's results, drawn:** the setup status as a checklist with what to do now, a check's and
@@ -106,9 +194,9 @@ Inside a studio (a folder with `studio.json` at or above where Claude Code runs)
 | --- | --- | --- |
 | `paneAutoOpen` | on | The Studio pane when a build starts, the parts pane for two agents |
 | `band` | on | The band above the prompt |
-| `guardFiles` | on | Holding edits to protected files |
-| `guardDeploys` | on | Holding production deploys |
-| `guardSpend` | on | Holding paid media calls past the budget |
+| `guardFiles` | on | Holding edits to protected files; refusing changes to locked art decisions and files over 5 MB under `games/` into git |
+| `guardDeploys` | on | Holding production deploys, and changes to the studio's Cloudflare account outside its deploy (deletes, secrets, hand rollouts, writes to the live database, by Wrangler or Cloudflare's MCP); refusing a deploy that ships an asset with no allowed licence |
+| `guardSpend` | on | Holding paid media calls past the budget (the models skill's too), and the ones whose cost cannot be read first (a provider's own CLI, MCP server or API); and holding a Clef model download through Ollama (about 11 GB) |
 | `redactSecrets` | on | Taking secrets out of tool output |
 | `renderResults` | on | Homie's results and command rows drawn natively |
 | `arcade` | on | `/arcade` and the live Watch views |
@@ -131,8 +219,10 @@ Inside a studio (a folder with `studio.json` at or above where Claude Code runs)
 ❯ ./homie.mjs hooks: session.start, session.end, command.run{command=studio}, command.run{command=build},
   command.run{command=rooms}, command.run{command=play}, command.run{command=watch}, command.run{command=codex},
   command.run{command=deploy-status}, command.run{command=perf-numbers}, command.run{command=parts},
-  command.run{command=arcade}, tool.call, tool.call{tool=Edit|Write|MultiEdit|NotebookEdit}, tool.call{tool=Bash},
-  tool.call{tool=/"^mcp__.+__studio_deploy$"/}, tool.call{tool=/"^mcp__.*(?:fal|eleven).*__"/i}, turn.complete,
+  command.run{command=arcade}, command.run{command=look}, command.run{command=lock}, command.run{command=assets},
+  command.run{command=cast}, command.run{command=clips}, command.run{command=lineup}, command.run{command=rights}, tool.call, tool.call{tool=Edit|Write|MultiEdit|NotebookEdit}, tool.call{tool=Bash},
+  tool.call{tool=/"^mcp__.+__studio_deploy$"/}, tool.call{tool=/"^mcp__.*(?:fal|eleven|tripo).*__"/i},
+  tool.call{tool=/"^mcp__.*cloudflare.*__"/i}, turn.complete,
   ui.render{component=AbovePrompt}, ui.render{component=Pane}, ui.render{component=AskUserQuestion},
   ui.render{component=ToolUse}, ui.render{component=ToolResult}, ui.render{component=ToolGroup}, ui.message, ui.close
 ❯ ./homie.mjs calls: $.agent.list, $.clock.every, $.command.register, $.fs.exists, $.fs.list, $.fs.read, $.fs.stat,
@@ -145,13 +235,17 @@ Inside a studio (a folder with `studio.json` at or above where Claude Code runs)
 
 - `session.start` / `session.end`: find the studio, register the commands, start a 2-second
   timer that rereads the studio's files; end any game bridge.
-- `command.run` (its ten commands only).
+- `command.run` (its seventeen commands only).
 - `tool.call` (every tool): after the tool ran, take secrets out of its result; note which Homie
   command ran (for drawing it) and which agent ran what (for the parts). It never changes a tool's
   input.
-- `tool.call` on Edit, Write, MultiEdit, NotebookEdit; on Bash; on `studio_deploy`; on fal and
-  ElevenLabs connector tools: the guards. They hold or refuse; they never approve. The mod has no
-  `tool.check` hook, so it cannot approve a call a permission rule would ask about or deny.
+- `tool.call` on Edit, Write, MultiEdit, NotebookEdit (protected files, locked art decisions); on
+  Bash (big files into git, deploys and their licences, Cloudflare changes, paid calls, Clef model
+  downloads); on
+  `studio_deploy` (a deploy and its licences); on fal, ElevenLabs and Tripo MCP tools (paid calls);
+  on Cloudflare MCP tools (account changes): the guards. They hold or
+  refuse; they never approve. The mod has no `tool.check` hook, so it cannot approve a call a
+  permission rule would ask about or deny.
 - `turn.complete`: a part (a subagent) ended; reread the build after a turn.
 - `ui.render` on the band, its panes, the question dialog (only for its own holds), and the rows
   and results of Homie commands. Every other site is left to Claude Code.
@@ -161,9 +255,9 @@ Inside a studio (a folder with `studio.json` at or above where Claude Code runs)
 
 | Call | What for | What it reaches |
 | --- | --- | --- |
-| `$.fs.exists`, `$.fs.list`, `$.fs.read`, `$.fs.stat` | The studio's own files | `studio.json`, `.studio/` (the build feed, `local.json`, the Game Lab's `server.json` and last checks), `games/*/game.json` and `CODEX.md`, media jobs' `budget.json`, `.perf/`, `.wrangler/homie-dev.json`, and the file a held edit names. Never a key file, the keychain or the environment. It writes no file (no `$.fs.write`) |
-| `$.http.fetch` | Live rooms, games and the arcade's list; whether the Game Lab answers; the game bridge | Only the studio's own live site, this computer's dev site and Game Lab (`127.0.0.1`), `*.homie.rocks`, and the bridge's private Unix socket. Any other address is refused in the code |
-| `$.process.run` | The back office, stats and codex links; deploy summaries; prices | Only `node` with the studio's own pinned `homie-studio` (`--json`), `git -C <studio>` (read-only: `rev-parse`, `log`, `status`, `diff`), and a media skill's own `--dry-run` (free; it asks the provider's price list). No shell |
+| `$.fs.exists`, `$.fs.list`, `$.fs.read`, `$.fs.stat` | The studio's own files | `studio.json`, `.studio/` (the build feed, `local.json`, the Game Lab's `server.json` and last checks, art direction's `art/<game>/latest.json`), `games/*/game.json`, `CODEX.md`, `codex/decisions.json` (an edit to it), `assets/manifest.json` (before a deploy) and whether `assets/RIGHTS.md` exists, media jobs' `budget.json`, `.perf/`, `.wrangler/homie-dev.json`, the file a held edit names, and the size of a file a `git add` or `git commit` would stage. Never a key file, the keychain or the environment. It writes no file (no `$.fs.write`) |
+| `$.http.fetch` | Live rooms, games and the arcade's list; whether the Game Lab answers; the game bridge; whether Ollama already has a Clef model, before a download is held | Only the studio's own live site, this computer's dev site and Game Lab (`127.0.0.1`), Ollama's model list on this computer (`127.0.0.1:11434/api/tags`, or a loopback `OLLAMA_HOST` the command sets), `*.homie.rocks`, and the bridge's private Unix socket. Any other address is refused in the code |
+| `$.process.run` | The back office, stats and codex links; Lock and Unlock (and Unlock's blast radius); deploy summaries; what a commit would stage; prices | Only `node` with the studio's own pinned `homie-studio` (`--json`), `git -C <studio or a folder in it>` (read-only: `rev-parse`, `log`, `status`, `diff`, `diff --cached`), and a media skill's own `--dry-run` (free; it asks the provider's price list). No shell |
 | `$.process.spawn` | The game bridge (`mod/bridge.mjs`), only while the arcade or a live Watch is open | One headless Chrome on this computer (below) |
 | `$.store.get`, `$.store.set` | The commit of the last deploy, per studio | Claude Code's own store for this plugin, nothing else |
 | `$.agent.list` | The parts | The session's subagents (names and states) |
@@ -205,7 +299,8 @@ the keys you press. It needs Node 22 and Google Chrome (or `CHROME_PATH`), and n
   once you have opened it yourself).
 - The guards read shell text: `$(...)`, aliases, `eval`, `bash -c "..."` and scripts that run a
   deploy or a paid call are not seen. They are a net, not a sandbox; use permission rules for a
-  hard block. A shell command that writes a protected file (`sed -i`, `>`) is not held.
+  hard block. A shell command that writes a protected file or a locked decision (`sed -i`, `>`)
+  is not held, and a big file staged by a script is not seen.
 - A mod cannot draw in claude.ai or the Claude app's Chat tab; the Homie MCP's cards (MCP Apps)
   stay the way there.
 - Secret patterns are patterns: a key in a format they do not know passes, and a long random
