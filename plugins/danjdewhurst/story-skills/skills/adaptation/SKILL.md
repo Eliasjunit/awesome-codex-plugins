@@ -65,7 +65,8 @@ Follow `references/audiobook.md`.
 
 1. Add `pronunciation` to every character, location, faction, artifact, and
    glossary term a narrator could say wrong (`pronunciation: SEER-sha`).
-   Ask the author for any they have not decided.
+   Respell for the narrator's language, not always English. Ask the
+   author for any they have not decided.
 2. Build the script:
 
    ```shell
@@ -73,8 +74,11 @@ Follow `references/audiobook.md`.
    ```
 
    It opens with the pronunciation guide table, then each chapter with its
-   estimated finished runtime (155 words per minute), scene breaks as
-   `[pause]`, and the total runtime. `--out` never replaces an existing
+   estimated finished runtime, scene breaks as `[pause]`, and the total
+   runtime. The rate comes from the book's `language` (155 words per
+   minute in English; the script's first line names it), and the credits
+   are in that language; time a sample chapter and rescale (see
+   `references/audiobook.md`). `--out` never replaces an existing
    file under `adaptations/`, so delete the old script before a rebuild.
 3. Review the script for what reads badly aloud: long dialogue runs
    without tags, visual-only jokes, footnotes, maps, letters and texts,

@@ -77,6 +77,7 @@ var FINDING_CODES = {
   "style-use-equals-avoid": "error",
   "style-sample-missing": "warning",
   "style-sample-own-chapters": "warning",
+  "unknown-word-list": "warning",
   "duplicate-session-date": "error",
   "research-no-sources": "warning",
   "research-unsettled": "warning",
@@ -86,12 +87,18 @@ var FINDING_CODES = {
   "permission-no-rights-holder": "warning",
   "backslash-path": "warning",
   "form-length-range": "warning",
+  "unused-target": "warning",
+  "session-without-characters": "warning",
   "invalid-language": "error",
+  "unsupported-writing-mode": "error",
+  "unsupported-chapter-numerals": "error",
   "invalid-isbn": "error",
   "invalid-subject": "error",
   "too-many-keywords": "warning",
   "todo-placeholder": "warning",
   "author-and-authors": "warning",
+  "unknown-label": "warning",
+  "blank-label": "warning",
   "missing-reference": "error",
   "missing-backlink": "error",
   "backlink-type-mismatch": "error",
@@ -425,13 +432,13 @@ function formatClueMatrix(matrix) {
 }
 
 // src/context.js
-import path5 from "node:path";
+import path6 from "node:path";
 
 // src/continuity.js
-import path4 from "node:path";
+import path5 from "node:path";
 
 // src/exemptions.js
-import path3 from "node:path";
+import path4 from "node:path";
 
 // src/files.js
 import fs from "node:fs";
@@ -1025,6 +1032,5501 @@ function withoutLeadingFrontmatter(text) {
   return text.slice(match[0].length);
 }
 
+// src/languages/ar.js
+var ar_default = {
+  code: "ar",
+  name: "Arabic",
+  cased: false,
+  script: "Arab",
+  segmentation: "space",
+  narrationRate: 95,
+  labels: {
+    chapter: "الفصل {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "المحتويات",
+    and: "{a} و{b}",
+    copyright: "حقوق النشر",
+    "all-rights-reserved": "جميع الحقوق محفوظة.",
+    "published-by": "الناشر: {publisher}",
+    "scene-break": "فاصل بين المشاهد",
+    "cover-alt": "غلاف كتاب {title}",
+    "start-of-content": "بداية المحتوى",
+    "accessibility-summary": "كتاب نصي فقط، فيه فهرس محتويات قابل للتنقل، وعنوان لكل فصل، وترتيب قراءة منطقي واحد.",
+    "accessibility-summary-cover": "كتاب نصي مع صورة غلاف موصوفة، وفهرس محتويات قابل للتنقل، وعنوان لكل فصل، وترتيب قراءة منطقي واحد.",
+    "review-title": "{title}: نسخة المراجعة",
+    "review-intro": "نسخة المراجعة.",
+    "review-intro-build": "نسخة المراجعة، الإصدار {build}.",
+    "review-labels": "لكل فقرة تسمية مثل {label} (الفصل 3، الفقرة 12).",
+    "review-quote": "اذكر التسمية في كل ملاحظة مع الكلمات الأولى من الفقرة، ليتمكن المؤلف من العثور على الموضع بدقة حتى بعد تغيّر النص.",
+    "review-quote-build": "اذكر التسمية والإصدار في كل ملاحظة مع الكلمات الأولى من الفقرة، ليتمكن المؤلف من العثور على الموضع بدقة حتى بعد تغيّر النص.",
+    "review-note-link": "يفتح رابط «ملاحظة» بجانب كل تسمية ملاحظةً مملوءة بهذه البيانات مسبقًا.",
+    note: "ملاحظة",
+    "note-title": "اكتب ملاحظة على {label}",
+    "anchor-title": "رابط إلى {label}",
+    by: "بقلم",
+    "approximate-words": "نحو {words} كلمة",
+    "approximate-characters": "نحو {characters} حرف",
+    "narration-opening": "{title}. تأليف {authors}. بصوت {narrator}.",
+    "narration-opening-anonymous": "{title}. بصوت {narrator}.",
+    "narration-closing": "النهاية. استمعتم إلى {title}، تأليف {authors}، بصوت {narrator}.",
+    "narration-closing-anonymous": "النهاية. استمعتم إلى {title}، بصوت {narrator}.",
+    "screenplay-credit": "تأليف",
+    "screenplay-source": "مقتبس من عمل {authors}",
+    "screenplay-source-anonymous": "مقتبس من عمل أدبي"
+  }
+};
+
+// src/languages/base.js
+var base_default = {
+  code: "und",
+  name: "Generic",
+  cased: true,
+  script: null,
+  segmentation: "space",
+  countUnit: "words",
+  sentenceEnd: [".", "!", "?", "…", "。", "！", "？", "؟", "۔", "।", "॥", "።"],
+  quotes: [
+    ["“", "”"],
+    ["‘", "’"],
+    ['"', '"'],
+    ["'", "'"],
+    ["«", "»"],
+    ["‹", "›"],
+    ["„", "“"],
+    ["„", "”"],
+    ["‚", "‘"],
+    ["「", "」"],
+    ["『", "』"]
+  ],
+  dialogueDash: "—",
+  dashStartsLine: false,
+  ordinalStop: false,
+  capitalInitials: false,
+  labels: {},
+  narrationRate: 155,
+  checks: {}
+};
+
+// src/languages/da.js
+var da_default = {
+  code: "da",
+  name: "Danish",
+  quotes: [["»", "«"], ["›", "‹"], ["„", "“"], ["“", "”"], ["”", "”"], ['"', '"']]
+};
+
+// src/languages/de-ch.js
+var de_ch_default = {
+  code: "de-ch",
+  name: "Swiss German",
+  quotes: [["«", "»"], ["‹", "›"], ["„", "“"], ["‚", "‘"], ["“", "”"], ['"', '"']]
+};
+
+// src/languages/de.js
+var ORDINALS = [
+  "erst",
+  "zweit",
+  "dritt",
+  "viert",
+  "fünft",
+  "sechst",
+  "siebt",
+  "siebent",
+  "acht",
+  "neunt",
+  "zehnt",
+  "elft",
+  "zwölft"
+].flatMap((stem) => ["e", "er", "es", "en"].map((ending) => `${stem}${ending}`));
+var de_default = {
+  code: "de",
+  name: "German",
+  quotes: [["„", "“"], ["‚", "‘"], ["»", "«"], ["›", "‹"], ["“", "”"], ['"', '"']],
+  ordinalStop: true,
+  capitalInitials: true,
+  narrationRate: 120,
+  labels: {
+    chapter: "Kapitel {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "Inhalt",
+    and: "{a} und {b}",
+    copyright: "Impressum",
+    "all-rights-reserved": "Alle Rechte vorbehalten.",
+    "published-by": "Erschienen bei {publisher}",
+    "scene-break": "Szenenwechsel",
+    "cover-alt": "Cover von {title}",
+    "start-of-content": "Beginn des Inhalts",
+    "accessibility-summary": "Buch, das nur aus Text besteht, mit navigierbarem Inhaltsverzeichnis, einer Überschrift für jedes Kapitel und einer einzigen logischen Lesereihenfolge.",
+    "accessibility-summary-cover": "Buch mit Text und beschriebenem Coverbild, navigierbarem Inhaltsverzeichnis, einer Überschrift für jedes Kapitel und einer einzigen logischen Lesereihenfolge.",
+    "review-title": "{title}: Leseexemplar",
+    "review-intro": "Leseexemplar.",
+    "review-intro-build": "Leseexemplar, Fassung {build}.",
+    "review-labels": "Jeder Absatz hat eine Kennung wie {label} (Kapitel 3, Absatz 12).",
+    "review-quote": "Geben Sie bei jeder Anmerkung die Kennung und die ersten Wörter des Absatzes an, damit sich die Stelle auch nach Änderungen am Text genau finden lässt.",
+    "review-quote-build": "Geben Sie bei jeder Anmerkung die Kennung, die Fassung und die ersten Wörter des Absatzes an, damit sich die Stelle auch nach Änderungen am Text genau finden lässt.",
+    "review-note-link": "Der Link „Anmerkung“ neben jeder Kennung öffnet eine Anmerkung, in der diese Angaben schon ausgefüllt sind.",
+    note: "Anmerkung",
+    "note-title": "Anmerkung zu {label} schreiben",
+    "anchor-title": "Link zu {label}",
+    by: "von",
+    "approximate-words": "Etwa {words} Wörter",
+    "approximate-characters": "Etwa {characters} Zeichen",
+    "narration-opening": "{title}. Geschrieben von {authors}. Gelesen von {narrator}.",
+    "narration-opening-anonymous": "{title}. Gelesen von {narrator}.",
+    "narration-closing": "Ende. Sie hörten {title}, geschrieben von {authors}, gelesen von {narrator}.",
+    "narration-closing-anonymous": "Ende. Sie hörten {title}, gelesen von {narrator}.",
+    "screenplay-credit": "Geschrieben von",
+    "screenplay-source": "Nach einer Vorlage von {authors}",
+    "screenplay-source-anonymous": "Nach einer literarischen Vorlage"
+  },
+  checks: {
+    filterWords: [
+      "fühlte",
+      "spürte",
+      "empfand",
+      "sah",
+      "hörte",
+      "vernahm",
+      "bemerkte",
+      "merkte",
+      "wunderte",
+      "schien",
+      "beobachtete",
+      "wusste",
+      "entschied",
+      "beschloss",
+      "dachte",
+      "glaubte",
+      "erkannte",
+      "begriff",
+      "ahnte",
+      "registrierte"
+    ],
+    saidBookisms: [
+      "bellte",
+      "erkundigte",
+      "fauchte",
+      "frotzelte",
+      "gluckste",
+      "grinste",
+      "grunzte",
+      "gurrte",
+      "höhnte",
+      "jammerte",
+      "japste",
+      "keuchte",
+      "kicherte",
+      "knurrte",
+      "konterte",
+      "kreischte",
+      "lachte",
+      "lächelte",
+      "maulte",
+      "nörgelte",
+      "schluchzte",
+      "schnappte",
+      "schnaubte",
+      "schnurrte",
+      "seufzte",
+      "spie",
+      "spottete",
+      "stöhnte",
+      "säuselte",
+      "verkündete",
+      "witzelte",
+      "zischte",
+      "ächzte",
+      "hauchte",
+      "schmunzelte",
+      "blaffte",
+      "schnauzte"
+    ],
+    plainTags: ["sagte", "sagten", "fragte", "fragten", "sagt", "fragt", "versetzte"],
+    beatPronouns: ["er", "sie", "es", "ich", "wir", "ihr", "du"],
+    echoStopwords: [
+      "aber",
+      "alle",
+      "alles",
+      "also",
+      "andere",
+      "anderen",
+      "auch",
+      "bevor",
+      "beim",
+      "dabei",
+      "damit",
+      "dann",
+      "darauf",
+      "darum",
+      "dass",
+      "dein",
+      "deine",
+      "denen",
+      "denn",
+      "dessen",
+      "dich",
+      "dies",
+      "diese",
+      "diesem",
+      "diesen",
+      "dieser",
+      "dieses",
+      "doch",
+      "dort",
+      "durch",
+      "eine",
+      "einem",
+      "einen",
+      "einer",
+      "eines",
+      "einfach",
+      "einige",
+      "einmal",
+      "etwas",
+      "ganz",
+      "gegen",
+      "gewesen",
+      "habe",
+      "haben",
+      "hatte",
+      "hatten",
+      "hier",
+      "hinter",
+      "ihnen",
+      "ihre",
+      "ihrem",
+      "ihren",
+      "ihrer",
+      "immer",
+      "jede",
+      "jeder",
+      "jedes",
+      "jetzt",
+      "kein",
+      "keine",
+      "konnte",
+      "konnten",
+      "können",
+      "machen",
+      "mehr",
+      "mein",
+      "meine",
+      "mich",
+      "nach",
+      "nicht",
+      "nichts",
+      "noch",
+      "oder",
+      "ohne",
+      "schon",
+      "sehr",
+      "sein",
+      "seine",
+      "seinem",
+      "seinen",
+      "seiner",
+      "selbst",
+      "sich",
+      "sind",
+      "sollte",
+      "über",
+      "unter",
+      "viel",
+      "vielleicht",
+      "waren",
+      "warum",
+      "wäre",
+      "weil",
+      "weiter",
+      "welche",
+      "wenn",
+      "werden",
+      "wieder",
+      "will",
+      "wird",
+      "wollte",
+      "wurde",
+      "wurden",
+      "würde",
+      "zurück",
+      "zwischen",
+      "während"
+    ],
+    phraseStopwords: [
+      "aber",
+      "als",
+      "am",
+      "an",
+      "auch",
+      "auf",
+      "aus",
+      "bei",
+      "da",
+      "dann",
+      "das",
+      "dass",
+      "dem",
+      "den",
+      "der",
+      "des",
+      "die",
+      "du",
+      "ein",
+      "eine",
+      "einem",
+      "einen",
+      "einer",
+      "er",
+      "es",
+      "hat",
+      "hatte",
+      "ich",
+      "ihm",
+      "ihn",
+      "ihr",
+      "ihre",
+      "im",
+      "in",
+      "ist",
+      "mich",
+      "mir",
+      "mit",
+      "nicht",
+      "noch",
+      "nur",
+      "sein",
+      "seine",
+      "sich",
+      "sie",
+      "so",
+      "um",
+      "und",
+      "uns",
+      "von",
+      "vor",
+      "war",
+      "was",
+      "wenn",
+      "wie",
+      "wir",
+      "zu",
+      "zum",
+      "zur"
+    ],
+    speechVerbs: [
+      "sagte",
+      "sagt",
+      "fragte",
+      "fragt",
+      "antwortete",
+      "antwortet",
+      "erwiderte",
+      "entgegnete",
+      "flüsterte",
+      "flüstert",
+      "rief",
+      "ruft",
+      "schrie",
+      "schreit",
+      "murmelte",
+      "murmelt",
+      "brummte",
+      "meinte",
+      "meint",
+      "fügte",
+      "erklärte",
+      "erzählte",
+      "befahl",
+      "verlangte",
+      "beharrte",
+      "bestätigte",
+      "wiederholte",
+      "begann"
+    ],
+    speechPronouns: ["er", "sie", "ich", "wir"],
+    contractionSuffixes: ["'s", "'m", "'n"],
+    contractedIs: [],
+    voiceStopwords: [
+      "aber",
+      "also",
+      "auch",
+      "bitte",
+      "danke",
+      "dann",
+      "dass",
+      "denn",
+      "dich",
+      "diese",
+      "dieser",
+      "doch",
+      "eben",
+      "eigentlich",
+      "eine",
+      "einen",
+      "einfach",
+      "etwas",
+      "euch",
+      "ganz",
+      "geht",
+      "gibt",
+      "habe",
+      "haben",
+      "hast",
+      "hier",
+      "ihnen",
+      "immer",
+      "jetzt",
+      "kann",
+      "kannst",
+      "kein",
+      "keine",
+      "mach",
+      "mehr",
+      "mein",
+      "meine",
+      "mich",
+      "nicht",
+      "nichts",
+      "noch",
+      "oder",
+      "sagen",
+      "sagte",
+      "schon",
+      "sehr",
+      "sein",
+      "selbst",
+      "sind",
+      "warum",
+      "weil",
+      "weiß",
+      "wenn",
+      "werde",
+      "wieder",
+      "will",
+      "wird",
+      "wirklich",
+      "wohl",
+      "wollte"
+    ],
+    titleAbbreviations: ["Dr", "Prof", "Hr", "Hrn", "Fr", "Frl", "St", "bzw", "bspw", "ca", "ehem", "sog", "vgl", "ggf", "evtl", "inkl", "zzgl", "Str", "Mio", "Mrd"],
+    contextAbbreviations: ["usw", "etc", "Nr", "Jh", "Std", "Min"],
+    calendarWords: [
+      "Montag",
+      "Dienstag",
+      "Mittwoch",
+      "Donnerstag",
+      "Freitag",
+      "Samstag",
+      "Sonnabend",
+      "Sonntag",
+      "Januar",
+      "Jänner",
+      "Februar",
+      "März",
+      "April",
+      "Mai",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "Dezember"
+    ],
+    chapterWords: ["kapitel"],
+    sectionWords: ["prolog", "epilog", "zwischenspiel", "nachwort"],
+    partWords: ["teil", "buch"],
+    frontMatterWords: ["prolog", "vorwort", "einleitung", "einführung", "vorspiel"],
+    numberWords: {
+      words: [
+        "eins",
+        "ein",
+        "zwei",
+        "drei",
+        "vier",
+        "fünf",
+        "sechs",
+        "sieben",
+        "acht",
+        "neun",
+        "zehn",
+        "elf",
+        "zwölf",
+        "dreizehn",
+        "vierzehn",
+        "fünfzehn",
+        "sechzehn",
+        "siebzehn",
+        "achtzehn",
+        "neunzehn",
+        "zwanzig",
+        "dreißig",
+        "dreissig",
+        "vierzig",
+        "fünfzig",
+        "sechzig",
+        "siebzig",
+        "achtzig",
+        "neunzig",
+        "hundert"
+      ],
+      joiners: ["und"]
+    },
+    ordinalWords: ORDINALS,
+    candidateStopwords: [
+      "Aber",
+      "Als",
+      "Am",
+      "An",
+      "Auch",
+      "Auf",
+      "Aus",
+      "Bei",
+      "Bis",
+      "Da",
+      "Dann",
+      "Das",
+      "Dass",
+      "Dein",
+      "Dem",
+      "Den",
+      "Denn",
+      "Der",
+      "Des",
+      "Die",
+      "Dies",
+      "Diese",
+      "Dieser",
+      "Doch",
+      "Dr",
+      "Du",
+      "Ein",
+      "Eine",
+      "Einem",
+      "Einen",
+      "Einer",
+      "Er",
+      "Es",
+      "Frau",
+      "Fräulein",
+      "Für",
+      "Herr",
+      "Hier",
+      "Ich",
+      "Ihnen",
+      "Ihr",
+      "Ihre",
+      "Ihrem",
+      "Ihren",
+      "Ihrer",
+      "Im",
+      "In",
+      "Ja",
+      "Jetzt",
+      "Kein",
+      "Keine",
+      "Man",
+      "Mein",
+      "Meine",
+      "Mit",
+      "Nach",
+      "Nein",
+      "Nicht",
+      "Noch",
+      "Nun",
+      "Nur",
+      "Ob",
+      "Oder",
+      "Sein",
+      "Seine",
+      "Sie",
+      "So",
+      "Über",
+      "Um",
+      "Und",
+      "Uns",
+      "Unter",
+      "Von",
+      "Vor",
+      "Was",
+      "Wenn",
+      "Wer",
+      "Wie",
+      "Wir",
+      "Wo",
+      "Zu",
+      "Zum",
+      "Zur",
+      "Abend",
+      "Angst",
+      "Arbeit",
+      "Augen",
+      "Blut",
+      "Brot",
+      "Durst",
+      "Ende",
+      "Erde",
+      "Feuer",
+      "Frauen",
+      "Freude",
+      "Geld",
+      "Glück",
+      "Gott",
+      "Hand",
+      "Händen",
+      "Hause",
+      "Haus",
+      "Häusern",
+      "Herz",
+      "Hilfe",
+      "Himmel",
+      "Hunger",
+      "Jahre",
+      "Jahren",
+      "Kinder",
+      "Kindern",
+      "Kraft",
+      "Leben",
+      "Leute",
+      "Leuten",
+      "Licht",
+      "Liebe",
+      "Luft",
+      "Lust",
+      "Männer",
+      "Männern",
+      "Menschen",
+      "Minuten",
+      "Morgen",
+      "Musik",
+      "Mut",
+      "Nacht",
+      "Recht",
+      "Regen",
+      "Ruhe",
+      "Schuld",
+      "Schule",
+      "Sorge",
+      "Sorgen",
+      "Spaß",
+      "Stunden",
+      "Tag",
+      "Tage",
+      "Tagen",
+      "Tod",
+      "Uhr",
+      "Wasser",
+      "Wein",
+      "Welt",
+      "Wind",
+      "Zeit"
+    ],
+    relativeWords: ["der", "die", "das", "den", "dem", "deren", "dessen", "denen"],
+    determiners: [
+      "der",
+      "die",
+      "das",
+      "den",
+      "dem",
+      "des",
+      "ein",
+      "eine",
+      "einen",
+      "einem",
+      "einer",
+      "eines",
+      "kein",
+      "keine",
+      "keinen",
+      "keinem",
+      "keiner",
+      "keines",
+      "mein",
+      "meine",
+      "meinen",
+      "meinem",
+      "meiner",
+      "meines",
+      "dein",
+      "deine",
+      "deinen",
+      "deinem",
+      "deiner",
+      "deines",
+      "sein",
+      "seine",
+      "seinen",
+      "seinem",
+      "seiner",
+      "seines",
+      "ihr",
+      "ihre",
+      "ihren",
+      "ihrem",
+      "ihrer",
+      "ihres",
+      "unser",
+      "unsere",
+      "unseren",
+      "unserem",
+      "unserer",
+      "unseres",
+      "euer",
+      "eure",
+      "euren",
+      "eurem",
+      "eurer",
+      "eures",
+      "dieser",
+      "diese",
+      "dieses",
+      "diesem",
+      "diesen",
+      "jener",
+      "jene",
+      "jenes",
+      "jenem",
+      "jenen",
+      "jeder",
+      "jede",
+      "jedes",
+      "jedem",
+      "jeden",
+      "welcher",
+      "welche",
+      "welches",
+      "welchem",
+      "welchen",
+      "mancher",
+      "manche",
+      "manches",
+      "solche",
+      "solcher",
+      "solches",
+      "alle",
+      "alles",
+      "beide",
+      "einige",
+      "mehrere",
+      "viele",
+      "wenige",
+      "etwas",
+      "nichts",
+      "viel",
+      "wenig",
+      "im",
+      "am",
+      "zum",
+      "zur",
+      "vom",
+      "beim",
+      "ins",
+      "ans",
+      "aufs",
+      "durchs",
+      "fürs",
+      "ums",
+      "übers"
+    ],
+    nounSuffixes: [
+      "ung",
+      "ungen",
+      "heit",
+      "heiten",
+      "keit",
+      "keiten",
+      "schaft",
+      "schaften",
+      "tion",
+      "tionen",
+      "tät",
+      "täten",
+      "ismus",
+      "nis",
+      "nisse",
+      "chen",
+      "lein",
+      "tum"
+    ],
+    titleWords: [
+      "der",
+      "die",
+      "das",
+      "ein",
+      "eine",
+      "von",
+      "van",
+      "zu",
+      "herr",
+      "frau",
+      "fräulein",
+      "hr",
+      "fr",
+      "frl",
+      "dr",
+      "doktor",
+      "prof",
+      "professor",
+      "könig",
+      "königin",
+      "prinz",
+      "prinzessin",
+      "herzog",
+      "herzogin",
+      "graf",
+      "gräfin",
+      "baron",
+      "baronin",
+      "fürst",
+      "fürstin",
+      "kaiser",
+      "kaiserin",
+      "ritter",
+      "hauptmann",
+      "kapitän",
+      "general",
+      "oberst",
+      "major",
+      "leutnant",
+      "feldwebel",
+      "kommandant",
+      "vater",
+      "mutter",
+      "bruder",
+      "schwester",
+      "onkel",
+      "tante",
+      "sankt",
+      "st",
+      "pater",
+      "meister",
+      "alte",
+      "alter",
+      "junge",
+      "kleine",
+      "kleiner"
+    ]
+  }
+};
+
+// src/languages/en.js
+var en_default = {
+  code: "en",
+  name: "English",
+  script: "Latn",
+  quotes: [["“", "”"], ["‘", "’"], ['"', '"'], ["'", "'"]],
+  checks: {
+    filterWords: [
+      "felt",
+      "saw",
+      "heard",
+      "noticed",
+      "realized",
+      "realised",
+      "wondered",
+      "seemed",
+      "watched",
+      "knew",
+      "decided",
+      "thought",
+      "sensed"
+    ],
+    saidBookisms: [
+      "barked",
+      "bellowed",
+      "breathed",
+      "chuckled",
+      "cooed",
+      "declared",
+      "exclaimed",
+      "gasped",
+      "grinned",
+      "groaned",
+      "growled",
+      "grunted",
+      "hissed",
+      "inquired",
+      "interjected",
+      "intoned",
+      "laughed",
+      "opined",
+      "purred",
+      "queried",
+      "quipped",
+      "retorted",
+      "shrieked",
+      "sighed",
+      "smiled",
+      "smirked",
+      "snapped",
+      "snarled",
+      "sneered",
+      "spat",
+      "stated"
+    ],
+    plainTags: ["said", "asked", "says", "asks"],
+    beatPronouns: ["he", "she", "they", "i", "we", "it", "you"],
+    adverbSuffixes: ["ly"],
+    adverbLabel: "-ly adverbs",
+    adverbExceptions: [
+      "ally",
+      "anomaly",
+      "apply",
+      "assembly",
+      "belly",
+      "bully",
+      "burly",
+      "butterfly",
+      "chilly",
+      "comply",
+      "costly",
+      "curly",
+      "daily",
+      "deadly",
+      "dolly",
+      "dragonfly",
+      "early",
+      "elderly",
+      "family",
+      "fly",
+      "folly",
+      "friendly",
+      "ghastly",
+      "ghostly",
+      "gully",
+      "holly",
+      "holy",
+      "homely",
+      "hourly",
+      "imply",
+      "italy",
+      "jelly",
+      "jolly",
+      "july",
+      "lily",
+      "likely",
+      "lively",
+      "lonely",
+      "lovely",
+      "melancholy",
+      "monopoly",
+      "monthly",
+      "multiply",
+      "oily",
+      "only",
+      "orderly",
+      "prickly",
+      "rally",
+      "rely",
+      "reply",
+      "sickly",
+      "silly",
+      "sly",
+      "smelly",
+      "stately",
+      "supply",
+      "surly",
+      "tally",
+      "ugly",
+      "unlikely",
+      "weekly",
+      "wobbly",
+      "woolly",
+      "yearly"
+    ],
+    echoStopwords: [
+      "about",
+      "above",
+      "after",
+      "again",
+      "against",
+      "along",
+      "always",
+      "among",
+      "another",
+      "around",
+      "because",
+      "before",
+      "behind",
+      "being",
+      "below",
+      "between",
+      "could",
+      "couldn't",
+      "didn't",
+      "doesn't",
+      "don't",
+      "every",
+      "first",
+      "hadn't",
+      "haven't",
+      "isn't",
+      "might",
+      "never",
+      "other",
+      "right",
+      "should",
+      "since",
+      "something",
+      "still",
+      "their",
+      "there",
+      "these",
+      "thing",
+      "things",
+      "those",
+      "though",
+      "three",
+      "through",
+      "until",
+      "wasn't",
+      "where",
+      "which",
+      "while",
+      "without",
+      "would",
+      "wouldn't",
+      "you're",
+      "they're",
+      "we're"
+    ],
+    phraseStopwords: [
+      "a",
+      "an",
+      "and",
+      "as",
+      "at",
+      "be",
+      "but",
+      "by",
+      "for",
+      "from",
+      "had",
+      "has",
+      "have",
+      "he",
+      "her",
+      "his",
+      "i",
+      "in",
+      "into",
+      "is",
+      "it",
+      "its",
+      "me",
+      "my",
+      "not",
+      "of",
+      "on",
+      "or",
+      "she",
+      "so",
+      "that",
+      "the",
+      "their",
+      "them",
+      "then",
+      "they",
+      "this",
+      "to",
+      "was",
+      "we",
+      "were",
+      "with",
+      "you"
+    ],
+    dialectPairs: [
+      ["armour", "armor"],
+      ["armoured", "armored"],
+      ["centre", "center"],
+      ["centres", "centers"],
+      ["centred", "centered"],
+      ["colour", "color"],
+      ["colours", "colors"],
+      ["coloured", "colored"],
+      ["colourful", "colorful"],
+      ["defence", "defense"],
+      ["defences", "defenses"],
+      ["favour", "favor"],
+      ["favours", "favors"],
+      ["favoured", "favored"],
+      ["favourite", "favorite"],
+      ["grey", "gray"],
+      ["greying", "graying"],
+      ["harbour", "harbor"],
+      ["harbours", "harbors"],
+      ["honour", "honor"],
+      ["honours", "honors"],
+      ["honoured", "honored"],
+      ["honourable", "honorable"],
+      ["jewellery", "jewelry"],
+      ["labour", "labor"],
+      ["mould", "mold"],
+      ["mouldy", "moldy"],
+      ["neighbour", "neighbor"],
+      ["neighbours", "neighbors"],
+      ["odour", "odor"],
+      ["offence", "offense"],
+      ["plough", "plow"],
+      ["rumour", "rumor"],
+      ["rumours", "rumors"],
+      ["sceptic", "skeptic"],
+      ["sceptical", "skeptical"],
+      ["smoulder", "smolder"],
+      ["smouldering", "smoldering"],
+      ["theatre", "theater"],
+      ["towards", "toward"],
+      ["travelled", "traveled"],
+      ["travelling", "traveling"],
+      ["traveller", "traveler"],
+      ["cancelled", "canceled"],
+      ["vapour", "vapor"],
+      ["whisky", "whiskey"]
+    ],
+    speechVerbs: [
+      "said",
+      "says",
+      "asked",
+      "asks",
+      "replied",
+      "replies",
+      "answered",
+      "answers",
+      "whispered",
+      "whispers",
+      "shouted",
+      "shouts",
+      "called",
+      "calls",
+      "muttered",
+      "mutters",
+      "murmured",
+      "murmurs",
+      "cried",
+      "cries",
+      "yelled",
+      "yells",
+      "added",
+      "adds",
+      "told",
+      "tells",
+      "snapped",
+      "snaps",
+      "admitted",
+      "admits",
+      "insisted",
+      "insists",
+      "demanded",
+      "demands",
+      "continued",
+      "continues",
+      "began",
+      "begins",
+      "went on",
+      "goes on"
+    ],
+    speechPronouns: ["he", "she", "they", "i", "we"],
+    contractionSuffixes: ["n't", "'re", "'ll", "'ve", "'m", "'d"],
+    contractedIs: ["it", "that", "let", "what", "there", "here", "where", "who", "he", "she", "how", "when", "why"],
+    elisions: ["em", "tis", "twas", "cause", "cos", "til", "till", "bout", "round", "n", "nuff"],
+    voiceStopwords: [
+      "that",
+      "this",
+      "with",
+      "have",
+      "what",
+      "from",
+      "they",
+      "there",
+      "their",
+      "them",
+      "then",
+      "than",
+      "were",
+      "would",
+      "could",
+      "should",
+      "your",
+      "yours",
+      "just",
+      "know",
+      "been",
+      "will",
+      "when",
+      "where",
+      "which",
+      "about",
+      "into",
+      "some",
+      "because",
+      "want",
+      "like",
+      "only",
+      "here",
+      "does",
+      "didn't",
+      "don't",
+      "it's",
+      "can't",
+      "won't",
+      "i'm",
+      "you're",
+      "we're",
+      "that's",
+      "there's",
+      "what's",
+      "going",
+      "come",
+      "back",
+      "over",
+      "tell",
+      "said",
+      "more",
+      "very",
+      "also"
+    ],
+    titleAbbreviations: ["Dr", "Mr", "Mrs", "Ms", "St", "Mt", "Jr", "Sr", "Prof", "Capt", "Gen", "Col", "Lt", "Sgt", "Rev", "Fr", "e.g", "i.e"],
+    contextAbbreviations: ["No", "vs", "etc", "a.m", "p.m"],
+    calendarWords: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    chapterWords: ["chapter"],
+    sectionWords: ["prologue", "epilogue", "interlude", "afterword"],
+    partWords: ["part"],
+    frontMatterWords: ["prologue", "preface", "foreword", "introduction", "prelude"],
+    numberWords: {
+      units: ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
+      teens: ["ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"],
+      tens: ["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"],
+      hundred: "hundred",
+      and: "and"
+    },
+    candidateStopwords: [
+      "A",
+      "An",
+      "And",
+      "At",
+      "But",
+      "By",
+      "Dr",
+      "For",
+      "He",
+      "Her",
+      "His",
+      "I",
+      "If",
+      "In",
+      "It",
+      "Its",
+      "Mr",
+      "Mrs",
+      "Ms",
+      "No",
+      "Not",
+      "Of",
+      "On",
+      "Or",
+      "She",
+      "That",
+      "The",
+      "Then",
+      "They",
+      "Their",
+      "This",
+      "To",
+      "We",
+      "When",
+      "While",
+      "With",
+      "Yes",
+      "You"
+    ],
+    titleWords: [
+      "the",
+      "a",
+      "an",
+      "lord",
+      "lady",
+      "sir",
+      "dame",
+      "dr",
+      "doctor",
+      "mr",
+      "mrs",
+      "ms",
+      "miss",
+      "master",
+      "mistress",
+      "captain",
+      "capt",
+      "king",
+      "queen",
+      "prince",
+      "princess",
+      "duke",
+      "duchess",
+      "count",
+      "countess",
+      "baron",
+      "baroness",
+      "father",
+      "mother",
+      "sister",
+      "brother",
+      "uncle",
+      "aunt",
+      "councillor",
+      "councilor",
+      "general",
+      "colonel",
+      "major",
+      "sergeant",
+      "lieutenant",
+      "commander",
+      "professor",
+      "prof",
+      "saint",
+      "st",
+      "old",
+      "young",
+      "little"
+    ]
+  },
+  labels: {
+    chapter: "Chapter {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "Contents",
+    and: "{a} and {b}",
+    copyright: "Copyright",
+    "all-rights-reserved": "All rights reserved.",
+    "published-by": "Published by {publisher}",
+    "scene-break": "Scene break",
+    "cover-alt": "Cover of {title}",
+    "start-of-content": "Start of Content",
+    "accessibility-summary": "Text-only book with a navigable table of contents, headings for each chapter, and a single logical reading order.",
+    "accessibility-summary-cover": "Text book with a described cover image, a navigable table of contents, headings for each chapter, and a single logical reading order.",
+    "review-title": "{title}: review copy",
+    "review-intro": "Review copy.",
+    "review-intro-build": "Review copy, build {build}.",
+    "review-labels": "Every paragraph has a label such as {label} (chapter 3, paragraph 12).",
+    "review-quote": "Quote the label with each note, with the paragraph's first few words, so the author can find the exact spot after the text changes.",
+    "review-quote-build": "Quote the label and the build with each note, with the paragraph's first few words, so the author can find the exact spot after the text changes.",
+    "review-note-link": "The Note link beside each label opens a note with these filled in.",
+    note: "Note",
+    "note-title": "Write a note on {label}",
+    "anchor-title": "Link to {label}",
+    by: "by",
+    "approximate-words": "Approximately {words} words",
+    "approximate-characters": "Approximately {characters} characters",
+    "narration-opening": "{title}. Written by {authors}. Narrated by {narrator}.",
+    "narration-opening-anonymous": "{title}. Narrated by {narrator}.",
+    "narration-closing": "The end. You have been listening to {title}, written by {authors}, narrated by {narrator}.",
+    "narration-closing-anonymous": "The end. You have been listening to {title}, narrated by {narrator}.",
+    "screenplay-credit": "Written by",
+    "screenplay-source": "Based on the {form} by {authors}",
+    "screenplay-source-anonymous": "Based on the {form}"
+  }
+};
+
+// src/languages/es.js
+var ORDINALS2 = [
+  "primero",
+  "primera",
+  "primer",
+  "segundo",
+  "segunda",
+  "tercero",
+  "tercera",
+  "tercer",
+  "cuarto",
+  "cuarta",
+  "quinto",
+  "quinta",
+  "sexto",
+  "sexta",
+  "séptimo",
+  "séptima",
+  "octavo",
+  "octava",
+  "noveno",
+  "novena",
+  "décimo",
+  "décima",
+  "undécimo",
+  "undécima",
+  "duodécimo",
+  "duodécima"
+];
+var es_default = {
+  code: "es",
+  name: "Spanish",
+  capitalInitials: true,
+  narrationRate: 150,
+  labels: {
+    chapter: "Capítulo {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "Índice",
+    and: "{a} y {b}",
+    copyright: "Derechos de autor",
+    "all-rights-reserved": "Todos los derechos reservados.",
+    "published-by": "Publicado por {publisher}",
+    "scene-break": "Cambio de escena",
+    "cover-alt": "Portada de {title}",
+    "start-of-content": "Inicio del contenido",
+    "accessibility-summary": "Libro solo de texto con un índice navegable, encabezados para cada capítulo y un único orden de lectura lógico.",
+    "accessibility-summary-cover": "Libro con texto e imagen de portada descrita, con un índice navegable, encabezados para cada capítulo y un único orden de lectura lógico.",
+    "review-title": "{title}: copia de revisión",
+    "review-intro": "Copia de revisión.",
+    "review-intro-build": "Copia de revisión, versión {build}.",
+    "review-labels": "Cada párrafo tiene una etiqueta como {label} (capítulo 3, párrafo 12).",
+    "review-quote": "Cite la etiqueta en cada nota, junto con las primeras palabras del párrafo, para que el autor encuentre el lugar exacto aunque el texto cambie.",
+    "review-quote-build": "Cite la etiqueta y la versión en cada nota, junto con las primeras palabras del párrafo, para que el autor encuentre el lugar exacto aunque el texto cambie.",
+    "review-note-link": "El enlace Nota junto a cada etiqueta abre una nota con estos datos ya rellenados.",
+    note: "Nota",
+    "note-title": "Escribir una nota sobre {label}",
+    "anchor-title": "Enlace a {label}",
+    by: "por",
+    "approximate-words": "Aproximadamente {words} palabras",
+    "approximate-characters": "Aproximadamente {characters} caracteres",
+    "narration-opening": "{title}. Escrito por {authors}. Narrado por {narrator}.",
+    "narration-opening-anonymous": "{title}. Narrado por {narrator}.",
+    "narration-closing": "Fin. Ha escuchado {title}, escrito por {authors}, narrado por {narrator}.",
+    "narration-closing-anonymous": "Fin. Ha escuchado {title}, narrado por {narrator}.",
+    "screenplay-credit": "Escrito por",
+    "screenplay-source": "Basado en la obra de {authors}",
+    "screenplay-source-anonymous": "Basado en la obra original"
+  },
+  checks: {
+    filterWords: [
+      "sintió",
+      "sentía",
+      "sentí",
+      "vio",
+      "veía",
+      "vi",
+      "oyó",
+      "oía",
+      "oí",
+      "escuchó",
+      "escuchaba",
+      "notó",
+      "notaba",
+      "noté",
+      "advirtió",
+      "advertía",
+      "percibió",
+      "percibía",
+      "pareció",
+      "parecía",
+      "observó",
+      "observaba",
+      "supo",
+      "sabía",
+      "supe",
+      "decidió",
+      "decidí",
+      "pensó",
+      "pensaba",
+      "pensé",
+      "creyó",
+      "creía",
+      "comprendió",
+      "comprendía",
+      "comprendí",
+      "recordó",
+      "recordaba"
+    ],
+    saidBookisms: [
+      "bramó",
+      "bufó",
+      "chilló",
+      "declaró",
+      "espetó",
+      "exclamó",
+      "gimió",
+      "gruñó",
+      "inquirió",
+      "jadeó",
+      "ladró",
+      "refunfuñó",
+      "resopló",
+      "rezongó",
+      "rio",
+      "rió",
+      "rugió",
+      "sentenció",
+      "siseó",
+      "sollozó",
+      "sonrió",
+      "suspiró",
+      "bromeó",
+      "ronroneó",
+      "aseveró",
+      "graznó"
+    ],
+    plainTags: ["dijo", "dice", "dije", "dijeron", "preguntó", "pregunta", "pregunté", "preguntaron"],
+    beatPronouns: ["él", "ella", "ellos", "ellas", "yo", "nosotros", "nosotras", "usted", "tú"],
+    adverbSuffixes: ["mente"],
+    adverbLabel: "-mente adverbs",
+    adverbExceptions: [
+      "mente",
+      "demente",
+      "clemente",
+      "inclemente",
+      "vehemente",
+      "alimente",
+      "argumente",
+      "atormente",
+      "aumente",
+      "cimente",
+      "comente",
+      "complemente",
+      "documente",
+      "experimente",
+      "fomente",
+      "fragmente",
+      "implemente",
+      "incremente",
+      "lamente",
+      "segmente",
+      "sedimente",
+      "fermente",
+      "ornamente",
+      "pigmente",
+      "reglamente",
+      "suplemente",
+      "condimente",
+      "cumplimente",
+      "parlamente",
+      "pavimente"
+    ],
+    adverbBlockers: [
+      "el",
+      "la",
+      "los",
+      "las",
+      "un",
+      "una",
+      "unos",
+      "unas",
+      "mi",
+      "tu",
+      "su",
+      "mis",
+      "tus",
+      "sus",
+      "nuestra",
+      "vuestra",
+      "esa",
+      "esta",
+      "aquella",
+      "se",
+      "me",
+      "te",
+      "le",
+      "les",
+      "nos",
+      "os"
+    ],
+    echoStopwords: [
+      "ahora",
+      "algo",
+      "alguien",
+      "allí",
+      "antes",
+      "aquel",
+      "aquella",
+      "aquello",
+      "aquí",
+      "aunque",
+      "bien",
+      "cada",
+      "casi",
+      "como",
+      "cómo",
+      "contra",
+      "cuando",
+      "cuándo",
+      "debía",
+      "desde",
+      "después",
+      "donde",
+      "dónde",
+      "durante",
+      "ellas",
+      "ellos",
+      "entonces",
+      "entre",
+      "eran",
+      "estaba",
+      "estaban",
+      "estar",
+      "estas",
+      "este",
+      "esta",
+      "esto",
+      "estos",
+      "fueron",
+      "había",
+      "habían",
+      "hacia",
+      "hasta",
+      "mientras",
+      "misma",
+      "mismo",
+      "mucha",
+      "mucho",
+      "muchos",
+      "nada",
+      "nadie",
+      "nunca",
+      "otra",
+      "otras",
+      "otro",
+      "otros",
+      "para",
+      "pero",
+      "poco",
+      "podía",
+      "porque",
+      "pudo",
+      "puede",
+      "quería",
+      "sido",
+      "siempre",
+      "sobre",
+      "solo",
+      "sólo",
+      "también",
+      "tanto",
+      "tenía",
+      "tenían",
+      "toda",
+      "todas",
+      "todavía",
+      "todo",
+      "todos",
+      "tras",
+      "unas",
+      "unos"
+    ],
+    phraseStopwords: [
+      "a",
+      "al",
+      "como",
+      "con",
+      "de",
+      "del",
+      "el",
+      "él",
+      "ella",
+      "ellas",
+      "ellos",
+      "en",
+      "era",
+      "es",
+      "esa",
+      "ese",
+      "eso",
+      "esta",
+      "este",
+      "esto",
+      "fue",
+      "ha",
+      "había",
+      "la",
+      "las",
+      "le",
+      "les",
+      "lo",
+      "los",
+      "me",
+      "mi",
+      "mis",
+      "más",
+      "muy",
+      "ni",
+      "no",
+      "nos",
+      "o",
+      "para",
+      "pero",
+      "por",
+      "que",
+      "qué",
+      "se",
+      "si",
+      "sí",
+      "sin",
+      "su",
+      "sus",
+      "te",
+      "tu",
+      "tus",
+      "un",
+      "una",
+      "uno",
+      "y",
+      "ya",
+      "yo"
+    ],
+    speechVerbs: [
+      "dijo",
+      "dice",
+      "dije",
+      "decía",
+      "preguntó",
+      "pregunta",
+      "pregunté",
+      "preguntaba",
+      "respondió",
+      "responde",
+      "contestó",
+      "contesta",
+      "replicó",
+      "repuso",
+      "susurró",
+      "susurra",
+      "gritó",
+      "grita",
+      "murmuró",
+      "murmura",
+      "masculló",
+      "exclamó",
+      "añadió",
+      "añade",
+      "explicó",
+      "insistió",
+      "continuó",
+      "prosiguió",
+      "siguió",
+      "llamó",
+      "admitió",
+      "exigió",
+      "ordenó"
+    ],
+    speechPronouns: ["él", "ella", "ellos", "ellas", "yo", "nosotros", "nosotras"],
+    voiceStopwords: [
+      "ahora",
+      "algo",
+      "aquí",
+      "bien",
+      "cómo",
+      "como",
+      "cuando",
+      "decir",
+      "dijo",
+      "eres",
+      "esta",
+      "está",
+      "estás",
+      "este",
+      "esto",
+      "hacer",
+      "hasta",
+      "nada",
+      "para",
+      "pero",
+      "porque",
+      "puedo",
+      "puede",
+      "quiero",
+      "sabes",
+      "solo",
+      "sólo",
+      "también",
+      "tengo",
+      "tiene",
+      "todo",
+      "usted",
+      "vamos",
+      "verdad",
+      "favor",
+      "entonces",
+      "nunca",
+      "siempre",
+      "mucho",
+      "ella",
+      "ellos",
+      "estoy",
+      "creo",
+      "sobre"
+    ],
+    titleAbbreviations: ["Sr", "Sra", "Srta", "Dr", "Dra", "Dña", "Ud", "Uds", "Vd", "Vds", "Lic", "Ing", "Prof", "Profa", "Sto", "Sta", "Gral", "Cap", "Excmo", "Excma", "Ilmo", "Mons", "Fr", "ej", "EE"],
+    contextAbbreviations: ["etc", "núm", "pág", "aprox", "vs", "a.m", "p.m", "a. m", "p. m", "UU"],
+    calendarWords: [
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado",
+      "Domingo",
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Setiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ],
+    chapterWords: ["capítulo", "capitulo"],
+    sectionWords: ["prólogo", "prologo", "epílogo", "epilogo", "interludio", "posfacio"],
+    partWords: ["parte"],
+    frontMatterWords: ["prólogo", "prologo", "prefacio", "introducción", "introduccion", "preludio", "preámbulo"],
+    numberWords: {
+      words: [
+        "uno",
+        "un",
+        "dos",
+        "tres",
+        "cuatro",
+        "cinco",
+        "seis",
+        "siete",
+        "ocho",
+        "nueve",
+        "diez",
+        "once",
+        "doce",
+        "trece",
+        "catorce",
+        "quince",
+        "dieciséis",
+        "dieciseis",
+        "diecisiete",
+        "dieciocho",
+        "diecinueve",
+        "veinte",
+        "veintiuno",
+        "veintidós",
+        "veintidos",
+        "veintitrés",
+        "veintitres",
+        "veinticuatro",
+        "veinticinco",
+        "veintiséis",
+        "veintiseis",
+        "veintisiete",
+        "veintiocho",
+        "veintinueve",
+        "treinta",
+        "cuarenta",
+        "cincuenta",
+        "sesenta",
+        "setenta",
+        "ochenta",
+        "noventa",
+        "cien",
+        "ciento",
+        "doscientos",
+        "trescientos",
+        "cuatrocientos",
+        "quinientos",
+        "seiscientos",
+        "setecientos",
+        "ochocientos",
+        "novecientos",
+        ...ORDINALS2
+      ],
+      joiners: ["y"]
+    },
+    ordinalWords: ORDINALS2,
+    candidateStopwords: [
+      "A",
+      "Al",
+      "Allí",
+      "Ahora",
+      "Aquí",
+      "Así",
+      "Como",
+      "Cómo",
+      "Con",
+      "Cuando",
+      "De",
+      "Del",
+      "Desde",
+      "Después",
+      "Don",
+      "Doña",
+      "Donde",
+      "Dónde",
+      "Dr",
+      "Dra",
+      "El",
+      "Él",
+      "Ella",
+      "Ellas",
+      "Ellos",
+      "En",
+      "Entonces",
+      "Era",
+      "Es",
+      "Esa",
+      "Ese",
+      "Eso",
+      "Esta",
+      "Este",
+      "Esto",
+      "Fue",
+      "Hasta",
+      "La",
+      "Las",
+      "Le",
+      "Lo",
+      "Los",
+      "Mi",
+      "Mientras",
+      "Muy",
+      "Nada",
+      "Nadie",
+      "No",
+      "Nos",
+      "Nosotros",
+      "Nunca",
+      "O",
+      "Para",
+      "Pero",
+      "Por",
+      "Porque",
+      "Que",
+      "Qué",
+      "Quién",
+      "Se",
+      "Señor",
+      "Señora",
+      "Señorita",
+      "Si",
+      "Sí",
+      "Sin",
+      "Sobre",
+      "Sr",
+      "Sra",
+      "Srta",
+      "Su",
+      "Sus",
+      "También",
+      "Todo",
+      "Tras",
+      "Tú",
+      "Un",
+      "Una",
+      "Usted",
+      "Y",
+      "Ya",
+      "Yo"
+    ],
+    titleWords: [
+      "el",
+      "la",
+      "los",
+      "las",
+      "un",
+      "una",
+      "de",
+      "del",
+      "don",
+      "doña",
+      "señor",
+      "señora",
+      "señorita",
+      "sr",
+      "sra",
+      "srta",
+      "dr",
+      "dra",
+      "doctor",
+      "doctora",
+      "rey",
+      "reina",
+      "príncipe",
+      "princesa",
+      "duque",
+      "duquesa",
+      "conde",
+      "condesa",
+      "marqués",
+      "marquesa",
+      "barón",
+      "baronesa",
+      "capitán",
+      "capitana",
+      "general",
+      "coronel",
+      "comandante",
+      "sargento",
+      "teniente",
+      "padre",
+      "madre",
+      "fray",
+      "sor",
+      "hermano",
+      "hermana",
+      "tío",
+      "tía",
+      "san",
+      "santo",
+      "santa",
+      "profesor",
+      "profesora",
+      "maestro",
+      "maestra",
+      "viejo",
+      "vieja",
+      "joven",
+      "pequeño",
+      "pequeña"
+    ]
+  }
+};
+
+// src/languages/fa.js
+var fa_default = {
+  code: "fa",
+  name: "Persian",
+  cased: false,
+  segmentation: "space",
+  labels: {
+    chapter: "فصل {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "فهرست مطالب",
+    and: "{a} و {b}",
+    copyright: "حق نشر",
+    "all-rights-reserved": "همهٔ حقوق محفوظ است.",
+    "published-by": "ناشر: {publisher}",
+    "scene-break": "تغییر صحنه",
+    "cover-alt": "جلد کتاب {title}",
+    "start-of-content": "آغاز محتوا",
+    "accessibility-summary": "کتابی فقط متنی، با فهرست مطالب پیمایش‌پذیر، عنوانی برای هر فصل و یک ترتیب خواندن منطقی واحد.",
+    "accessibility-summary-cover": "کتابی متنی با تصویر جلد توصیف‌شده، فهرست مطالب پیمایش‌پذیر، عنوانی برای هر فصل و یک ترتیب خواندن منطقی واحد.",
+    "review-title": "{title}: نسخهٔ بازبینی",
+    "review-intro": "نسخهٔ بازبینی.",
+    "review-intro-build": "نسخهٔ بازبینی، ویرایش {build}.",
+    "review-labels": "هر بند برچسبی مانند {label} دارد (فصل 3، بند 12).",
+    "review-quote": "در هر یادداشت، برچسب و چند واژهٔ نخست بند را بیاورید تا نویسنده حتی پس از تغییر متن، جای دقیق را پیدا کند.",
+    "review-quote-build": "در هر یادداشت، برچسب، ویرایش و چند واژهٔ نخست بند را بیاورید تا نویسنده حتی پس از تغییر متن، جای دقیق را پیدا کند.",
+    "review-note-link": "پیوند «یادداشت» کنار هر برچسب، یادداشتی باز می‌کند که این موارد از پیش در آن پر شده‌اند.",
+    note: "یادداشت",
+    "note-title": "نوشتن یادداشت برای {label}",
+    "anchor-title": "پیوند به {label}",
+    by: "نوشتهٔ",
+    "approximate-words": "حدود {words} واژه",
+    "approximate-characters": "حدود {characters} نویسه",
+    "narration-opening": "{title}. نوشتهٔ {authors}. با صدای {narrator}.",
+    "narration-opening-anonymous": "{title}. با صدای {narrator}.",
+    "narration-closing": "پایان. شما {title}، نوشتهٔ {authors}، را با صدای {narrator} شنیدید.",
+    "narration-closing-anonymous": "پایان. شما {title} را با صدای {narrator} شنیدید.",
+    "screenplay-credit": "نوشتهٔ",
+    "screenplay-source": "برگرفته از اثری از {authors}",
+    "screenplay-source-anonymous": "برگرفته از یک اثر ادبی"
+  }
+};
+
+// src/languages/fi.js
+var fi_default = {
+  code: "fi",
+  name: "Finnish",
+  quotes: [["”", "”"], ["’", "’"], ["»", "»"], ["“", "”"], ['"', '"']],
+  dialogueDash: ["–", "—"],
+  dashStartsLine: true
+};
+
+// src/languages/fr.js
+var fr_default = {
+  code: "fr",
+  name: "French",
+  capitalInitials: true,
+  narrationRate: 135,
+  inciseTags: true,
+  labels: {
+    chapter: "Chapitre {n}",
+    "chapter-heading": "{chapter} : {title}",
+    contents: "Table des matières",
+    and: "{a} et {b}",
+    copyright: "Droits d’auteur",
+    "all-rights-reserved": "Tous droits réservés.",
+    "published-by": "Publié par {publisher}",
+    "scene-break": "Changement de scène",
+    "cover-alt": "Couverture de {title}",
+    "start-of-content": "Début du contenu",
+    "accessibility-summary": "Livre entièrement textuel, avec une table des matières navigable, un titre pour chaque chapitre et un ordre de lecture logique unique.",
+    "accessibility-summary-cover": "Livre textuel avec une image de couverture décrite, une table des matières navigable, un titre pour chaque chapitre et un ordre de lecture logique unique.",
+    "review-title": "{title} : exemplaire de relecture",
+    "review-intro": "Exemplaire de relecture.",
+    "review-intro-build": "Exemplaire de relecture, version {build}.",
+    "review-labels": "Chaque paragraphe porte une étiquette comme {label} (chapitre 3, paragraphe 12).",
+    "review-quote": "Citez l’étiquette dans chaque note, avec les premiers mots du paragraphe, pour que l’auteur retrouve l’endroit exact même après une modification du texte.",
+    "review-quote-build": "Citez l’étiquette et la version dans chaque note, avec les premiers mots du paragraphe, pour que l’auteur retrouve l’endroit exact même après une modification du texte.",
+    "review-note-link": "Le lien Note à côté de chaque étiquette ouvre une note où ces informations sont déjà remplies.",
+    note: "Note",
+    "note-title": "Écrire une note sur {label}",
+    "anchor-title": "Lien vers {label}",
+    by: "par",
+    "approximate-words": "Environ {words} mots",
+    "approximate-characters": "Environ {characters} caractères",
+    "narration-opening": "{title}. Écrit par {authors}. Lu par {narrator}.",
+    "narration-opening-anonymous": "{title}. Lu par {narrator}.",
+    "narration-closing": "Fin. Vous venez d’écouter {title}, écrit par {authors}, lu par {narrator}.",
+    "narration-closing-anonymous": "Fin. Vous venez d’écouter {title}, lu par {narrator}.",
+    "screenplay-credit": "Écrit par",
+    "screenplay-source": "D’après l’œuvre de {authors}",
+    "screenplay-source-anonymous": "D’après l’œuvre originale"
+  },
+  checks: {
+    filterWords: [
+      "sentit",
+      "sentait",
+      "sentis",
+      "senti",
+      "voyait",
+      "vis",
+      "entendit",
+      "entendait",
+      "entendis",
+      "entendu",
+      "remarqua",
+      "remarquait",
+      "remarquai",
+      "remarqué",
+      "aperçut",
+      "apercevait",
+      "aperçus",
+      "aperçu",
+      "sembla",
+      "semblait",
+      "parut",
+      "paraissait",
+      "observa",
+      "observait",
+      "sut",
+      "savait",
+      "sus",
+      "su",
+      "décida",
+      "décidait",
+      "décidai",
+      "décidé",
+      "pensa",
+      "pensait",
+      "pensai",
+      "pensé",
+      "comprit",
+      "comprenait",
+      "réalisa",
+      "réalisait",
+      "crut",
+      "croyait",
+      "songea",
+      "songeait",
+      "regarda",
+      "regardait",
+      "écouta",
+      "écoutait"
+    ],
+    saidBookisms: [
+      "aboya",
+      "affirma",
+      "bougonna",
+      "cracha",
+      "déclara",
+      "glapit",
+      "gloussa",
+      "gronda",
+      "grogna",
+      "haleta",
+      "maugréa",
+      "minauda",
+      "persifla",
+      "railla",
+      "ricana",
+      "ronronna",
+      "rugit",
+      "rétorqua",
+      "sanglota",
+      "siffla",
+      "souffla",
+      "soupira",
+      "sourit",
+      "s'enquit",
+      "s'esclaffa",
+      "s'exclama",
+      "s'écria",
+      "trancha",
+      "ironisa",
+      "énonça",
+      "rit",
+      "gémit",
+      "plaisanta",
+      "grommela"
+    ],
+    plainTags: ["dit", "dis", "dirent", "demanda", "demandai", "demande", "demandèrent"],
+    beatPronouns: ["il", "elle", "ils", "elles", "je", "nous", "on", "vous", "tu"],
+    inversionLinks: ["-t-", "-"],
+    adverbSuffixes: ["ement", "ément", "iment", "ument", "ûment", "amment", "emment"],
+    adverbLabel: "-ment adverbs",
+    adverbExceptions: [
+      "abaissement",
+      "aboiement",
+      "accouchement",
+      "acharnement",
+      "acquiescement",
+      "affrontement",
+      "agacement",
+      "agrément",
+      "aliment",
+      "allument",
+      "aménagement",
+      "animent",
+      "apaisement",
+      "appartement",
+      "argument",
+      "armement",
+      "assument",
+      "attachement",
+      "avertissement",
+      "aveuglement",
+      "balancement",
+      "battement",
+      "bâtiment",
+      "bombardement",
+      "bouleversement",
+      "bourdonnement",
+      "campement",
+      "changement",
+      "châtiment",
+      "cheminement",
+      "chuchotement",
+      "ciment",
+      "claquement",
+      "clément",
+      "clignement",
+      "commencement",
+      "comportement",
+      "complément",
+      "compliment",
+      "consentiment",
+      "consument",
+      "craquement",
+      "crépitement",
+      "croisement",
+      "déciment",
+      "déplacement",
+      "dément",
+      "département",
+      "déroulement",
+      "détachement",
+      "détriment",
+      "développement",
+      "dévouement",
+      "divertissement",
+      "document",
+      "écoulement",
+      "effondrement",
+      "égarement",
+      "élancement",
+      "élément",
+      "éloignement",
+      "embarquement",
+      "emplacement",
+      "emportement",
+      "empressement",
+      "encouragement",
+      "enchantement",
+      "enfermement",
+      "engagement",
+      "engourdissement",
+      "enlèvement",
+      "enseignement",
+      "entêtement",
+      "enterrement",
+      "entraînement",
+      "épuisement",
+      "équipement",
+      "établissement",
+      "estiment",
+      "étonnement",
+      "étranglement",
+      "évanouissement",
+      "événement",
+      "évènement",
+      "expriment",
+      "flottement",
+      "froncement",
+      "frémissement",
+      "frottement",
+      "fument",
+      "gémissement",
+      "glissement",
+      "gouvernement",
+      "grésillement",
+      "grincement",
+      "grondement",
+      "haussement",
+      "hochement",
+      "hument",
+      "hurlement",
+      "impriment",
+      "inclément",
+      "instrument",
+      "isolement",
+      "jaillissement",
+      "jugement",
+      "jument",
+      "lancement",
+      "liment",
+      "logement",
+      "mécontentement",
+      "monument",
+      "mouvement",
+      "parfument",
+      "piment",
+      "piétinement",
+      "pincement",
+      "présument",
+      "pressentiment",
+      "raclement",
+      "raisonnement",
+      "ralentissement",
+      "rapprochement",
+      "rassemblement",
+      "recueillement",
+      "régiment",
+      "règlement",
+      "relâchement",
+      "remerciement",
+      "renseignement",
+      "ressentiment",
+      "résument",
+      "revirement",
+      "riment",
+      "ronflement",
+      "roulement",
+      "rugissement",
+      "ruissellement",
+      "saignement",
+      "scintillement",
+      "sentiment",
+      "serrement",
+      "sifflement",
+      "soulagement",
+      "soulèvement",
+      "suppriment",
+      "supplément",
+      "tiraillement",
+      "tintement",
+      "traitement",
+      "tremblement",
+      "tressaillement",
+      "véhément",
+      "vêtement",
+      "vieillissement",
+      "aiment",
+      "abîment",
+      "condiment",
+      "rudiment",
+      "abattement",
+      "aboutissement",
+      "abrutissement",
+      "accablement",
+      "accomplissement",
+      "accroissement",
+      "achèvement",
+      "acheminement",
+      "adoucissement",
+      "affaiblissement",
+      "affaissement",
+      "affolement",
+      "agenouillement",
+      "agissement",
+      "agrandissement",
+      "ahurissement",
+      "ajustement",
+      "alignement",
+      "allaitement",
+      "allongement",
+      "alourdissement",
+      "amoncellement",
+      "amusement",
+      "anéantissement",
+      "apitoiement",
+      "applaudissement",
+      "appauvrissement",
+      "arrachement",
+      "arrangement",
+      "arriment",
+      "assentiment",
+      "assombrissement",
+      "assoupissement",
+      "atermoiement",
+      "attendrissement",
+      "attroupement",
+      "avancement",
+      "avènement",
+      "avilissement",
+      "bâillement",
+      "balbutiement",
+      "bannissement",
+      "bégaiement",
+      "bêlement",
+      "beuglement",
+      "blanchiment",
+      "bouillonnement",
+      "bredouillement",
+      "bruissement",
+      "chamboulement",
+      "chancellement",
+      "chargement",
+      "chavirement",
+      "chevauchement",
+      "chuintement",
+      "classement",
+      "clapotement",
+      "cliquetement",
+      "clignotement",
+      "commandement",
+      "compartiment",
+      "compriment",
+      "consentement",
+      "contentement",
+      "couronnement",
+      "crissement",
+      "croassement",
+      "débarquement",
+      "débordement",
+      "déchaînement",
+      "déchirement",
+      "décollement",
+      "découragement",
+      "décrément",
+      "dédommagement",
+      "défilement",
+      "dégagement",
+      "déguisement",
+      "délabrement",
+      "délaissement",
+      "délassement",
+      "démantèlement",
+      "déménagement",
+      "dénigrement",
+      "dénouement",
+      "dénuement",
+      "dépassement",
+      "dépaysement",
+      "dépérissement",
+      "déploiement",
+      "déracinement",
+      "dérangement",
+      "dérèglement",
+      "désagrément",
+      "désarmement",
+      "désœuvrement",
+      "dessèchement",
+      "détournement",
+      "dévoilement",
+      "discernement",
+      "durcissement",
+      "ébahissement",
+      "éblouissement",
+      "éboulement",
+      "ébranlement",
+      "écartement",
+      "échauffement",
+      "éclaircissement",
+      "éclatement",
+      "écrasement",
+      "écroulement",
+      "effacement",
+      "effarement",
+      "effleurement",
+      "effritement",
+      "égouttement",
+      "élargissement",
+      "émerveillement",
+      "emballement",
+      "embellissement",
+      "embrasement",
+      "émiettement",
+      "emménagement",
+      "empêchement",
+      "empiètement",
+      "empilement",
+      "empoisonnement",
+      "emprisonnement",
+      "encadrement",
+      "enchaînement",
+      "encombrement",
+      "endettement",
+      "endormissement",
+      "enfoncement",
+      "enflamment",
+      "engloutissement",
+      "engouement",
+      "enivrement",
+      "enlisement",
+      "enracinement",
+      "enregistrement",
+      "enrichissement",
+      "enroulement",
+      "enrouement",
+      "ensevelissement",
+      "ensorcellement",
+      "entassement",
+      "entrechoquement",
+      "entrelacement",
+      "envahissement",
+      "envoûtement",
+      "épaississement",
+      "épanchement",
+      "épanouissement",
+      "éparpillement",
+      "escarpement",
+      "escriment",
+      "essoufflement",
+      "étalement",
+      "étirement",
+      "étouffement",
+      "étourdissement",
+      "excrément",
+      "exhument",
+      "flamboiement",
+      "fléchissement",
+      "foisonnement",
+      "fonctionnement",
+      "fourmillement",
+      "fourvoiement",
+      "frétillement",
+      "froissement",
+      "gazouillement",
+      "glapissement",
+      "gloussement",
+      "gonflement",
+      "grignotement",
+      "grognement",
+      "grossissement",
+      "grouillement",
+      "halètement",
+      "harcèlement",
+      "hébergement",
+      "hennissement",
+      "incrément",
+      "inhument",
+      "jaunissement",
+      "jappement",
+      "larmoiement",
+      "licenciement",
+      "maniement",
+      "marmonnement",
+      "martèlement",
+      "médicament",
+      "ménagement",
+      "miaulement",
+      "miroitement",
+      "nivellement",
+      "noircissement",
+      "ondoiement",
+      "oppriment",
+      "ornement",
+      "paiement",
+      "pansement",
+      "parlement",
+      "pétillement",
+      "peuplement",
+      "piaillement",
+      "picotement",
+      "placement",
+      "plissement",
+      "pourrissement",
+      "priment",
+      "prolongement",
+      "raffermissement",
+      "rafraîchissement",
+      "raidissement",
+      "rajeunissement",
+      "ralliement",
+      "rallument",
+      "ramollissement",
+      "raniment",
+      "rangement",
+      "rapetissement",
+      "ravissement",
+      "rayonnement",
+      "recensement",
+      "recommencement",
+      "recrutement",
+      "redoublement",
+      "redressement",
+      "refroidissement",
+      "regroupement",
+      "rejaillissement",
+      "remboursement",
+      "remuement",
+      "renfrognement",
+      "renforcement",
+      "reniement",
+      "renoncement",
+      "renouvellement",
+      "renversement",
+      "répriment",
+      "resserrement",
+      "retentissement",
+      "rétablissement",
+      "retournement",
+      "retranchement",
+      "rétrécissement",
+      "ricanement",
+      "ronronnement",
+      "roucoulement",
+      "saisissement",
+      "sautillement",
+      "sédiment",
+      "sifflotement",
+      "sous-estiment",
+      "subliment",
+      "surgissement",
+      "susurrement",
+      "tapotement",
+      "tassement",
+      "tâtonnement",
+      "tégument",
+      "titubement",
+      "tortillement",
+      "tournoiement",
+      "trébuchement",
+      "tremblotement",
+      "trépignement",
+      "tressautement",
+      "trottinement",
+      "tutoiement",
+      "vacillement",
+      "vagissement",
+      "verdissement",
+      "vouvoiement",
+      "vrombissement",
+      "émolument",
+      "enrhument"
+    ],
+    adverbBlockers: [
+      "le",
+      "la",
+      "les",
+      "un",
+      "une",
+      "du",
+      "des",
+      "au",
+      "aux",
+      "ce",
+      "cet",
+      "cette",
+      "ces",
+      "mon",
+      "ma",
+      "mes",
+      "ton",
+      "ta",
+      "tes",
+      "son",
+      "sa",
+      "ses",
+      "notre",
+      "nos",
+      "votre",
+      "vos",
+      "leur",
+      "leurs",
+      "quel",
+      "quelle",
+      "quels",
+      "quelles",
+      "chaque",
+      "aucun",
+      "aucune",
+      "nul",
+      "nulle",
+      "ils",
+      "elles",
+      "qui",
+      "avec",
+      "en",
+      "de",
+      "par",
+      "l'",
+      "d'",
+      "s'",
+      "n'",
+      "j'",
+      "m'",
+      "t'"
+    ],
+    echoStopwords: [
+      "ainsi",
+      "alors",
+      "après",
+      "aussi",
+      "autre",
+      "autres",
+      "avaient",
+      "avait",
+      "avant",
+      "avec",
+      "avoir",
+      "beaucoup",
+      "bien",
+      "c'est",
+      "c'était",
+      "cela",
+      "celle",
+      "celui",
+      "cette",
+      "ceux",
+      "chose",
+      "comme",
+      "comment",
+      "contre",
+      "d'un",
+      "d'une",
+      "dans",
+      "déjà",
+      "depuis",
+      "deux",
+      "devant",
+      "donc",
+      "dont",
+      "elle",
+      "elles",
+      "encore",
+      "entre",
+      "être",
+      "était",
+      "étaient",
+      "faire",
+      "fait",
+      "j'ai",
+      "jamais",
+      "jusqu'à",
+      "l'autre",
+      "leur",
+      "leurs",
+      "lorsque",
+      "mais",
+      "même",
+      "moins",
+      "n'est",
+      "n'était",
+      "nous",
+      "parce",
+      "pendant",
+      "peut",
+      "plus",
+      "pour",
+      "pourquoi",
+      "pouvait",
+      "puis",
+      "qu'elle",
+      "qu'il",
+      "qu'on",
+      "quand",
+      "quelqu'un",
+      "quelque",
+      "quelques",
+      "quoi",
+      "rien",
+      "s'il",
+      "sans",
+      "serait",
+      "sont",
+      "sous",
+      "tandis",
+      "toujours",
+      "tous",
+      "tout",
+      "toute",
+      "toutes",
+      "très",
+      "vers",
+      "voulait",
+      "votre",
+      "vous",
+      "aurait",
+      "fallait"
+    ],
+    phraseStopwords: [
+      "a",
+      "à",
+      "au",
+      "aux",
+      "avec",
+      "c'est",
+      "c'était",
+      "ce",
+      "d'un",
+      "d'une",
+      "dans",
+      "de",
+      "des",
+      "du",
+      "elle",
+      "en",
+      "est",
+      "et",
+      "était",
+      "il",
+      "j'ai",
+      "je",
+      "la",
+      "le",
+      "les",
+      "leur",
+      "lui",
+      "ma",
+      "mais",
+      "me",
+      "mes",
+      "mon",
+      "n'est",
+      "ne",
+      "nous",
+      "on",
+      "ou",
+      "par",
+      "pas",
+      "pour",
+      "qu'elle",
+      "qu'il",
+      "que",
+      "qui",
+      "s'il",
+      "sa",
+      "se",
+      "ses",
+      "son",
+      "sur",
+      "ta",
+      "te",
+      "tu",
+      "un",
+      "une",
+      "vous",
+      "y"
+    ],
+    speechVerbs: [
+      "dit",
+      "dis",
+      "demanda",
+      "demande",
+      "demandai",
+      "répondit",
+      "répond",
+      "répondis",
+      "fit",
+      "reprit",
+      "murmura",
+      "murmure",
+      "chuchota",
+      "susurra",
+      "marmonna",
+      "cria",
+      "crie",
+      "hurla",
+      "s'écria",
+      "s'exclama",
+      "ajouta",
+      "ajoute",
+      "expliqua",
+      "insista",
+      "poursuivit",
+      "continua",
+      "lança",
+      "souffla",
+      "appela",
+      "admit",
+      "avoua",
+      "exigea",
+      "ordonna",
+      "déclara",
+      "répliqua",
+      "rétorqua"
+    ],
+    speechPronouns: ["il", "elle", "ils", "elles", "je", "nous"],
+    voiceStopwords: [
+      "alors",
+      "aussi",
+      "avec",
+      "avoir",
+      "bien",
+      "c'est",
+      "cela",
+      "ceci",
+      "cette",
+      "comme",
+      "dans",
+      "dire",
+      "elle",
+      "encore",
+      "est-ce",
+      "était",
+      "être",
+      "faire",
+      "fait",
+      "faut",
+      "j'ai",
+      "j'en",
+      "leur",
+      "mais",
+      "m'a",
+      "n'est",
+      "nous",
+      "parce",
+      "peut",
+      "peux",
+      "plus",
+      "pour",
+      "qu'est-ce",
+      "qu'il",
+      "quand",
+      "quoi",
+      "rien",
+      "sais",
+      "sont",
+      "suis",
+      "tout",
+      "très",
+      "vais",
+      "veux",
+      "voilà",
+      "vous",
+      "êtes",
+      "votre",
+      "juste",
+      "vraiment"
+    ],
+    titleAbbreviations: ["Mme", "Mmes", "Mlle", "Mlles", "MM", "Me", "Dr", "Pr", "St", "Ste", "Mgr", "cf", "env", "av", "apr"],
+    contextAbbreviations: ["etc", "chap", "vol", "n°", "J.-C"],
+    calendarWords: [
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+      "Dimanche",
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ],
+    chapterWords: ["chapitre"],
+    sectionWords: ["prologue", "épilogue", "interlude", "postface"],
+    partWords: ["partie", "livre"],
+    frontMatterWords: ["prologue", "préface", "avant-propos", "introduction", "prélude"],
+    numberWords: {
+      words: [
+        "un",
+        "deux",
+        "trois",
+        "quatre",
+        "cinq",
+        "six",
+        "sept",
+        "huit",
+        "neuf",
+        "dix",
+        "onze",
+        "douze",
+        "treize",
+        "quatorze",
+        "quinze",
+        "seize",
+        "vingt",
+        "vingts",
+        "trente",
+        "quarante",
+        "cinquante",
+        "soixante",
+        "cent",
+        "cents",
+        "premier",
+        "première",
+        "septante",
+        "huitante",
+        "octante",
+        "nonante"
+      ],
+      joiners: ["et"]
+    },
+    ordinalWords: [
+      "premier",
+      "première",
+      "deuxième",
+      "second",
+      "seconde",
+      "troisième",
+      "quatrième",
+      "cinquième",
+      "sixième",
+      "septième",
+      "huitième",
+      "neuvième",
+      "dixième",
+      "onzième",
+      "douzième"
+    ],
+    candidateStopwords: [
+      "À",
+      "Alors",
+      "Après",
+      "Au",
+      "Aux",
+      "Avec",
+      "Ce",
+      "Cela",
+      "Ces",
+      "Cette",
+      "Comme",
+      "Dans",
+      "De",
+      "Des",
+      "Docteur",
+      "Dr",
+      "Du",
+      "Elle",
+      "Elles",
+      "En",
+      "Enfin",
+      "Et",
+      "Il",
+      "Ils",
+      "Je",
+      "La",
+      "Le",
+      "Les",
+      "Leur",
+      "Lui",
+      "Ma",
+      "Madame",
+      "Mademoiselle",
+      "Mais",
+      "Maître",
+      "Me",
+      "Mes",
+      "Mlle",
+      "Mme",
+      "Moi",
+      "Mon",
+      "Monsieur",
+      "Ne",
+      "Ni",
+      "Non",
+      "Nous",
+      "On",
+      "Or",
+      "Ou",
+      "Oui",
+      "Par",
+      "Pas",
+      "Pendant",
+      "Pour",
+      "Pourquoi",
+      "Puis",
+      "Qu'elle",
+      "Qu'il",
+      "Quand",
+      "Que",
+      "Qui",
+      "Quoi",
+      "Sa",
+      "Sans",
+      "Se",
+      "Ses",
+      "Si",
+      "Son",
+      "Sur",
+      "Ta",
+      "Toi",
+      "Ton",
+      "Tout",
+      "Tu",
+      "Un",
+      "Une",
+      "Vous",
+      "Y"
+    ],
+    titleWords: [
+      "le",
+      "la",
+      "les",
+      "un",
+      "une",
+      "de",
+      "du",
+      "monsieur",
+      "madame",
+      "mademoiselle",
+      "m",
+      "mme",
+      "mlle",
+      "dr",
+      "docteur",
+      "maître",
+      "me",
+      "roi",
+      "reine",
+      "prince",
+      "princesse",
+      "duc",
+      "duchesse",
+      "comte",
+      "comtesse",
+      "baron",
+      "baronne",
+      "marquis",
+      "marquise",
+      "capitaine",
+      "général",
+      "colonel",
+      "commandant",
+      "sergent",
+      "lieutenant",
+      "père",
+      "mère",
+      "frère",
+      "sœur",
+      "soeur",
+      "oncle",
+      "tante",
+      "saint",
+      "sainte",
+      "st",
+      "ste",
+      "professeur",
+      "prof",
+      "sire",
+      "dame",
+      "seigneur",
+      "messire",
+      "abbé",
+      "vieux",
+      "vieille",
+      "petit",
+      "petite",
+      "jeune"
+    ]
+  }
+};
+
+// src/languages/he.js
+var he_default = {
+  code: "he",
+  name: "Hebrew",
+  cased: false,
+  script: "Hebr",
+  segmentation: "space",
+  narrationRate: 125,
+  labels: {
+    chapter: "פרק {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "תוכן העניינים",
+    and: "{a} ו{b}",
+    copyright: "זכויות יוצרים",
+    "all-rights-reserved": "כל הזכויות שמורות.",
+    "published-by": "בהוצאת {publisher}",
+    "scene-break": "מעבר סצנה",
+    "cover-alt": "כריכת הספר {title}",
+    "start-of-content": "תחילת התוכן",
+    "accessibility-summary": "ספר טקסט בלבד, עם תוכן עניינים ניתן לניווט, כותרת לכל פרק וסדר קריאה לוגי יחיד.",
+    "accessibility-summary-cover": "ספר טקסט עם תמונת כריכה מתוארת, תוכן עניינים ניתן לניווט, כותרת לכל פרק וסדר קריאה לוגי יחיד.",
+    "review-title": "{title}: עותק לקריאה",
+    "review-intro": "עותק לקריאה.",
+    "review-intro-build": "עותק לקריאה, גרסה {build}.",
+    "review-labels": "לכל פסקה יש תווית, למשל {label} (פרק 3, פסקה 12).",
+    "review-quote": "ציינו בכל הערה את התווית ואת המילים הראשונות של הפסקה, כדי שאפשר יהיה למצוא את המקום המדויק גם אחרי שהטקסט ישתנה.",
+    "review-quote-build": "ציינו בכל הערה את התווית, את הגרסה ואת המילים הראשונות של הפסקה, כדי שאפשר יהיה למצוא את המקום המדויק גם אחרי שהטקסט ישתנה.",
+    "review-note-link": 'הקישור "הערה" שליד כל תווית פותח הערה שהפרטים האלה כבר מולאו בה.',
+    note: "הערה",
+    "note-title": "כתיבת הערה על {label}",
+    "anchor-title": "קישור אל {label}",
+    by: "מאת",
+    "approximate-words": "כ־{words} מילים",
+    "approximate-characters": "כ־{characters} תווים",
+    "narration-opening": "{title}. מאת {authors}. בקריאת {narrator}.",
+    "narration-opening-anonymous": "{title}. בקריאת {narrator}.",
+    "narration-closing": "הסוף. האזנתם לספר {title} מאת {authors}, בקריאת {narrator}.",
+    "narration-closing-anonymous": "הסוף. האזנתם לספר {title}, בקריאת {narrator}.",
+    "screenplay-credit": "נכתב על ידי",
+    "screenplay-source": "על פי היצירה מאת {authors}",
+    "screenplay-source-anonymous": "על פי יצירה ספרותית"
+  }
+};
+
+// src/languages/hi.js
+var hi_default = {
+  code: "hi",
+  name: "Hindi",
+  cased: false,
+  script: "Deva",
+  segmentation: "space",
+  labels: {
+    chapter: "अध्याय {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "विषय-सूची",
+    and: "{a} और {b}",
+    copyright: "कॉपीराइट",
+    "all-rights-reserved": "सर्वाधिकार सुरक्षित।",
+    "published-by": "प्रकाशक: {publisher}",
+    "scene-break": "दृश्य परिवर्तन",
+    "cover-alt": "{title} का आवरण",
+    "start-of-content": "सामग्री का आरंभ",
+    "accessibility-summary": "केवल पाठ वाली पुस्तक, जिसमें नेविगेट करने योग्य विषय-सूची, हर अध्याय का शीर्षक और एक ही तार्किक पठन क्रम है।",
+    "accessibility-summary-cover": "पाठ वाली पुस्तक, जिसमें वर्णित आवरण चित्र, नेविगेट करने योग्य विषय-सूची, हर अध्याय का शीर्षक और एक ही तार्किक पठन क्रम है।",
+    "review-title": "{title}: समीक्षा प्रति",
+    "review-intro": "समीक्षा प्रति।",
+    "review-intro-build": "समीक्षा प्रति, संस्करण {build}।",
+    "review-labels": "हर अनुच्छेद का एक लेबल है, जैसे {label} (अध्याय 3, अनुच्छेद 12)।",
+    "review-quote": "हर टिप्पणी में लेबल और अनुच्छेद के पहले कुछ शब्द लिखें, ताकि पाठ बदलने के बाद भी लेखक ठीक वही जगह ढूँढ सके।",
+    "review-quote-build": "हर टिप्पणी में लेबल, संस्करण और अनुच्छेद के पहले कुछ शब्द लिखें, ताकि पाठ बदलने के बाद भी लेखक ठीक वही जगह ढूँढ सके।",
+    "review-note-link": "हर लेबल के पास का टिप्पणी लिंक एक टिप्पणी खोलता है, जिसमें ये जानकारियाँ पहले से भरी होती हैं।",
+    note: "टिप्पणी",
+    "note-title": "{label} पर टिप्पणी लिखें",
+    "anchor-title": "{label} का लिंक",
+    by: "लेखक",
+    "approximate-words": "लगभग {words} शब्द",
+    "approximate-characters": "लगभग {characters} वर्ण",
+    "narration-opening": "{title}। लेखक: {authors}। वाचक: {narrator}।",
+    "narration-opening-anonymous": "{title}। वाचक: {narrator}।",
+    "narration-closing": "समाप्त। आप {title} सुन रहे थे, लेखक {authors}, वाचक {narrator}।",
+    "narration-closing-anonymous": "समाप्त। आप {title} सुन रहे थे, वाचक {narrator}।",
+    "screenplay-credit": "लेखक",
+    "screenplay-source": "{authors} की रचना पर आधारित",
+    "screenplay-source-anonymous": "मूल रचना पर आधारित"
+  }
+};
+
+// src/languages/it.js
+var it_default = {
+  code: "it",
+  name: "Italian",
+  narrationRate: 130,
+  labels: {
+    chapter: "Capitolo {n}",
+    "chapter-heading": "{chapter}. {title}",
+    contents: "Indice",
+    and: "{a} e {b}",
+    copyright: "Copyright",
+    "all-rights-reserved": "Tutti i diritti riservati.",
+    "published-by": "Pubblicato da {publisher}",
+    "scene-break": "Cambio di scena",
+    "cover-alt": "Copertina di {title}",
+    "start-of-content": "Inizio del contenuto",
+    "accessibility-summary": "Libro di solo testo con indice navigabile, un titolo per ogni capitolo e un unico ordine di lettura logico.",
+    "accessibility-summary-cover": "Libro testuale con immagine di copertina descritta, indice navigabile, un titolo per ogni capitolo e un unico ordine di lettura logico.",
+    "review-title": "{title}: copia di revisione",
+    "review-intro": "Copia di revisione.",
+    "review-intro-build": "Copia di revisione, versione {build}.",
+    "review-labels": "Ogni paragrafo ha un’etichetta come {label} (capitolo 3, paragrafo 12).",
+    "review-quote": "Riportate l’etichetta in ogni nota, insieme alle prime parole del paragrafo, così l’autore potrà trovare il punto esatto anche dopo modifiche al testo.",
+    "review-quote-build": "Riportate l’etichetta e la versione in ogni nota, insieme alle prime parole del paragrafo, così l’autore potrà trovare il punto esatto anche dopo modifiche al testo.",
+    "review-note-link": "Il link Nota accanto a ogni etichetta apre una nota con questi dati già compilati.",
+    note: "Nota",
+    "note-title": "Scrivete una nota su {label}",
+    "anchor-title": "Link a {label}",
+    by: "di",
+    "approximate-words": "Circa {words} parole",
+    "approximate-characters": "Circa {characters} caratteri",
+    "narration-opening": "{title}. Scritto da {authors}. Letto da {narrator}.",
+    "narration-opening-anonymous": "{title}. Letto da {narrator}.",
+    "narration-closing": "Fine. Avete ascoltato {title}, scritto da {authors}, letto da {narrator}.",
+    "narration-closing-anonymous": "Fine. Avete ascoltato {title}, letto da {narrator}.",
+    "screenplay-credit": "Scritto da",
+    "screenplay-source": "Tratto dall’opera di {authors}",
+    "screenplay-source-anonymous": "Tratto dall’opera originale"
+  }
+};
+
+// src/languages/ja.js
+var ja_default = {
+  code: "ja",
+  name: "Japanese",
+  cased: false,
+  script: "Jpan",
+  segmentation: "character",
+  quotes: [["「", "」"], ["『", "』"], ["“", "”"], ["〝", "〟"], ['"', '"']],
+  dialogueDash: null,
+  countUnit: "characters",
+  characterForms: {
+    flash: { min: 1, max: 1e4, target: 4000 },
+    "short-story": { min: 4000, max: 40000, target: 20000 },
+    novella: { min: 40000, max: 120000, target: 80000 },
+    novel: { min: 120000, max: null, target: 150000 }
+  },
+  narrationRate: 300,
+  labels: {
+    chapter: "第{n}章",
+    "chapter-heading": "{chapter}　{title}",
+    contents: "目次",
+    and: "{a}、{b}",
+    copyright: "著作権",
+    "all-rights-reserved": "本書の無断転載・複製を禁じます。",
+    "published-by": "発行所：{publisher}",
+    "scene-break": "場面転換",
+    "cover-alt": "『{title}』の表紙",
+    "start-of-content": "本文",
+    "accessibility-summary": "テキストのみの書籍です。ナビゲーション可能な目次、各章の見出し、単一の論理的な読み順を備えています。",
+    "accessibility-summary-cover": "説明付きの表紙画像があるテキストの書籍です。ナビゲーション可能な目次、各章の見出し、単一の論理的な読み順を備えています。",
+    "review-title": "{title}（レビュー用原稿）",
+    "review-intro": "レビュー用の原稿です。",
+    "review-intro-build": "レビュー用の原稿です（ビルド {build}）。",
+    "review-labels": "各段落には {label}（第3章の第12段落）のようなラベルが付いています。",
+    "review-quote": "コメントには、ラベルと段落の書き出しを添えてください。本文が変わっても、著者が正確な箇所を見つけられます。",
+    "review-quote-build": "コメントには、ラベルとビルド、段落の書き出しを添えてください。本文が変わっても、著者が正確な箇所を見つけられます。",
+    "review-note-link": "各ラベルの横にある「コメント」リンクを開くと、これらが入力済みのコメントを書けます。",
+    note: "コメント",
+    "note-title": "{label} にコメントを書く",
+    "anchor-title": "{label} へのリンク",
+    by: "",
+    "approximate-words": "約{words}語",
+    "approximate-characters": "約{characters}字",
+    "narration-opening": "『{title}』。作、{authors}。朗読、{narrator}。",
+    "narration-opening-anonymous": "『{title}』。朗読、{narrator}。",
+    "narration-closing": "おわり。お聴きいただいたのは、{authors}作『{title}』、朗読は{narrator}でした。",
+    "narration-closing-anonymous": "おわり。お聴きいただいたのは『{title}』、朗読は{narrator}でした。",
+    "screenplay-credit": "脚本",
+    "screenplay-source": "原作：{authors}",
+    "screenplay-source-anonymous": "原作に基づく"
+  }
+};
+
+// src/languages/ko.js
+var ko_default = {
+  code: "ko",
+  name: "Korean",
+  cased: false,
+  script: "Kore",
+  segmentation: "space",
+  narrationRate: 100,
+  labels: {
+    chapter: "제{n}장",
+    "chapter-heading": "{chapter} {title}",
+    contents: "차례",
+    and: "{a}, {b}",
+    copyright: "저작권",
+    "all-rights-reserved": "이 책의 무단 전재와 복제를 금합니다.",
+    "published-by": "펴낸곳: {publisher}",
+    "scene-break": "장면 전환",
+    "cover-alt": "『{title}』 표지",
+    "start-of-content": "본문",
+    "accessibility-summary": "텍스트로만 된 책으로, 탐색할 수 있는 차례, 장마다 제목, 하나의 논리적인 읽기 순서를 갖추고 있습니다.",
+    "accessibility-summary-cover": "설명이 있는 표지 이미지가 포함된 텍스트 책으로, 탐색할 수 있는 차례, 장마다 제목, 하나의 논리적인 읽기 순서를 갖추고 있습니다.",
+    "review-title": "{title}: 검토용 원고",
+    "review-intro": "검토용 원고입니다.",
+    "review-intro-build": "검토용 원고입니다(빌드 {build}).",
+    "review-labels": "모든 문단에는 {label}(3장 12번째 문단) 같은 라벨이 붙어 있습니다.",
+    "review-quote": "의견마다 라벨과 문단의 첫 몇 단어를 함께 적어 주세요. 그러면 본문이 바뀌어도 저자가 정확한 위치를 찾을 수 있습니다.",
+    "review-quote-build": "의견마다 라벨과 빌드, 문단의 첫 몇 단어를 함께 적어 주세요. 그러면 본문이 바뀌어도 저자가 정확한 위치를 찾을 수 있습니다.",
+    "review-note-link": "각 라벨 옆의 ‘의견’ 링크를 누르면 이 내용이 미리 채워진 의견이 열립니다.",
+    note: "의견",
+    "note-title": "{label} 의견 쓰기",
+    "anchor-title": "{label} 링크",
+    by: "",
+    "approximate-words": "약 {words}단어",
+    "approximate-characters": "약 {characters}자",
+    "narration-opening": "『{title}』. {authors} 지음. {narrator} 낭독.",
+    "narration-opening-anonymous": "『{title}』. {narrator} 낭독.",
+    "narration-closing": "끝. 지금까지 들으신 작품은 『{title}』, {authors} 지음, {narrator} 낭독이었습니다.",
+    "narration-closing-anonymous": "끝. 지금까지 들으신 작품은 『{title}』, {narrator} 낭독이었습니다.",
+    "screenplay-credit": "각본",
+    "screenplay-source": "원작: {authors}",
+    "screenplay-source-anonymous": "원작을 바탕으로 함"
+  }
+};
+
+// src/languages/nl.js
+var nl_default = {
+  code: "nl",
+  name: "Dutch",
+  narrationRate: 135,
+  labels: {
+    chapter: "Hoofdstuk {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "Inhoud",
+    and: "{a} en {b}",
+    copyright: "Colofon",
+    "all-rights-reserved": "Alle rechten voorbehouden.",
+    "published-by": "Uitgegeven door {publisher}",
+    "scene-break": "Scènewisseling",
+    "cover-alt": "Omslag van {title}",
+    "start-of-content": "Begin van de inhoud",
+    "accessibility-summary": "Boek met alleen tekst, met een navigeerbare inhoudsopgave, een kop voor elk hoofdstuk en één logische leesvolgorde.",
+    "accessibility-summary-cover": "Boek met tekst en een beschreven omslagafbeelding, met een navigeerbare inhoudsopgave, een kop voor elk hoofdstuk en één logische leesvolgorde.",
+    "review-title": "{title}: leesexemplaar",
+    "review-intro": "Leesexemplaar.",
+    "review-intro-build": "Leesexemplaar, versie {build}.",
+    "review-labels": "Elke alinea heeft een label zoals {label} (hoofdstuk 3, alinea 12).",
+    "review-quote": "Vermeld bij elke notitie het label en de eerste woorden van de alinea, zodat de auteur de precieze plek terugvindt, ook als de tekst verandert.",
+    "review-quote-build": "Vermeld bij elke notitie het label, de versie en de eerste woorden van de alinea, zodat de auteur de precieze plek terugvindt, ook als de tekst verandert.",
+    "review-note-link": "De link Notitie naast elk label opent een notitie waarin deze gegevens al zijn ingevuld.",
+    note: "Notitie",
+    "note-title": "Notitie schrijven bij {label}",
+    "anchor-title": "Link naar {label}",
+    by: "door",
+    "approximate-words": "Ongeveer {words} woorden",
+    "approximate-characters": "Ongeveer {characters} tekens",
+    "narration-opening": "{title}. Geschreven door {authors}. Voorgelezen door {narrator}.",
+    "narration-opening-anonymous": "{title}. Voorgelezen door {narrator}.",
+    "narration-closing": "Einde. U luisterde naar {title}, geschreven door {authors}, voorgelezen door {narrator}.",
+    "narration-closing-anonymous": "Einde. U luisterde naar {title}, voorgelezen door {narrator}.",
+    "screenplay-credit": "Geschreven door",
+    "screenplay-source": "Naar het werk van {authors}",
+    "screenplay-source-anonymous": "Naar het oorspronkelijke werk"
+  }
+};
+
+// src/languages/pl.js
+var pl_default = {
+  code: "pl",
+  name: "Polish",
+  narrationRate: 115,
+  labels: {
+    chapter: "Rozdział {n}",
+    "chapter-heading": "{chapter}. {title}",
+    contents: "Spis treści",
+    and: "{a} i {b}",
+    copyright: "Prawa autorskie",
+    "all-rights-reserved": "Wszelkie prawa zastrzeżone.",
+    "published-by": "Wydawca: {publisher}",
+    "scene-break": "Zmiana sceny",
+    "cover-alt": "Okładka książki „{title}”",
+    "start-of-content": "Początek treści",
+    "accessibility-summary": "Książka wyłącznie tekstowa z nawigowalnym spisem treści, nagłówkiem każdego rozdziału i jedną logiczną kolejnością czytania.",
+    "accessibility-summary-cover": "Książka tekstowa z opisaną ilustracją na okładce, nawigowalnym spisem treści, nagłówkiem każdego rozdziału i jedną logiczną kolejnością czytania.",
+    "review-title": "{title}: egzemplarz do recenzji",
+    "review-intro": "Egzemplarz do recenzji.",
+    "review-intro-build": "Egzemplarz do recenzji, wersja {build}.",
+    "review-labels": "Każdy akapit ma etykietę, na przykład {label} (rozdział 3, akapit 12).",
+    "review-quote": "W każdej uwadze podaj etykietę i pierwsze słowa akapitu, aby autor mógł znaleźć dokładne miejsce nawet po zmianach w tekście.",
+    "review-quote-build": "W każdej uwadze podaj etykietę, wersję i pierwsze słowa akapitu, aby autor mógł znaleźć dokładne miejsce nawet po zmianach w tekście.",
+    "review-note-link": "Link Uwaga obok każdej etykiety otwiera uwagę z już wypełnionymi danymi.",
+    note: "Uwaga",
+    "note-title": "Napisz uwagę do {label}",
+    "anchor-title": "Link do {label}",
+    by: "",
+    "approximate-words": "Około {words} słów",
+    "approximate-characters": "Około {characters} znaków",
+    "narration-opening": "{title}. Autor: {authors}. Czyta: {narrator}.",
+    "narration-opening-anonymous": "{title}. Czyta: {narrator}.",
+    "narration-closing": "Koniec. Wysłuchaliście audiobooka {title}. Autor: {authors}. Czyta: {narrator}.",
+    "narration-closing-anonymous": "Koniec. Wysłuchaliście audiobooka {title}. Czyta: {narrator}.",
+    "screenplay-credit": "Scenariusz",
+    "screenplay-source": "Na podstawie utworu (autor: {authors})",
+    "screenplay-source-anonymous": "Na podstawie utworu literackiego"
+  }
+};
+
+// src/languages/pt-pt.js
+var pt_pt_default = {
+  code: "pt-pt",
+  name: "European Portuguese",
+  labels: {
+    copyright: "Direitos de autor",
+    "review-labels": "Cada parágrafo tem uma etiqueta como {label} (capítulo 3, parágrafo 12).",
+    "review-quote": "Cite a etiqueta em cada nota, com as primeiras palavras do parágrafo, para que o autor encontre o ponto exato mesmo depois de o texto mudar.",
+    "review-quote-build": "Cite a etiqueta e a versão em cada nota, com as primeiras palavras do parágrafo, para que o autor encontre o ponto exato mesmo depois de o texto mudar.",
+    "review-note-link": "A ligação Nota ao lado de cada etiqueta abre uma nota com estes dados já preenchidos.",
+    "anchor-title": "Ligação para {label}",
+    "narration-closing": "Fim. Ouviu {title}, escrito por {authors}, narrado por {narrator}.",
+    "narration-closing-anonymous": "Fim. Ouviu {title}, narrado por {narrator}."
+  }
+};
+
+// src/languages/pt.js
+var pt_default = {
+  code: "pt",
+  name: "Portuguese",
+  narrationRate: 125,
+  labels: {
+    chapter: "Capítulo {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "Índice",
+    and: "{a} e {b}",
+    copyright: "Direitos autorais",
+    "all-rights-reserved": "Todos os direitos reservados.",
+    "published-by": "Publicado por {publisher}",
+    "scene-break": "Mudança de cena",
+    "cover-alt": "Capa de {title}",
+    "start-of-content": "Início do conteúdo",
+    "accessibility-summary": "Livro só de texto, com índice navegável, um título para cada capítulo e uma única ordem de leitura lógica.",
+    "accessibility-summary-cover": "Livro com texto e imagem de capa descrita, com índice navegável, um título para cada capítulo e uma única ordem de leitura lógica.",
+    "review-title": "{title}: cópia de revisão",
+    "review-intro": "Cópia de revisão.",
+    "review-intro-build": "Cópia de revisão, versão {build}.",
+    "review-labels": "Cada parágrafo tem um rótulo como {label} (capítulo 3, parágrafo 12).",
+    "review-quote": "Cite o rótulo em cada nota, com as primeiras palavras do parágrafo, para que o autor encontre o ponto exato mesmo depois de o texto mudar.",
+    "review-quote-build": "Cite o rótulo e a versão em cada nota, com as primeiras palavras do parágrafo, para que o autor encontre o ponto exato mesmo depois de o texto mudar.",
+    "review-note-link": "O link Nota ao lado de cada rótulo abre uma nota com esses dados já preenchidos.",
+    note: "Nota",
+    "note-title": "Escrever uma nota sobre {label}",
+    "anchor-title": "Link para {label}",
+    by: "por",
+    "approximate-words": "Aproximadamente {words} palavras",
+    "approximate-characters": "Aproximadamente {characters} caracteres",
+    "narration-opening": "{title}. Escrito por {authors}. Narrado por {narrator}.",
+    "narration-opening-anonymous": "{title}. Narrado por {narrator}.",
+    "narration-closing": "Fim. Você ouviu {title}, escrito por {authors}, narrado por {narrator}.",
+    "narration-closing-anonymous": "Fim. Você ouviu {title}, narrado por {narrator}.",
+    "screenplay-credit": "Escrito por",
+    "screenplay-source": "Baseado na obra de {authors}",
+    "screenplay-source-anonymous": "Baseado na obra original"
+  }
+};
+
+// src/languages/ru.js
+var ru_default = {
+  code: "ru",
+  name: "Russian",
+  narrationRate: 125,
+  labels: {
+    chapter: "Глава {n}",
+    "chapter-heading": "{chapter}. {title}",
+    contents: "Содержание",
+    and: "{a} и {b}",
+    copyright: "Авторские права",
+    "all-rights-reserved": "Все права защищены.",
+    "published-by": "Издатель: {publisher}",
+    "scene-break": "Смена сцены",
+    "cover-alt": "Обложка книги «{title}»",
+    "start-of-content": "Начало текста",
+    "accessibility-summary": "Книга, содержащая только текст, с навигационным оглавлением, заголовком у каждой главы и единым логическим порядком чтения.",
+    "accessibility-summary-cover": "Текстовая книга с описанным изображением обложки, навигационным оглавлением, заголовком у каждой главы и единым логическим порядком чтения.",
+    "review-title": "{title}: экземпляр для рецензирования",
+    "review-intro": "Экземпляр для рецензирования.",
+    "review-intro-build": "Экземпляр для рецензирования, версия {build}.",
+    "review-labels": "У каждого абзаца есть метка, например {label} (глава 3, абзац 12).",
+    "review-quote": "Указывайте метку в каждом замечании вместе с первыми словами абзаца, чтобы автор мог найти точное место даже после правок в тексте.",
+    "review-quote-build": "Указывайте метку и версию в каждом замечании вместе с первыми словами абзаца, чтобы автор мог найти точное место даже после правок в тексте.",
+    "review-note-link": "Ссылка «Замечание» рядом с каждой меткой открывает замечание с уже заполненными данными.",
+    note: "Замечание",
+    "note-title": "Написать замечание к {label}",
+    "anchor-title": "Ссылка на {label}",
+    by: "",
+    "approximate-words": "Около {words} слов",
+    "approximate-characters": "Около {characters} знаков",
+    "narration-opening": "{title}. Автор: {authors}. Читает {narrator}.",
+    "narration-opening-anonymous": "{title}. Читает {narrator}.",
+    "narration-closing": "Конец. Вы слушали книгу «{title}». Автор: {authors}. Читает {narrator}.",
+    "narration-closing-anonymous": "Конец. Вы слушали книгу «{title}». Читает {narrator}.",
+    "screenplay-credit": "Сценарий",
+    "screenplay-source": "По произведению (автор: {authors})",
+    "screenplay-source-anonymous": "По литературному произведению"
+  }
+};
+
+// src/languages/sv.js
+var sv_default = {
+  code: "sv",
+  name: "Swedish",
+  quotes: [["”", "”"], ["’", "’"], ["»", "»"], ["“", "”"], ['"', '"']],
+  dialogueDash: ["–", "—"],
+  dashStartsLine: true,
+  narrationRate: 135,
+  labels: {
+    chapter: "Kapitel {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "Innehåll",
+    and: "{a} och {b}",
+    copyright: "Upphovsrätt",
+    "all-rights-reserved": "Alla rättigheter förbehållna.",
+    "published-by": "Utgiven av {publisher}",
+    "scene-break": "Scenbyte",
+    "cover-alt": "Omslag till {title}",
+    "start-of-content": "Början av innehållet",
+    "accessibility-summary": "Bok med enbart text, med navigerbar innehållsförteckning, en rubrik för varje kapitel och en enda logisk läsordning.",
+    "accessibility-summary-cover": "Bok med text och en beskriven omslagsbild, med navigerbar innehållsförteckning, en rubrik för varje kapitel och en enda logisk läsordning.",
+    "review-title": "{title}: läsexemplar",
+    "review-intro": "Läsexemplar.",
+    "review-intro-build": "Läsexemplar, version {build}.",
+    "review-labels": "Varje stycke har en etikett som {label} (kapitel 3, stycke 12).",
+    "review-quote": "Ange etiketten i varje anteckning, tillsammans med styckets första ord, så att författaren hittar exakt rätt ställe även när texten har ändrats.",
+    "review-quote-build": "Ange etiketten och versionen i varje anteckning, tillsammans med styckets första ord, så att författaren hittar exakt rätt ställe även när texten har ändrats.",
+    "review-note-link": "Länken Anteckning bredvid varje etikett öppnar en anteckning där detta redan är ifyllt.",
+    note: "Anteckning",
+    "note-title": "Skriv en anteckning om {label}",
+    "anchor-title": "Länk till {label}",
+    by: "av",
+    "approximate-words": "Cirka {words} ord",
+    "approximate-characters": "Cirka {characters} tecken",
+    "narration-opening": "{title}. Skriven av {authors}. Uppläst av {narrator}.",
+    "narration-opening-anonymous": "{title}. Uppläst av {narrator}.",
+    "narration-closing": "Slut. Du har lyssnat på {title}, skriven av {authors}, uppläst av {narrator}.",
+    "narration-closing-anonymous": "Slut. Du har lyssnat på {title}, uppläst av {narrator}.",
+    "screenplay-credit": "Skriven av",
+    "screenplay-source": "Baserad på verket av {authors}",
+    "screenplay-source-anonymous": "Baserad på originalverket"
+  }
+};
+
+// src/languages/th.js
+var th_default = {
+  code: "th",
+  name: "Thai",
+  cased: false,
+  script: "Thai",
+  segmentation: "dictionary"
+};
+
+// src/languages/tr.js
+var tr_default = {
+  code: "tr",
+  name: "Turkish",
+  narrationRate: 115,
+  labels: {
+    chapter: "Bölüm {n}",
+    "chapter-heading": "{chapter}: {title}",
+    contents: "İçindekiler",
+    and: "{a} ve {b}",
+    copyright: "Telif hakkı",
+    "all-rights-reserved": "Tüm hakları saklıdır.",
+    "published-by": "Yayıncı: {publisher}",
+    "scene-break": "Sahne geçişi",
+    "cover-alt": "Kapak: {title}",
+    "start-of-content": "İçeriğin başlangıcı",
+    "accessibility-summary": "Gezinilebilir içindekiler tablosu, her bölüm için bir başlık ve tek bir mantıksal okuma sırası olan, yalnızca metinden oluşan kitap.",
+    "accessibility-summary-cover": "Açıklamalı kapak görseli, gezinilebilir içindekiler tablosu, her bölüm için bir başlık ve tek bir mantıksal okuma sırası olan metin tabanlı kitap.",
+    "review-title": "{title}: okuma nüshası",
+    "review-intro": "Okuma nüshası.",
+    "review-intro-build": "Okuma nüshası, sürüm {build}.",
+    "review-labels": "Her paragrafın {label} gibi bir etiketi vardır (bölüm 3, paragraf 12).",
+    "review-quote": "Metin değişse bile yazarın tam yeri bulabilmesi için her notta etiketi ve paragrafın ilk birkaç kelimesini belirtin.",
+    "review-quote-build": "Metin değişse bile yazarın tam yeri bulabilmesi için her notta etiketi, sürümü ve paragrafın ilk birkaç kelimesini belirtin.",
+    "review-note-link": "Her etiketin yanındaki Not bağlantısı, bu bilgilerin önceden doldurulduğu bir not açar.",
+    note: "Not",
+    "note-title": "Not yaz: {label}",
+    "anchor-title": "Bağlantı: {label}",
+    by: "",
+    "approximate-words": "Yaklaşık {words} kelime",
+    "approximate-characters": "Yaklaşık {characters} karakter",
+    "narration-opening": "{title}. Yazan: {authors}. Seslendiren: {narrator}.",
+    "narration-opening-anonymous": "{title}. Seslendiren: {narrator}.",
+    "narration-closing": "Son. {title} adlı kitabı dinlediniz. Yazan: {authors}. Seslendiren: {narrator}.",
+    "narration-closing-anonymous": "Son. {title} adlı kitabı dinlediniz. Seslendiren: {narrator}.",
+    "screenplay-credit": "Yazan",
+    "screenplay-source": "{authors} tarafından yazılan eserden uyarlanmıştır",
+    "screenplay-source-anonymous": "Özgün bir eserden uyarlanmıştır"
+  }
+};
+
+// src/languages/uk.js
+var uk_default = {
+  code: "uk",
+  name: "Ukrainian",
+  narrationRate: 125,
+  labels: {
+    chapter: "Розділ {n}",
+    "chapter-heading": "{chapter}. {title}",
+    contents: "Зміст",
+    and: "{a} і {b}",
+    copyright: "Авторські права",
+    "all-rights-reserved": "Усі права захищено.",
+    "published-by": "Видавець: {publisher}",
+    "scene-break": "Зміна сцени",
+    "cover-alt": "Обкладинка книжки «{title}»",
+    "start-of-content": "Початок тексту",
+    "accessibility-summary": "Книжка, що містить лише текст, із навігаційним змістом, заголовком кожного розділу та єдиним логічним порядком читання.",
+    "accessibility-summary-cover": "Текстова книжка з описаним зображенням обкладинки, навігаційним змістом, заголовком кожного розділу та єдиним логічним порядком читання.",
+    "review-title": "{title}: примірник для рецензування",
+    "review-intro": "Примірник для рецензування.",
+    "review-intro-build": "Примірник для рецензування, версія {build}.",
+    "review-labels": "Кожен абзац має мітку, наприклад {label} (розділ 3, абзац 12).",
+    "review-quote": "Зазначайте мітку в кожному зауваженні разом із першими словами абзацу, щоб автор міг знайти точне місце навіть після змін у тексті.",
+    "review-quote-build": "Зазначайте мітку й версію в кожному зауваженні разом із першими словами абзацу, щоб автор міг знайти точне місце навіть після змін у тексті.",
+    "review-note-link": "Посилання «Зауваження» біля кожної мітки відкриває зауваження з уже заповненими даними.",
+    note: "Зауваження",
+    "note-title": "Написати зауваження до {label}",
+    "anchor-title": "Посилання на {label}",
+    by: "",
+    "approximate-words": "Близько {words} слів",
+    "approximate-characters": "Близько {characters} знаків",
+    "narration-opening": "{title}. Автор: {authors}. Читає {narrator}.",
+    "narration-opening-anonymous": "{title}. Читає {narrator}.",
+    "narration-closing": "Кінець. Ви слухали книжку «{title}». Автор: {authors}. Читає {narrator}.",
+    "narration-closing-anonymous": "Кінець. Ви слухали книжку «{title}». Читає {narrator}.",
+    "screenplay-credit": "Сценарій",
+    "screenplay-source": "За твором (автор: {authors})",
+    "screenplay-source-anonymous": "За літературним твором"
+  }
+};
+
+// src/languages/zh.js
+var zh_default = {
+  code: "zh",
+  name: "Chinese",
+  cased: false,
+  script: "Hans",
+  segmentation: "character",
+  dialogueDash: null,
+  countUnit: "characters",
+  characterForms: {
+    flash: { min: 1, max: 2000, target: 1500 },
+    "short-story": { min: 2000, max: 25000, target: 1e4 },
+    novella: { min: 25000, max: 130000, target: 60000 },
+    novel: { min: 130000, max: null, target: 200000 }
+  },
+  narrationRate: 300,
+  labels: {
+    chapter: "第{n}章",
+    "chapter-heading": "{chapter}　{title}",
+    contents: "目录",
+    and: "{a}、{b}",
+    copyright: "版权",
+    "all-rights-reserved": "版权所有，侵权必究。",
+    "published-by": "出版者：{publisher}",
+    "scene-break": "场景转换",
+    "cover-alt": "《{title}》封面",
+    "start-of-content": "正文",
+    "accessibility-summary": "纯文本图书，包含可导航的目录、每章的标题和单一的逻辑阅读顺序。",
+    "accessibility-summary-cover": "文本图书，包含带描述的封面图片、可导航的目录、每章的标题和单一的逻辑阅读顺序。",
+    "review-title": "{title}（审阅本）",
+    "review-intro": "审阅本。",
+    "review-intro-build": "审阅本，版本 {build}。",
+    "review-labels": "每个段落都有一个标签，例如 {label}（第3章第12段）。",
+    "review-quote": "每条意见请注明标签和该段开头的几个词，这样即使文本有改动，作者也能找到确切位置。",
+    "review-quote-build": "每条意见请注明标签、版本和该段开头的几个词，这样即使文本有改动，作者也能找到确切位置。",
+    "review-note-link": "每个标签旁的“意见”链接会打开一条已填好这些信息的意见。",
+    note: "意见",
+    "note-title": "为 {label} 写意见",
+    "anchor-title": "链接到 {label}",
+    by: "",
+    "approximate-words": "约{words}词",
+    "approximate-characters": "约{characters}字",
+    "narration-opening": "《{title}》。作者：{authors}。演播：{narrator}。",
+    "narration-opening-anonymous": "《{title}》。演播：{narrator}。",
+    "narration-closing": "全书完。您收听的是《{title}》，作者{authors}，演播{narrator}。",
+    "narration-closing-anonymous": "全书完。您收听的是《{title}》，演播{narrator}。",
+    "screenplay-credit": "编剧",
+    "screenplay-source": "改编自{authors}的作品",
+    "screenplay-source-anonymous": "改编自原著"
+  }
+};
+
+// src/languages/zh-hant.js
+var labels = {
+  chapter: "第{n}章",
+  "chapter-heading": "{chapter}　{title}",
+  contents: "目錄",
+  and: "{a}、{b}",
+  copyright: "版權",
+  "all-rights-reserved": "版權所有，翻印必究。",
+  "published-by": "出版者：{publisher}",
+  "scene-break": "場景轉換",
+  "cover-alt": "《{title}》封面",
+  "start-of-content": "正文",
+  "accessibility-summary": "純文字圖書，包含可導覽的目錄、每章的標題和單一的邏輯閱讀順序。",
+  "accessibility-summary-cover": "文字圖書，包含附描述的封面圖片、可導覽的目錄、每章的標題和單一的邏輯閱讀順序。",
+  "review-title": "{title}（審閱本）",
+  "review-intro": "審閱本。",
+  "review-intro-build": "審閱本，版本 {build}。",
+  "review-labels": "每個段落都有一個標籤，例如 {label}（第3章第12段）。",
+  "review-quote": "每則意見請註明標籤和該段開頭的幾個詞，這樣即使文字有改動，作者也能找到確切位置。",
+  "review-quote-build": "每則意見請註明標籤、版本和該段開頭的幾個詞，這樣即使文字有改動，作者也能找到確切位置。",
+  "review-note-link": "每個標籤旁的「意見」連結會開啟一則已填好這些資訊的意見。",
+  note: "意見",
+  "note-title": "為 {label} 寫意見",
+  "anchor-title": "連結到 {label}",
+  by: "",
+  "approximate-words": "約{words}詞",
+  "approximate-characters": "約{characters}字",
+  "narration-opening": "《{title}》。作者：{authors}。朗讀：{narrator}。",
+  "narration-opening-anonymous": "《{title}》。朗讀：{narrator}。",
+  "narration-closing": "全書完。您收聽的是《{title}》，作者{authors}，朗讀{narrator}。",
+  "narration-closing-anonymous": "全書完。您收聽的是《{title}》，朗讀{narrator}。",
+  "screenplay-credit": "編劇",
+  "screenplay-source": "改編自{authors}的作品",
+  "screenplay-source-anonymous": "改編自原著"
+};
+var zh_hant_default = [
+  { code: "zh-hant", name: "Chinese (Traditional)", script: "Hant", labels },
+  { code: "yue", name: "Cantonese" },
+  { code: "lzh", name: "Classical Chinese" }
+];
+
+// src/languages/index.js
+var DEFAULT_LANGUAGE = "en";
+var PACKS = new Map([ar_default, da_default, de_default, de_ch_default, en_default, es_default, fa_default, fi_default, fr_default, he_default, hi_default, it_default, ja_default, ko_default, nl_default, pl_default, pt_default, pt_pt_default, ru_default, sv_default, th_default, tr_default, uk_default, zh_default, ...zh_hant_default].map((pack) => [pack.code, pack]));
+var TAG_PATTERN = /^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{1,8})*$/;
+function isLanguageTag(value) {
+  return typeof value === "string" && TAG_PATTERN.test(value.trim());
+}
+var LANGUAGE_ALIASES = {
+  iw: "he",
+  in: "id",
+  ji: "yi",
+  jw: "jv",
+  mo: "ro",
+  ara: "ar",
+  chi: "zh",
+  zho: "zh",
+  deu: "de",
+  ger: "de",
+  eng: "en",
+  spa: "es",
+  fra: "fr",
+  fre: "fr",
+  fas: "fa",
+  per: "fa",
+  heb: "he",
+  hin: "hi",
+  ita: "it",
+  jpn: "ja",
+  kor: "ko",
+  nld: "nl",
+  dut: "nl",
+  pol: "pl",
+  por: "pt",
+  rus: "ru",
+  swe: "sv",
+  tha: "th",
+  tur: "tr",
+  ukr: "uk"
+};
+var GRANDFATHERED = {
+  "en-gb-oed": ["en-gb-oxendict", null],
+  "i-klingon": ["tlh", null],
+  "no-bok": ["nb", "no"],
+  "no-nyn": ["nn", "no"],
+  "sgn-be-fr": ["sfb", null],
+  "sgn-be-nl": ["vgt", null],
+  "sgn-ch-de": ["sgg", null],
+  "zh-guoyu": ["cmn", "zh"],
+  "zh-hakka": ["hak", "zh"],
+  "zh-min-nan": ["nan", "zh"],
+  "zh-xiang": ["hsn", "zh"]
+};
+function lookupTag(language) {
+  const lower = language.toLowerCase();
+  if (GRANDFATHERED[lower] !== undefined) {
+    return GRANDFATHERED[lower];
+  }
+  const subtags = TAG_PATTERN.test(language) ? lower.split("-") : [lower.split(/[-_]/)[0]].filter((subtag) => /^[a-z]{2,3}$/.test(subtag));
+  if (subtags.length === 0) {
+    return ["und", null];
+  }
+  subtags[0] = LANGUAGE_ALIASES[subtags[0]] ?? subtags[0];
+  if (subtags.length > 1 && /^[a-z]{3}$/.test(subtags[1])) {
+    return [subtags.slice(1).join("-"), subtags[0]];
+  }
+  return [subtags.join("-"), null];
+}
+function parseTag(language) {
+  const [lookup, macrolanguage] = lookupTag(String(language ?? "").trim() || DEFAULT_LANGUAGE);
+  const subtags = lookup.split("-");
+  const [primary, ...rest] = subtags;
+  const script = /^[a-z]{4}$/.test(rest[0] ?? "") ? `${rest[0][0].toUpperCase()}${rest[0].slice(1)}` : null;
+  const region = rest[script === null ? 0 : 1] ?? "";
+  return { primary, macrolanguage, script, region: /^(?:[a-z]{2}|\d{3})$/.test(region) ? region : null, subtags };
+}
+var CHINESE_SCRIPTS = {
+  zh: "Hans",
+  cmn: "Hans",
+  wuu: "Hans",
+  hak: "Hans",
+  nan: "Hans",
+  gan: "Hans",
+  hsn: "Hans",
+  cjy: "Hans",
+  cdo: "Hans",
+  cpx: "Hans",
+  czh: "Hans",
+  czo: "Hans",
+  mnp: "Hans",
+  yue: "Hant",
+  lzh: "Hant"
+};
+var REGION_SCRIPTS = { tw: "Hant", hk: "Hant", mo: "Hant", cn: "Hans", sg: "Hans" };
+function hanScript(language) {
+  const { primary, script, region } = parseTag(language);
+  if (script === "Hans" || script === "Hant") {
+    return script;
+  }
+  if (script === "Bopo") {
+    return "Hant";
+  }
+  return REGION_SCRIPTS[region] ?? CHINESE_SCRIPTS[primary] ?? "Hans";
+}
+function chineseScript(language) {
+  const { primary, macrolanguage } = parseTag(language);
+  return CHINESE_SCRIPTS[primary] !== undefined || macrolanguage === "zh" ? hanScript(language) : null;
+}
+function canonicalTag(value) {
+  try {
+    return typeof value === "string" ? Intl.getCanonicalLocales(value)[0] ?? null : null;
+  } catch {
+    return null;
+  }
+}
+function projectLanguage(storyData) {
+  const value = storyData?.language;
+  if (value === undefined || value === null || typeof value === "string" && (value.trim() === "" || /^\[TODO\b/i.test(value.trim()))) {
+    return DEFAULT_LANGUAGE;
+  }
+  return String(value).trim();
+}
+var RESOLVED = new Map;
+function languagePack(tag = DEFAULT_LANGUAGE) {
+  const language = String(tag ?? "").trim() || DEFAULT_LANGUAGE;
+  if (!RESOLVED.has(language)) {
+    RESOLVED.set(language, resolvePack(language));
+  }
+  return RESOLVED.get(language);
+}
+function resolvePack(language) {
+  const [lookup, macrolanguage] = lookupTag(language);
+  const subtags = lookup.split("-");
+  const chinese = chineseScript(language);
+  const keys = new Set([
+    chinese === null ? macrolanguage : "zh",
+    chinese === "Hant" ? "zh-hant" : null,
+    ...subtags.map((_, index) => subtags.slice(0, index + 1).join("-"))
+  ]);
+  const layers = [base_default, ...[...keys].map((key) => PACKS.get(key)).filter((pack) => pack !== undefined)];
+  const pack = {};
+  for (const layer of layers) {
+    Object.assign(pack, layer, {
+      checks: { ...pack.checks, ...layer.checks },
+      labels: { ...pack.labels, ...layer.labels }
+    });
+  }
+  pack.tag = language;
+  pack.locale = canonicalTag(lookup) ?? canonicalTag(subtags[0]) ?? "und";
+  return deepFreeze(pack);
+}
+function deepFreeze(value) {
+  if (value !== null && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    Object.values(value).forEach(deepFreeze);
+  }
+  return value;
+}
+function checkList(pack, name) {
+  return pack.checks[name] ?? null;
+}
+function hasLists(pack, names) {
+  return names.every((name) => checkList(pack, name) !== null);
+}
+var SETS = new WeakMap;
+function checkSet(pack, name) {
+  if (!SETS.has(pack)) {
+    SETS.set(pack, new Map);
+  }
+  const sets = SETS.get(pack);
+  if (!sets.has(name)) {
+    const list = checkList(pack, name);
+    sets.set(name, list === null ? null : new Set(list));
+  }
+  return sets.get(name);
+}
+function skippedChecks(pack, definitions) {
+  return definitions.filter((definition) => !hasLists(pack, definition.lists)).map((definition) => skippedCheck(pack, definition));
+}
+function skippedCheck(pack, { check, label, lists }) {
+  const missing = lists.filter((name) => checkList(pack, name) === null);
+  const names = missing.length < 3 ? missing.join(" or ") : `${missing.slice(0, -1).join(", ")}, or ${missing[missing.length - 1]}`;
+  return {
+    check,
+    language: pack.tag,
+    missing,
+    message: `${label} skipped: no ${names} list for language ${pack.tag}`
+  };
+}
+function skippedLines(skipped) {
+  return skipped.map((entry) => `Note: ${entry.message}`);
+}
+var LABEL_KEYS = Object.freeze(Object.keys(en_default.labels));
+function fillLabel(labels, key, values = {}, escape = (text) => text) {
+  const template = String(labels?.[key] ?? en_default.labels[key] ?? "");
+  let text = "";
+  let last = 0;
+  for (const match of template.matchAll(/\{([a-z]+)\}/g)) {
+    if (values[match[1]] !== undefined) {
+      text += `${escape(template.slice(last, match.index))}${values[match[1]]}`;
+      last = match.index + match[0].length;
+    }
+  }
+  return `${text}${escape(template.slice(last))}`;
+}
+function joinNames(names, labels) {
+  const template = String(labels?.and ?? en_default.labels.and);
+  const joiner = template.includes("{a}") && template.includes("{b}") ? labels : { and: "{a}, {b}" };
+  return names.length === 0 ? "" : names.reduce((joined, name) => fillLabel(joiner, "and", { a: joined, b: name }));
+}
+
+// src/series.js
+import fs2 from "node:fs";
+import path3 from "node:path";
+
+// src/progressions.js
+var PROGRESSION_KINDS = ["character", "location", "faction"];
+var RESERVED_FIELDS = new Set(["progressions", "id", "died-in", "revived-in"]);
+function progressionEntry(item) {
+  if (!item || typeof item !== "object" || Array.isArray(item)) {
+    return null;
+  }
+  const from = idText(item.from);
+  const field = typeof item.field === "string" ? item.field : "";
+  if (from === "" || field === "" || item.value === undefined || item.value === null) {
+    return null;
+  }
+  return { from, field, value: item.value };
+}
+function setOwn(target, key, value) {
+  Object.defineProperty(target, key, { value, enumerable: true, configurable: true, writable: true });
+}
+function chapterPosition(chronology, id) {
+  if (chronology.numbers.has(id)) {
+    return chronology.numbers.get(id);
+  }
+  const match = /^chapter-(\d+)$/.exec(id);
+  return match && Number(match[1]) > 0 ? Number(match[1]) : Number.NaN;
+}
+function happensAfter(chronology, later, earlier) {
+  if (chronology.numbers.has(later) && chronology.numbers.has(earlier)) {
+    return chronology.after(later, earlier);
+  }
+  return chapterPosition(chronology, later) > chapterPosition(chronology, earlier);
+}
+function sortProgressions(list, chronology) {
+  const known = [];
+  const unknown = [];
+  for (const item of list) {
+    const from = item && typeof item === "object" && !Array.isArray(item) ? idText(item.from) : "";
+    (Number.isNaN(chapterPosition(chronology, from)) ? unknown : known).push({ item, from });
+  }
+  known.sort((left, right) => happensAfter(chronology, left.from, right.from) ? 1 : happensAfter(chronology, right.from, left.from) ? -1 : 0);
+  return [...known, ...unknown].map((entry) => entry.item);
+}
+function entityStateAt(data, atChapterId, chronology) {
+  if (Number.isNaN(chapterPosition(chronology, atChapterId))) {
+    throw usageError(`Unknown chapter ${atChapterId}`);
+  }
+  const state = {};
+  for (const [key, value] of Object.entries(data ?? {})) {
+    if (key !== "progressions") {
+      setOwn(state, key, value);
+    }
+  }
+  const entries = (Array.isArray(data?.progressions) ? data.progressions : []).map(progressionEntry).filter((entry) => entry !== null && !Number.isNaN(chapterPosition(chronology, entry.from)) && !happensAfter(chronology, entry.from, atChapterId));
+  entries.sort((left, right) => happensAfter(chronology, left.from, right.from) ? 1 : happensAfter(chronology, right.from, left.from) ? -1 : 0);
+  const changes = [];
+  for (const entry of entries) {
+    changes.push({ field: entry.field, value: entry.value, from: entry.from, previous: Object.hasOwn(state, entry.field) ? state[entry.field] : undefined });
+    setOwn(state, entry.field, entry.value);
+  }
+  return { state, changes };
+}
+function validateProgressions(data, label, rules, chronology, errors) {
+  if (data.progressions === undefined) {
+    return;
+  }
+  if (!Array.isArray(data.progressions)) {
+    errors.push(err("field-not-list", `${label} frontmatter field progressions must be a list`, label));
+    return;
+  }
+  const seen = new Map;
+  let latest = null;
+  for (const [index, item] of data.progressions.entries()) {
+    const entryLabel = `${label} progressions[${index}]`;
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      errors.push(err("entry-not-mapping", `${entryLabel} must be a mapping with from, field, and value`, label));
+      continue;
+    }
+    const from = idText(item.from);
+    if (from === "") {
+      errors.push(err("missing-field", `${entryLabel} is missing from (the chapter the change takes effect)`, label));
+    }
+    const field = item.field;
+    let fieldOk = false;
+    if (typeof field !== "string" || field.trim() === "") {
+      errors.push(err("missing-field", `${entryLabel} is missing field`, label));
+    } else if (field !== kebabCase(field)) {
+      errors.push(err("id-not-kebab", `${entryLabel} field ${field} must be kebab-case`, label));
+    } else if (RESERVED_FIELDS.has(field)) {
+      errors.push(err("progression-fixed-field", `${entryLabel} cannot change ${field}${field === "died-in" || field === "revived-in" ? "; set it on the character and story continuity reads it by chapter" : ""}`, label));
+    } else if (rules.lists.has(field)) {
+      errors.push(err("progression-list-field", `${entryLabel} cannot change ${field}, which is a list; a progression holds a single value`, label));
+    } else {
+      fieldOk = true;
+    }
+    const value = item.value;
+    if (value === undefined || value === null) {
+      errors.push(err("missing-field", `${entryLabel} is missing value`, label));
+    } else if (typeof value === "object") {
+      errors.push(err("field-not-scalar", `${entryLabel} value must be a single value, not a list or mapping`, label));
+    } else if (fieldOk && rules.enums.has(field) && !rules.enums.get(field).has(value)) {
+      errors.push(err("unsupported-value", `${entryLabel} ${field} has unsupported value ${value}`, label));
+    }
+    if (from !== "" && fieldOk) {
+      const key = `${from}\x00${field}`;
+      if (seen.has(key)) {
+        errors.push(err("progression-duplicate", `${entryLabel} repeats ${field} from ${from} (progressions[${seen.get(key)}])`, label));
+      } else {
+        seen.set(key, index);
+      }
+    }
+    if (Number.isNaN(chapterPosition(chronology, from))) {
+      continue;
+    }
+    if (latest && happensAfter(chronology, latest.from, from)) {
+      errors.push(err("progression-out-of-order", `${entryLabel} from ${from} comes before progressions[${latest.index}] from ${latest.from} in the story; list progressions in story order`, label));
+      continue;
+    }
+    latest = { from, index };
+  }
+}
+function formatStateChanges(changes, atChapterId) {
+  if (changes.length === 0) {
+    return "";
+  }
+  const lines = [`State at ${atChapterId}:`];
+  for (const change of changes) {
+    const previous = change.previous === undefined ? "" : `, was ${change.previous}`;
+    lines.push(`- ${change.field}: ${change.value === "" ? "(cleared)" : change.value} (from ${change.from}${previous})`);
+  }
+  return `${lines.join(`
+`)}
+`;
+}
+
+// src/deaths.js
+var STATUS_PROGRESSIONS = new WeakMap;
+function statusProgressions(character) {
+  if (!STATUS_PROGRESSIONS.has(character)) {
+    const list = Array.isArray(character.frontmatter.progressions) ? character.frontmatter.progressions : [];
+    STATUS_PROGRESSIONS.set(character, list.map((item, index) => ({ index, entry: progressionEntry(item) })).filter(({ entry }) => entry !== null && entry.field === "status").map(({ index, entry }) => ({ index, from: entry.from, value: String(entry.value) })));
+  }
+  return STATUS_PROGRESSIONS.get(character);
+}
+function progressionStatusAt(character, chapterId, chronology) {
+  let status = String(character.status);
+  let from = "";
+  let deadFrom = "";
+  if (chronology.numbers.has(chapterId) && statusProgressions(character).length > 0) {
+    for (const change of entityStateAt(character.frontmatter, chapterId, chronology).changes) {
+      if (change.field !== "status") {
+        continue;
+      }
+      const value = String(change.value);
+      if (value === "deceased" && status !== "deceased") {
+        deadFrom = change.from;
+      }
+      status = value;
+      from = change.from;
+    }
+  }
+  return { status, from, deadFrom };
+}
+function progressionDeathAt(character, chapterId, chronology) {
+  const from = progressionDeathFrom(character, chapterId, chronology);
+  if (from === null || from !== "" && !happensAfter(chronology, chapterId, from)) {
+    return null;
+  }
+  return { from };
+}
+function progressionDeathFrom(character, chapterId, chronology) {
+  const { status, deadFrom } = progressionStatusAt(character, chapterId, chronology);
+  if (status !== "deceased" || character.diedIn && deadFrom === "") {
+    return null;
+  }
+  if (character.diedIn && (character.revivedIn === "" || !happensAfter(chronology, deadFrom, character.revivedIn))) {
+    return null;
+  }
+  return deadFrom;
+}
+function characterLifeline(character, chronology) {
+  const status = String(character.status ?? "");
+  const chapters = storyOrder(chronology);
+  if (chapters.length === 0 || character.diedIn && !chronology.numbers.has(character.diedIn)) {
+    const dead = status === "deceased";
+    return { deadAtStart: dead, deadAtEnd: dead, events: [] };
+  }
+  const leadIn = status === "deceased" && Boolean(character.diedIn) && statusProgressions(character).some(({ from, value }) => value !== "deceased" && happensAfter(chronology, character.diedIn, from));
+  const deadAtStart = status === "deceased" && (!character.diedIn || leadIn);
+  if (!character.diedIn && statusProgressions(character).length === 0) {
+    return { deadAtStart, deadAtEnd: deadAtStart, events: [] };
+  }
+  const window = deathWindow(character, chronology);
+  const events = [];
+  let dead = deadAtStart;
+  for (const chapter of chapters) {
+    const byDiedIn = window !== null && (chapter === window.died || window.deadIn(chapter));
+    const beforeDeath = leadIn && happensAfter(chronology, window.died, chapter) && progressionStatusAt(character, chapter, chronology).status === "deceased";
+    const now = byDiedIn || beforeDeath || progressionDeathFrom(character, chapter, chronology) !== null;
+    if (!now && dead && chapter !== window?.revived && progressionStatusAt(character, chapter, chronology).from === "") {
+      continue;
+    }
+    if (now !== dead) {
+      events.push(now ? { type: "death", chapter, source: chapter === window?.died ? "died-in" : "progression" } : { type: "revival", chapter, source: chapter === window?.revived ? "revived-in" : "progression" });
+      dead = now;
+    }
+  }
+  return { deadAtStart, deadAtEnd: dead, events };
+}
+function revivedBy(lifeline, chapterId, chronology) {
+  return chronology.numbers.has(chapterId) && lifeline.events.some((event) => event.type === "revival" && !happensAfter(chronology, event.chapter, chapterId));
+}
+function storyOrder(chronology) {
+  return [...chronology.numbers.keys()].sort((left, right) => chronology.numbers.get(left) - chronology.numbers.get(right) || (left < right ? -1 : left > right ? 1 : 0)).sort((left, right) => chronology.after(left, right) ? 1 : chronology.after(right, left) ? -1 : 0);
+}
+
+// src/languages/locale.js
+var COMPARERS = new Map;
+function compareText(pack = languagePack()) {
+  if (!COMPARERS.has(pack.locale)) {
+    const collator = new Intl.Collator(pack.locale);
+    COMPARERS.set(pack.locale, (left, right) => collator.compare(left, right) || (left < right ? -1 : left > right ? 1 : 0));
+  }
+  return COMPARERS.get(pack.locale);
+}
+function lowerCase(text, pack = languagePack()) {
+  return String(text).toLocaleLowerCase(pack.locale);
+}
+function upperCase(text, pack = languagePack()) {
+  return String(text).toLocaleUpperCase(pack.locale);
+}
+var DOTLESS_I = new Set(["tr", "az"]);
+function casesDotlessI(pack) {
+  return DOTLESS_I.has(pack.locale.split("-")[0].toLowerCase());
+}
+function matchingCase(phrase, pack = languagePack()) {
+  return casesDotlessI(pack) ? lowerCase(phrase, pack) : String(phrase);
+}
+function matchingText(text, pack = languagePack()) {
+  const source = String(text);
+  const same = { text: source, original: (start, end) => [start, end] };
+  if (!casesDotlessI(pack)) {
+    return same;
+  }
+  const lower = lowerCase(source, pack);
+  if (lower.length === source.length) {
+    return { ...same, text: lower };
+  }
+  let folded = "";
+  const starts = [];
+  const sources = [];
+  const add = (from, value) => {
+    starts.push(folded.length);
+    sources.push(from);
+    folded += lowerCase(value, pack);
+  };
+  let last = 0;
+  for (const match of source.matchAll(/I\p{M}+/gu)) {
+    if (match.index > last) {
+      add(last, source.slice(last, match.index));
+    }
+    add(match.index, match[0]);
+    last = match.index + match[0].length;
+  }
+  if (last < source.length) {
+    add(last, source.slice(last));
+  }
+  starts.push(folded.length);
+  sources.push(source.length);
+  const piece = (offset) => {
+    let low = 0;
+    let high = starts.length - 1;
+    while (low < high) {
+      const middle = low + high + 1 >> 1;
+      if (starts[middle] <= offset) {
+        low = middle;
+      } else {
+        high = middle - 1;
+      }
+    }
+    return low;
+  };
+  const at = (offset, end) => {
+    const index = piece(offset);
+    const inside = offset - starts[index];
+    if (inside === 0) {
+      return sources[index];
+    }
+    if (starts[index + 1] - starts[index] === sources[index + 1] - sources[index]) {
+      return sources[index] + inside;
+    }
+    return sources[end ? index + 1 : index];
+  };
+  return { text: folded, original: (start, end) => [at(start, false), at(end, true)] };
+}
+var NUMBER_FORMATS = new Map;
+function formatNumber(value, pack = languagePack()) {
+  if (!NUMBER_FORMATS.has(pack.locale)) {
+    NUMBER_FORMATS.set(pack.locale, new Intl.NumberFormat(pack.locale, { numberingSystem: "latn", maximumFractionDigits: 0 }));
+  }
+  return NUMBER_FORMATS.get(pack.locale).format(value);
+}
+
+// src/series.js
+var SERIES_LINK_INVERSES = [["follows", "precedes"], ["precedes", "follows"]];
+var MAX_SERIES_BOOKS = 100;
+var SHARED_CANON = [
+  ["characters", "Characters", "name"],
+  ["locations", "Locations", "name"],
+  ["systems", "Systems", "name"],
+  ["factions", "Factions", "name"],
+  ["artifacts", "Artifacts", "name"],
+  ["glossaryTerms", "Glossary terms", "term"]
+];
+function isBookNumber(value) {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+function seriesDisplayName(data) {
+  const title = data?.["series-title"];
+  return typeof title === "string" && title.trim() !== "" ? title.trim() : seriesId(data);
+}
+function seriesLinkPath(fromRoot, toRoot) {
+  return path3.relative(fromRoot, toRoot).split(path3.sep).join("/");
+}
+function seriesLinks(root, data, field) {
+  const raw = data[field];
+  const values = Array.isArray(raw) ? raw : typeof raw === "string" ? [raw] : [];
+  return values.filter((value) => typeof value === "string" && value.trim() !== "").map((value) => path3.resolve(root, value));
+}
+function seriesId(data) {
+  const value = data?.series;
+  if (value === undefined || value === null) {
+    return;
+  }
+  return String(value).trim() === "" ? undefined : value;
+}
+function areSiblingBooks(left, right) {
+  return path3.dirname(canonicalPath(left)) === path3.dirname(canonicalPath(right));
+}
+function linksInclude(links, root) {
+  const key = canonicalPath(root);
+  return links.some((link) => link === root || canonicalPath(link) === key);
+}
+function readBookFrontmatter(root) {
+  const storyPath = path3.join(root, "story.md");
+  if (!fs2.existsSync(storyPath)) {
+    return null;
+  }
+  return parseFrontmatter(readTextFile(storyPath), storyPath).data;
+}
+function validateSeriesLinks(root, data, errors) {
+  for (const [field, inverse] of SERIES_LINK_INVERSES) {
+    const raw = Array.isArray(data[field]) ? data[field] : [data[field]];
+    const backslashed = raw.filter((value) => typeof value === "string" && value.includes("\\"));
+    for (const value of backslashed) {
+      errors.push(err("series-link-backslash", `story.md ${field} ${value} uses a backslash; write ${value.replace(/\\/g, "/")} so the link works on every system`, "story.md"));
+    }
+    for (const target of seriesLinks(root, { [field]: raw.filter((value) => !backslashed.includes(value)) }, field)) {
+      const label = `story.md ${field} ${seriesLinkPath(root, target)}`;
+      if (target === root || canonicalPath(target) === canonicalPath(root)) {
+        errors.push(err("series-link-self", `${label} points at this book`, "story.md"));
+        continue;
+      }
+      let other;
+      try {
+        other = readBookFrontmatter(target);
+      } catch (error) {
+        errors.push(err("series-link-unreadable", `${label}: ${error.message}`, "story.md"));
+        continue;
+      }
+      if (!other) {
+        errors.push(err("series-link-not-project", `${label} is not a story project: missing story.md`, "story.md"));
+        continue;
+      }
+      if (!areSiblingBooks(root, target)) {
+        errors.push(err("series-link-not-sibling", `${label} is not in the same parent folder as this book; story series only follows links between sibling book folders`, "story.md"));
+      }
+      if (!linksInclude(seriesLinks(target, other, inverse), root)) {
+        errors.push(err("series-missing-backlink", `${label} is missing backlink: add ${seriesLinkPath(target, root)} to its ${inverse}`, "story.md"));
+      }
+      const ownSeries = seriesId(data);
+      const otherSeries = seriesId(other);
+      if (ownSeries !== undefined && otherSeries !== undefined && ownSeries !== otherSeries) {
+        errors.push(err("series-link-other-series", `${label} belongs to series ${otherSeries}, not ${ownSeries}`, "story.md"));
+      }
+    }
+  }
+}
+function withSeriesBacklink(targetRoot, field, linkedRoot, newSeriesId) {
+  const storyPath = path3.join(targetRoot, "story.md");
+  const markdown = readTextFile(storyPath);
+  const { data } = parseFrontmatter(markdown, storyPath);
+  const current = data[field];
+  const existing = Array.isArray(current) ? current : typeof current === "string" && current.trim() !== "" ? [current] : [];
+  const linked = linksInclude(seriesLinks(targetRoot, { [field]: existing }, field), linkedRoot);
+  const addSeries = seriesId(data) === undefined && newSeriesId !== undefined;
+  if (linked && !addSeries) {
+    return null;
+  }
+  return replaceFrontmatter(markdown, {
+    ...data,
+    ...addSeries ? { series: newSeriesId } : {},
+    ...linked ? {} : { [field]: existing.concat(seriesLinkPath(targetRoot, linkedRoot)) }
+  });
+}
+function buildSeries(startRoot, scan) {
+  const errors = [];
+  const warnings = [];
+  const books = discoverBooks(startRoot, scan, errors).books;
+  if (books.length === 0) {
+    return {
+      root: startRoot,
+      series: null,
+      books: [],
+      ordered: false,
+      shared: [],
+      ok: false,
+      errors,
+      warnings
+    };
+  }
+  const seriesIds = [...new Set(books.map((book) => book.series).filter((series) => series !== undefined))].sort();
+  if (seriesIds.length > 1) {
+    errors.push(err("series-conflict", `Linked books belong to different series: ${seriesIds.join(", ")}`));
+  }
+  const unnamed = books.filter((book) => book.series === undefined);
+  if (seriesIds.length === 1 && unnamed.length > 0) {
+    warnings.push(warn("series-id-missing", `Linked books ${unnamed.map((book) => book.title).join(", ")} set no series id; add series: ${seriesIds[0]}`));
+  }
+  for (const book of books.filter((candidate) => candidate.invalidBookNumber)) {
+    errors.push(err("invalid-book-number", `${book.label}: story.md book-number ${JSON.stringify(book.project.story.data["book-number"])} is not a number 0 or more; the book is listed as unnumbered`, path3.join(book.label, "story.md")));
+  }
+  const seriesTitles = [...new Set(books.map((book) => book.seriesTitle).filter((title) => title !== undefined))].sort();
+  if (seriesTitles.length > 1) {
+    warnings.push(warn("series-title-mismatch", `Linked books set different series-title values: ${seriesTitles.map((title) => `"${title}"`).join(", ")}; keep the series name identical everywhere`));
+  }
+  checkDuplicateBookNumbers(books, errors);
+  const chronology = chronologicalOrder(books, errors);
+  if (chronology) {
+    checkSharedCanon(chronology, errors, warnings);
+  }
+  return {
+    root: startRoot,
+    series: books[0]?.series ?? seriesIds[0] ?? null,
+    seriesTitle: books[0]?.seriesTitle ?? seriesTitles[0] ?? null,
+    books: (chronology ? chronology.order : books).map((book) => ({
+      title: book.title,
+      label: book.label,
+      bookNumber: book.bookNumber,
+      status: book.status
+    })),
+    ordered: Boolean(chronology),
+    shared: sharedCanon(books),
+    ok: errors.length === 0,
+    errors,
+    warnings
+  };
+}
+function formatSeriesReport(report) {
+  const lines = [
+    `# Series: ${report.seriesTitle ?? report.series ?? "Unnamed series"}`,
+    "",
+    report.ordered ? "Chronological order:" : "Books (unordered):"
+  ];
+  report.books.forEach((book, index) => {
+    const details = [book.bookNumber === null ? "unnumbered" : `book ${book.bookNumber}`, book.status || "no status"];
+    lines.push(`${index + 1}. ${book.title} (${details.join(", ")}) - ${book.label}`);
+  });
+  lines.push("", "Shared canon:");
+  if (report.shared.length === 0) {
+    lines.push("- None");
+  }
+  for (const entry of report.shared) {
+    lines.push(`- ${entry.label}: ${entry.ids.join(", ")}`);
+  }
+  return `${lines.join(`
+`)}
+
+`;
+}
+function canonicalPath(target) {
+  const resolved = path3.resolve(target);
+  const tail = [];
+  let current = resolved;
+  while (current !== path3.dirname(current)) {
+    try {
+      const real = fs2.realpathSync(current);
+      return tail.length === 0 ? real : path3.join(real, ...tail.reverse());
+    } catch {
+      tail.push(path3.basename(current));
+      current = path3.dirname(current);
+    }
+  }
+  try {
+    return path3.join(fs2.realpathSync(current), ...tail.reverse());
+  } catch {
+    return path3.join(current, ...tail.reverse());
+  }
+}
+function discoverBooks(startRoot, scan, errors) {
+  const startResolved = path3.resolve(startRoot);
+  const scopeRoot = path3.dirname(startResolved);
+  const scopeReal = canonicalPath(scopeRoot);
+  const visited = new Map;
+  const queue = [startResolved];
+  while (queue.length > 0) {
+    const root = queue.shift();
+    const resolved = path3.resolve(root);
+    const effective = canonicalPath(resolved);
+    if (visited.has(effective)) {
+      continue;
+    }
+    if (visited.size >= MAX_SERIES_BOOKS) {
+      errors.push(err("series-too-many-books", "Series links exceed the " + MAX_SERIES_BOOKS + " book limit; refusing to traverse further"));
+      break;
+    }
+    const label = seriesLinkPath(startRoot, root) || ".";
+    if (path3.dirname(resolved) !== scopeRoot || path3.dirname(effective) !== scopeReal) {
+      const outside = !isPathInside2(scopeRoot, resolved) || !isPathInside2(scopeReal, effective);
+      errors.push(outside ? err("series-link-outside", label + " points outside the series directory " + scopeRoot + "; refusing to follow") : err("series-link-not-sibling", label + " is not a sibling folder in the series directory " + scopeRoot + "; keep series books side by side, refusing to follow"));
+      visited.set(effective, null);
+      continue;
+    }
+    if (!fs2.existsSync(path3.join(root, "story.md"))) {
+      errors.push(err("series-link-not-project", `${label} is not a story project: missing story.md`));
+      visited.set(effective, null);
+      continue;
+    }
+    let project;
+    try {
+      project = scan(root);
+    } catch (error) {
+      errors.push(err("series-link-unreadable", `${label}: ${error.message}`));
+      visited.set(effective, null);
+      continue;
+    }
+    for (const scanError of project.fileErrors ?? []) {
+      errors.push({ ...scanError, message: `${label}: ${scanError.message}`, file: path3.join(label, scanError.file) });
+    }
+    if (project.story?.unreadable) {
+      visited.set(effective, null);
+      continue;
+    }
+    const data = project.story.data;
+    const book = {
+      root,
+      key: effective,
+      label,
+      project,
+      title: String(data.title ?? path3.basename(root)),
+      series: seriesId(data),
+      status: data.status,
+      bookNumber: isBookNumber(data["book-number"]) ? data["book-number"] : null,
+      invalidBookNumber: data["book-number"] !== undefined && !isBookNumber(data["book-number"]),
+      seriesTitle: typeof data["series-title"] === "string" && data["series-title"].trim() !== "" ? data["series-title"].trim() : undefined,
+      follows: seriesLinks(root, data, "follows"),
+      precedes: seriesLinks(root, data, "precedes")
+    };
+    visited.set(effective, book);
+    for (const next of book.follows.concat(book.precedes)) {
+      queue.push(next);
+    }
+  }
+  const books = [...visited.values()].filter(Boolean);
+  return { books, complete: books.length === visited.size };
+}
+function discoverSeriesBooks(startRoot, scan) {
+  const errors = [];
+  const { books, complete } = discoverBooks(startRoot, scan, errors);
+  return { books, complete, errors };
+}
+function isPathInside2(root, target) {
+  const relativePath = path3.relative(root, target);
+  return !path3.isAbsolute(relativePath) && (relativePath === "" || !relativePath.split(path3.sep).includes(".."));
+}
+function chronologicalOrder(books, errors) {
+  const byKey = new Map(books.map((book) => [book.key, book]));
+  const later = new Map(books.map((book) => [book.key, new Set]));
+  for (const book of books) {
+    for (const earlier of book.follows.map(canonicalPath)) {
+      if (byKey.has(earlier) && earlier !== book.key) {
+        later.get(earlier).add(book.key);
+      }
+    }
+    for (const next of book.precedes.map(canonicalPath)) {
+      if (byKey.has(next) && next !== book.key) {
+        later.get(book.key).add(next);
+      }
+    }
+  }
+  const indegree = new Map(books.map((book) => [book.key, 0]));
+  for (const targets of later.values()) {
+    for (const target of targets) {
+      indegree.set(target, indegree.get(target) + 1);
+    }
+  }
+  const order = [];
+  const ready = books.filter((book) => indegree.get(book.key) === 0);
+  const compareTitles = compareText(seriesPack(books));
+  while (ready.length > 0) {
+    ready.sort((left, right) => compareBooks(left, right, compareTitles));
+    const book = ready.shift();
+    order.push(book);
+    for (const target of later.get(book.key)) {
+      indegree.set(target, indegree.get(target) - 1);
+      if (indegree.get(target) === 0) {
+        ready.push(byKey.get(target));
+      }
+    }
+  }
+  if (order.length < books.length) {
+    const cycle = books.filter((book) => !order.includes(book)).map((book) => book.title);
+    errors.push(err("series-cycle", `Series chronology has a cycle between ${cycle.join(", ")}; check follows and precedes`));
+    return null;
+  }
+  return { order, later };
+}
+function checkDuplicateBookNumbers(books, errors) {
+  const byNumber = new Map;
+  for (const book of books) {
+    if (book.bookNumber !== null) {
+      byNumber.set(book.bookNumber, (byNumber.get(book.bookNumber) ?? []).concat(book.label));
+    }
+  }
+  for (const [number, labels] of [...byNumber].sort((left, right) => left[0] - right[0])) {
+    if (labels.length > 1) {
+      errors.push(err("duplicate-book-number", `Books ${labels.join(", ")} share book-number ${number}; book-number is publication order and must be unique`));
+    }
+  }
+}
+function compareBooks(left, right, compareTitles) {
+  return (left.bookNumber ?? Infinity) - (right.bookNumber ?? Infinity) || compareTitles(left.title, right.title) || (left.key < right.key ? -1 : left.key > right.key ? 1 : 0);
+}
+function seriesPack(books) {
+  const languages = new Set(books.map((book) => (book.project.pack ?? languagePack()).locale.split("-")[0]));
+  return languages.size === 1 ? languagePack([...languages][0]) : languagePack();
+}
+function checkSharedCanon({ order, later }, errors, warnings) {
+  const reachable = new Map(order.map((book) => [book.key, collectLater(book.key, later, new Set)]));
+  for (const book of order) {
+    const earlierBooks = order.filter((candidate) => reachable.get(candidate.key).has(book.key));
+    checkCanonNames(book, earlierBooks, warnings);
+    checkCanonDeaths(book, earlierBooks, errors);
+    checkDestroyedArtifacts(book, earlierBooks, errors, warnings);
+    checkKnownFacts(book, earlierBooks, errors);
+  }
+}
+function collectLater(root, later, seen) {
+  for (const next of later.get(root)) {
+    if (!seen.has(next)) {
+      seen.add(next);
+      collectLater(next, later, seen);
+    }
+  }
+  return seen;
+}
+function checkCanonNames(book, earlierBooks, warnings) {
+  for (const [key, , field] of SHARED_CANON) {
+    const canon = new Map;
+    for (const earlier of earlierBooks) {
+      for (const entity of earlier.project[key]) {
+        canon.set(entity.id, { book: earlier, entity });
+      }
+    }
+    for (const entity of book.project[key]) {
+      const match = canon.get(entity.id);
+      if (match && canonText(entity[field]) !== canonText(match.entity[field])) {
+        warnings.push(warn("canon-name-mismatch", `${bookFile(book, entity.file)} ${field} "${entity[field]}" differs from "${match.entity[field]}" in ${bookFile(match.book, match.entity.file)}`, bookFile(book, entity.file)));
+      }
+      const said = pronunciationText(entity.pronunciation);
+      const saidBefore = pronunciationText(match?.entity.pronunciation);
+      if (said !== "" && saidBefore !== "" && said !== saidBefore) {
+        warnings.push(warn("canon-pronunciation-mismatch", `${bookFile(book, entity.file)} pronunciation "${said}" differs from "${saidBefore}" in ${bookFile(match.book, match.entity.file)}`, bookFile(book, entity.file)));
+      }
+    }
+  }
+}
+function pronunciationText(value) {
+  return typeof value === "string" ? value.trim().normalize("NFC") : "";
+}
+function canonText(value) {
+  return typeof value === "string" ? value.normalize("NFC") : value;
+}
+function checkCanonDeaths(book, earlierBooks, errors) {
+  const deaths = deathsBefore(earlierBooks);
+  const { chronology, lifelines } = bookLifelines(book);
+  const deadAt = (id, chapterId) => deaths.has(id) && !(lifelines.has(id) && revivedBy(lifelines.get(id), chapterId, chronology));
+  for (const character of book.project.characters) {
+    const death = deaths.get(character.id);
+    if (!death) {
+      continue;
+    }
+    if (character.status !== "deceased") {
+      errors.push(err("canon-death-status", `${bookFile(book, character.file)} has status ${character.status || "unset"}, but ${character.id} is deceased in earlier book ${death.title}; set status: deceased`, bookFile(book, character.file)));
+    }
+  }
+  for (const record of book.project.chapters.concat(book.project.scenes)) {
+    const chapterId = record.chapter ?? record.id;
+    for (const [id, death] of deaths) {
+      if ((record.characters.includes(id) || record.pov === id && !record.mentions.includes(id)) && deadAt(id, chapterId)) {
+        errors.push(err("canon-posthumous-appearance", `${bookFile(book, record.file)} lists ${id}, who died in earlier book ${death.title}; move appearances to mentions`, bookFile(book, record.file)));
+      }
+    }
+  }
+  for (const entry of knowledgeEntries(book)) {
+    const death = deaths.get(entry.character);
+    if (death && entry.learnedIn && deadAt(entry.character, entry.learnedIn)) {
+      errors.push(err("canon-posthumous-learning", `${bookFile(book, entry.file)} knowledge-state[${entry.index}] has ${entry.character} learn something in ${entry.learnedIn}, but ${entry.character} died in earlier book ${death.title}; drop learned-in or the entry`, bookFile(book, entry.file)));
+    }
+  }
+}
+function deathsBefore(earlierBooks) {
+  const deaths = new Map;
+  for (const earlier of earlierBooks) {
+    const { lifelines } = bookLifelines(earlier);
+    for (const character of earlier.project.characters) {
+      const lifeline = lifelines.get(character.id);
+      if (lifeline.deadAtEnd && (lifeline.events.length > 0 || !deaths.has(character.id))) {
+        deaths.set(character.id, earlier);
+      } else if (!lifeline.deadAtEnd && lifeline.events.some((event) => event.type === "revival")) {
+        deaths.delete(character.id);
+      }
+    }
+  }
+  return deaths;
+}
+var LIFELINES = new WeakMap;
+function bookLifelines(book) {
+  if (!LIFELINES.has(book.project)) {
+    const chronology = chapterChronology(book.project);
+    const lifelines = new Map(book.project.characters.map((character) => [character.id, characterLifeline(character, chronology)]));
+    LIFELINES.set(book.project, { chronology, lifelines });
+  }
+  return LIFELINES.get(book.project);
+}
+function checkDestroyedArtifacts(book, earlierBooks, errors, warnings) {
+  const destroyed = firstMatching(earlierBooks, "artifacts", (artifact) => artifact.status === "destroyed");
+  for (const artifact of book.project.artifacts) {
+    const earlier = destroyed.get(artifact.id);
+    if (earlier && artifact.status !== "destroyed") {
+      warnings.push(warn("canon-destroyed-status", `${bookFile(book, artifact.file)} has status ${artifact.status || "unset"}, but ${artifact.id} was destroyed in earlier book ${earlier.title}`, bookFile(book, artifact.file)));
+    }
+  }
+  for (const scene of book.project.scenes) {
+    for (const [id, earlier] of destroyed) {
+      if (scene.stateChanges.some((change) => change && typeof change === "object" && String(change.target ?? "") === id)) {
+        errors.push(err("canon-destroyed-artifact-used", `${bookFile(book, scene.file)} uses ${id}, which was destroyed in earlier book ${earlier.title}; account for its return or remove the state change`, bookFile(book, scene.file)));
+      }
+    }
+  }
+}
+function checkKnownFacts(book, earlierBooks, errors) {
+  const known = new Map;
+  for (const earlier of earlierBooks) {
+    for (const entry of knowledgeFacts(earlier)) {
+      if (!known.has(entry.key)) {
+        known.set(entry.key, { book: earlier, entry });
+      }
+    }
+  }
+  for (const entry of knowledgeFacts(book)) {
+    const prior = known.get(entry.key);
+    if (prior && entry.learnedIn) {
+      errors.push(err("canon-fact-relearned", `${bookFile(book, entry.file)} knowledge-state[${entry.index}] has ${entry.character} learn ${entry.fact} in ${entry.learnedIn}, but they already know it in earlier book ${prior.book.title} (${bookFile(prior.book, prior.entry.file)} knowledge-state[${prior.entry.index}])`, bookFile(book, entry.file)));
+    }
+  }
+}
+function knowledgeEntries(book) {
+  const continuity = book.project.continuity;
+  const entries = continuity && Array.isArray(continuity.data["knowledge-state"]) ? continuity.data["knowledge-state"] : [];
+  const file = path3.join(book.root, "continuity", "state.md");
+  return entries.flatMap((entry, index) => entry && typeof entry === "object" && typeof entry.character === "string" ? [{ index, file, character: entry.character, learnedIn: entry["learned-in"] ? String(entry["learned-in"]) : "" }] : []);
+}
+function knowledgeFacts(book) {
+  const continuity = book.project.continuity;
+  const entries = continuity && Array.isArray(continuity.data["knowledge-state"]) ? continuity.data["knowledge-state"] : [];
+  const file = path3.join(book.root, "continuity", "state.md");
+  const facts = [];
+  entries.forEach((entry, index) => {
+    const fact = entry && typeof entry === "object" ? String(entry.fact ?? "") : "";
+    if (fact !== "" && typeof entry.character === "string") {
+      facts.push({
+        index,
+        file,
+        character: entry.character,
+        fact,
+        key: `${entry.character}\x00${fact}`,
+        learnedIn: entry["learned-in"] ? String(entry["learned-in"]) : ""
+      });
+    }
+  });
+  return facts;
+}
+function firstMatching(books, key, predicate) {
+  const matches = new Map;
+  for (const book of books) {
+    for (const entity of book.project[key]) {
+      if (!matches.has(entity.id) && predicate(entity)) {
+        matches.set(entity.id, book);
+      }
+    }
+  }
+  return matches;
+}
+function sharedCanon(books) {
+  const shared = [];
+  for (const [key, label] of SHARED_CANON) {
+    const counts = new Map;
+    for (const book of books) {
+      for (const entity of book.project[key]) {
+        counts.set(entity.id, (counts.get(entity.id) ?? 0) + 1);
+      }
+    }
+    const ids = [...counts].filter(([, count]) => count > 1).map(([id]) => id).sort();
+    if (ids.length > 0) {
+      shared.push({ label, ids });
+    }
+  }
+  const factBooks = new Map;
+  for (const book of books) {
+    for (const entry of knowledgeFacts(book)) {
+      factBooks.set(entry.fact, (factBooks.get(entry.fact) ?? new Set).add(book.root));
+    }
+  }
+  const facts = [...factBooks].filter(([, roots]) => roots.size > 1).map(([fact]) => fact).sort();
+  if (facts.length > 0) {
+    shared.push({ label: "Facts", ids: facts });
+  }
+  return shared;
+}
+function bookFile(book, file) {
+  return path3.join(book.label, path3.relative(book.root, file));
+}
+
+// src/publishing.js
+var MAX_KEYWORDS = 7;
+var BISAC_PATTERN = /^[A-Z]{3}\d{6}$/;
+var SCALAR_FIELDS = ["author", "language", "isbn", "publisher", "publication-date", "description", "copyright", "cover-alt", "ai-disclosure", "chapter-label", "contents-label"];
+function isPlaceholder(value) {
+  return typeof value === "string" && /^\[TODO\b/i.test(value.trim());
+}
+var RTL_LANGUAGES = new Set(["ar", "arc", "ckb", "dv", "fa", "he", "iw", "ji", "ks", "ku", "ps", "sd", "syr", "ug", "ur", "yi"]);
+var RTL_SCRIPTS = new Set(["adlm", "arab", "hebr", "mand", "nkoo", "rohg", "samr", "syrc", "thaa"]);
+function textDirection(language) {
+  const [lookup, macrolanguage] = lookupTag(String(language ?? "").trim() || DEFAULT_LANGUAGE);
+  const [primary, ...subtags] = lookup.split("-");
+  const script = subtags.find((subtag) => /^[a-z]{4}$/.test(subtag));
+  if (script !== undefined) {
+    return RTL_SCRIPTS.has(script) ? "rtl" : "ltr";
+  }
+  return RTL_LANGUAGES.has(primary) || RTL_LANGUAGES.has(macrolanguage) ? "rtl" : "ltr";
+}
+function publishingMeta(data) {
+  const text = (field) => typeof data[field] === "string" && !isPlaceholder(data[field]) ? data[field].trim() : "";
+  const list = (field) => Array.isArray(data[field]) ? data[field].filter((item) => typeof item === "string" && item.trim() !== "" && !isPlaceholder(item)).map((item) => item.trim()) : [];
+  const authors = list("authors");
+  const author = text("author");
+  const pack = languagePack(projectLanguage(data));
+  return {
+    authors: authors.length > 0 ? authors : author === "" ? [] : [author],
+    language: text("language") || "en",
+    writingMode: text("writing-mode") || "horizontal",
+    chapterNumerals: chapterNumerals(data),
+    isbn: normalizeIsbn(typeof data.isbn === "number" ? String(data.isbn) : text("isbn")),
+    publisher: text("publisher"),
+    publicationDate: text("publication-date"),
+    description: text("description"),
+    keywords: list("keywords"),
+    subjects: list("subjects"),
+    copyright: text("copyright"),
+    coverAlt: text("cover-alt"),
+    aiDisclosure: text("ai-disclosure"),
+    labels: buildLabels(data, pack),
+    narrationRate: pack.narrationRate,
+    countUnit: pack.countUnit
+  };
+}
+function buildLabels(data, pack = languagePack(projectLanguage(data))) {
+  const labels = { ...languagePack("en").labels, ...pack.labels };
+  const set = (key, value) => {
+    if (typeof value !== "string" || isPlaceholder(value) || isBlankLabel(key, value)) {
+      return;
+    }
+    labels[key] = key !== "chapter" ? value : value.includes("{n}") ? value.trim() : `${value.trim()} {n}`;
+  };
+  set("chapter", data["chapter-label"]);
+  set("contents", typeof data["contents-label"] === "string" ? data["contents-label"].trim() : undefined);
+  for (const [key, value] of labelEntries(data.labels)) {
+    if (LABEL_KEYS.includes(key)) {
+      set(key, value);
+    }
+  }
+  return labels;
+}
+function labelEntries(value) {
+  return Array.isArray(value) ? value.filter(isEntry).flatMap((entry) => Object.entries(entry)) : [];
+}
+function isBlankLabel(key, value) {
+  return key !== "by" && value.trim() === "";
+}
+function isEntry(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function validatePublishing(data, errors, warnings) {
+  for (const field of SCALAR_FIELDS) {
+    if (data[field] !== undefined && typeof data[field] !== "string" && !(field === "isbn" && typeof data[field] === "number")) {
+      errors.push(err("field-not-text", `story.md frontmatter field ${field} must be text`, "story.md"));
+    }
+  }
+  for (const field of ["keywords", "subjects", "authors"]) {
+    if (data[field] !== undefined && (!Array.isArray(data[field]) || data[field].some((item) => typeof item !== "string"))) {
+      errors.push(err("field-not-list", `story.md frontmatter field ${field} must be a list of text`, "story.md"));
+    }
+  }
+  if (data.labels !== undefined) {
+    if (!Array.isArray(data.labels) || !data.labels.every(isEntry)) {
+      errors.push(err("field-not-list", "story.md frontmatter field labels must be a list of label: text entries, such as - chapter: Teil {n}", "story.md"));
+    } else {
+      for (const [key, value] of labelEntries(data.labels)) {
+        if (!LABEL_KEYS.includes(key)) {
+          warnings.push(warn("unknown-label", `story.md labels entry ${key} is not a build label; builds ignore it (see docs/manuscripts.md#build-labels)`, "story.md"));
+        } else if (typeof value !== "string") {
+          errors.push(err("field-not-text", `story.md labels entry ${key} must be text`, "story.md"));
+        } else if (isPlaceholder(value)) {
+          warnings.push(warn("todo-placeholder", `story.md labels entry ${key} is still a [TODO] placeholder; builds use the language's own text`, "story.md"));
+        } else if (isBlankLabel(key, value)) {
+          warnings.push(warn("blank-label", `story.md labels entry ${key} is blank; builds use the language's own text`, "story.md"));
+        }
+      }
+    }
+  }
+  if (typeof data.language === "string" && !isPlaceholder(data.language) && !isLanguageTag(data.language)) {
+    errors.push(err("invalid-language", `story.md language ${data.language} must be a BCP 47 tag such as en, en-GB, or fr`, "story.md"));
+  }
+  const isbn = typeof data.isbn === "number" ? String(data.isbn) : data.isbn;
+  if (typeof isbn === "string" && isbn.trim() !== "" && !isPlaceholder(isbn) && normalizeIsbn(isbn) === "") {
+    const hint = typeof data.isbn === "number" ? "; quote it so leading zeros survive" : "";
+    errors.push(err("invalid-isbn", `story.md isbn ${isbn} is not a valid ISBN-13 or ISBN-10 (check the digits and checksum${hint})`, "story.md"));
+  }
+  if (typeof data["publication-date"] === "string" && !isPlaceholder(data["publication-date"])) {
+    const dateError = storyDateError(data["publication-date"]);
+    if (dateError !== "") {
+      errors.push(err("invalid-date", `story.md publication-date ${dateError}`, "story.md"));
+    }
+  }
+  if (Array.isArray(data.subjects)) {
+    for (const subject of data.subjects) {
+      if (typeof subject === "string" && !isPlaceholder(subject) && !BISAC_PATTERN.test(subject.trim())) {
+        errors.push(err("invalid-subject", `story.md subject ${subject} must be a BISAC code such as FIC022000`, "story.md"));
+      }
+    }
+  }
+  if (Array.isArray(data.keywords) && data.keywords.length > MAX_KEYWORDS) {
+    warnings.push(warn("too-many-keywords", `story.md lists ${data.keywords.length} keywords; most retailers accept ${MAX_KEYWORDS}`, "story.md"));
+  }
+  for (const field of [...SCALAR_FIELDS, "authors", "keywords", "subjects"]) {
+    const values = Array.isArray(data[field]) ? data[field] : [data[field]];
+    if (values.some(isPlaceholder)) {
+      warnings.push(warn("todo-placeholder", `story.md ${field} is still a [TODO] placeholder; builds leave it out`, "story.md"));
+    }
+  }
+  if (data.author !== undefined && data.authors !== undefined) {
+    warnings.push(warn("author-and-authors", "story.md sets both author and authors; builds use authors", "story.md"));
+  }
+}
+function normalizeIsbn(value) {
+  const compact = String(value ?? "").replace(/[\s-]/g, "").toUpperCase();
+  if (/^97[89]\d{10}$/.test(compact)) {
+    const sum = [...compact.slice(0, 12)].reduce((total, digit, index) => total + Number(digit) * (index % 2 === 0 ? 1 : 3), 0);
+    return (10 - sum % 10) % 10 === Number(compact[12]) ? compact : "";
+  }
+  if (/^\d{9}[\dX]$/.test(compact)) {
+    const sum = [...compact].reduce((total, char, index) => total + (char === "X" ? 10 : Number(char)) * (10 - index), 0);
+    return sum % 11 === 0 ? compact : "";
+  }
+  return "";
+}
+function copyrightPage(meta) {
+  const lines = [meta.copyright, "", fillLabel(meta.labels, "all-rights-reserved")];
+  if (meta.publisher !== "") {
+    lines.push("", fillLabel(meta.labels, "published-by", { publisher: meta.publisher }));
+  }
+  if (meta.isbn !== "") {
+    lines.push("", `ISBN ${meta.isbn}`);
+  }
+  if (meta.aiDisclosure !== "") {
+    lines.push("", meta.aiDisclosure);
+  }
+  return lines.join(`
+`);
+}
+var DESCRIPTION_LIMIT = 4000;
+function metadataSheet(input) {
+  const { title, data, meta, words, characters, pages } = input;
+  const seriesName = seriesDisplayName(data);
+  const series = typeof seriesName === "string" ? `${seriesName}${isBookNumber(data["book-number"]) ? `, book ${data["book-number"]}` : ""}` : "";
+  const rows = [
+    ["Title", title],
+    ["Series", series],
+    ["Author(s)", meta.authors.join("; ")],
+    ["ISBN", meta.isbn],
+    ["Publisher", meta.publisher],
+    ["Publication date", meta.publicationDate],
+    ["Language", meta.language],
+    ["Genre", [data.genre, data["sub-genre"]].filter((value) => typeof value === "string" && value !== "").join(" / ")],
+    ["Form", typeof data.form === "string" ? data.form : ""],
+    characters === undefined ? ["Word count", String(words)] : ["Character count", String(characters)],
+    ["Estimated print pages", Object.entries(pages).map(([trim, count]) => `${count} at ${trim}`).join(", ")],
+    ["Description", meta.description === "" ? "" : `${meta.description.length} characters (limit ${DESCRIPTION_LIMIT})`],
+    ["Keywords", meta.keywords.length === 0 ? "" : `${meta.keywords.length} of ${MAX_KEYWORDS}: ${meta.keywords.join("; ")}`],
+    ["BISAC subjects", meta.subjects.join("; ")],
+    ["Copyright", meta.copyright],
+    ["Cover", typeof data.cover === "string" ? data.cover : ""],
+    ["Cover alt text", meta.coverAlt],
+    ["AI disclosure", meta.aiDisclosure]
+  ];
+  const checks = [
+    ["Author named (`author` or `authors`)", meta.authors.length > 0],
+    ["ISBN for this edition (`isbn`), or a retailer-assigned identifier", meta.isbn !== ""],
+    ["Publisher or imprint (`publisher`)", meta.publisher !== ""],
+    ["Publication date (`publication-date`)", meta.publicationDate !== ""],
+    [`Description under ${DESCRIPTION_LIMIT} characters (\`description\`)`, meta.description !== "" && meta.description.length <= DESCRIPTION_LIMIT],
+    [`Keywords, up to ${MAX_KEYWORDS} (\`keywords\`)`, meta.keywords.length > 0 && meta.keywords.length <= MAX_KEYWORDS],
+    ["BISAC subjects (`subjects`)", meta.subjects.length > 0],
+    ["Copyright line (`copyright`) or copyright matter page", meta.copyright !== "" || input.hasCopyrightPage],
+    ["Cover image (`cover`)", Boolean(input.coverReady)],
+    ["Cover alt text (`cover-alt`)", meta.coverAlt !== ""],
+    ["AI-use statement decided (`ai-disclosure`)", meta.aiDisclosure !== ""],
+    [`Permissions cleared for quoted matter (\`permission\`${(input.pendingPermissions ?? []).length > 0 ? `; pending: ${input.pendingPermissions.join(", ")}` : ""})`, (input.pendingPermissions ?? []).length === 0],
+    [`No \`[TODO\` markers in chapter prose${(input.todoChapters ?? []).length > 0 ? ` (found in: ${input.todoChapters.join(", ")})` : ""}`, (input.todoChapters ?? []).length === 0],
+    ["Story status is complete", data.status === "complete"]
+  ];
+  return [
+    `# ${title}: Retailer Metadata`,
+    "",
+    "Generated from story.md. Retailer limits change; check each retailer's current requirements before upload.",
+    "",
+    "| Field | Value |",
+    "| --- | --- |",
+    ...rows.map(([field, value]) => `| ${field} | ${value === "" ? "(missing)" : tableCell(value)} |`),
+    "",
+    "## Description",
+    "",
+    meta.description === "" ? "(missing)" : meta.description,
+    "",
+    "## Readiness",
+    "",
+    ...checks.map(([label, ok]) => `- [${ok ? "x" : " "}] ${label}`),
+    ""
+  ].join(`
+`);
+}
+function tableCell(value) {
+  return String(value).replace(/\|/g, "\\|").replace(/\n/g, " ");
+}
+
+// src/typesetting.js
+var WRITING_MODES = new Set(["horizontal", "vertical"]);
+var CASED_SCRIPTS = new Set(["Latn", "Cyrl", "Grek", "Armn", "Copt", "Glag", "Adlm", "Osge", "Dsrt"]);
+var VERTICAL_SCRIPTS = new Set(["Jpan", "Hani", "Hans", "Hant", "Hira", "Kana", "Bopo", "Kore", "Hang"]);
+var EAST_ASIAN_SCRIPTS = new Set(["Jpan", "Hani", "Hans", "Hant", "Hira", "Kana", "Bopo", "Kore", "Hang"]);
+var COMPLEX_SCRIPTS = new Set(["Arab", "Hebr", "Syrc", "Thaa", "Nkoo", "Deva", "Beng", "Guru", "Gujr", "Orya", "Taml", "Telu", "Knda", "Mlym", "Sinh", "Thai", "Laoo", "Khmr", "Mymr", "Tibt"]);
+var LIKELY_SCRIPTS = {
+  Cyrl: ["ru", "uk", "be", "bg", "mk", "sr", "kk", "ky", "mn", "tg", "tt", "ba", "cv", "os"],
+  Grek: ["el"],
+  Armn: ["hy"],
+  Geor: ["ka"],
+  Arab: ["fa", "ur", "ps", "sd", "ug", "ckb", "ks"],
+  Hebr: ["yi"],
+  Deva: ["mr", "ne", "sa", "kok", "mai", "bho"],
+  Beng: ["bn", "as"],
+  Guru: ["pa"],
+  Gujr: ["gu"],
+  Orya: ["or"],
+  Taml: ["ta"],
+  Telu: ["te"],
+  Knda: ["kn"],
+  Mlym: ["ml"],
+  Sinh: ["si"],
+  Laoo: ["lo"],
+  Khmr: ["km"],
+  Mymr: ["my"],
+  Tibt: ["bo", "dz"],
+  Ethi: ["am", "ti"],
+  Thaa: ["dv"],
+  Syrc: ["syr"],
+  Cher: ["chr"]
+};
+var SCRIPT_OF = new Map(Object.entries(LIKELY_SCRIPTS).flatMap(([script, codes]) => codes.map((code) => [code, script])));
+var LATIN_SERIF = `Georgia, "Iowan Old Style", "Palatino Linotype", serif`;
+var FONT_STACKS = {
+  Cyrl: `Georgia, "Palatino Linotype", "Times New Roman", "Noto Serif", "DejaVu Serif", serif`,
+  Jpan: `"Hiragino Mincho ProN", "Yu Mincho", YuMincho, "MS Mincho", "Noto Serif JP", "Noto Serif CJK JP", serif`,
+  Hans: `"Songti SC", STSong, SimSun, "Noto Serif SC", "Noto Serif CJK SC", serif`,
+  Hant: `"Songti TC", PMingLiU, MingLiU, "Noto Serif TC", "Noto Serif CJK TC", serif`,
+  Kore: `AppleMyungjo, Batang, "Nanum Myeongjo", "Noto Serif KR", "Noto Serif CJK KR", serif`,
+  Arab: `"Noto Naskh Arabic", "Geeza Pro", "Times New Roman", "Traditional Arabic", serif`,
+  Hebr: `"Noto Serif Hebrew", "Times New Roman", David, "Arial Hebrew", serif`,
+  Deva: `"Noto Serif Devanagari", "Kohinoor Devanagari", "Devanagari Sangam MN", Mangal, "Nirmala UI", serif`,
+  Thai: `"Noto Serif Thai", Thonburi, "Leelawadee UI", Tahoma, serif`,
+  Cher: `"Plantagenet Cherokee", Gadugi, "Noto Sans Cherokee", serif`
+};
+FONT_STACKS.Grek = FONT_STACKS.Cyrl;
+var DOCX_EAST_ASIA = { Jpan: "MS Mincho", Hans: "SimSun", Hant: "PMingLiU", Kore: "Batang" };
+var DOCX_COMPLEX = { Deva: "Mangal", Thai: "Tahoma" };
+function writtenTag(language) {
+  const { script, region, subtags } = parseTag(language);
+  const at = script === null ? 1 : 2;
+  return subtags.map((subtag, index) => {
+    if (index === 1 && script !== null) {
+      return script;
+    }
+    return index === at && region !== null ? subtag.toUpperCase() : subtag;
+  }).join("-");
+}
+function languageScript(language) {
+  const { primary, script } = parseTag(language);
+  if (script !== null) {
+    return script;
+  }
+  const chinese = chineseScript(language);
+  if (chinese !== null) {
+    return chinese;
+  }
+  const pack = languagePack(language);
+  const own = pack.code.split("-")[0] === primary ? pack.script : null;
+  return own ?? SCRIPT_OF.get(primary) ?? pack.script ?? "Latn";
+}
+function fontScript(script, language) {
+  if (script === "Hira" || script === "Kana") {
+    return "Jpan";
+  }
+  if (script === "Hang") {
+    return "Kore";
+  }
+  if (script === "Bopo") {
+    return "Hant";
+  }
+  if (script === "Hani") {
+    const { primary } = parseTag(language);
+    if (primary === "ja" || primary === "ko") {
+      return primary === "ja" ? "Jpan" : "Kore";
+    }
+    return hanScript(language);
+  }
+  return script;
+}
+function supportsVertical(language) {
+  return VERTICAL_SCRIPTS.has(languageScript(language));
+}
+var SETTINGS = new Map;
+function typesetting(language = "en", writingMode = "horizontal") {
+  const key = `${language}\x00${writingMode}`;
+  if (!SETTINGS.has(key)) {
+    const script = languageScript(language);
+    const explicit = parseTag(language).script !== null;
+    const fonts = fontScript(script, language);
+    const body = FONT_STACKS[fonts] ?? LATIN_SERIF;
+    SETTINGS.set(key, Object.freeze({
+      script,
+      cased: CASED_SCRIPTS.has(script) && (explicit || languagePack(language).cased),
+      rtl: textDirection(language) === "rtl",
+      vertical: writingMode === "vertical" && VERTICAL_SCRIPTS.has(script),
+      fonts: Object.freeze({ body, heads: body === LATIN_SERIF ? "Georgia, serif" : body, latin: body === LATIN_SERIF }),
+      docx: Object.freeze({
+        eastAsia: DOCX_EAST_ASIA[fonts] ?? null,
+        cs: DOCX_COMPLEX[fonts] ?? null,
+        eastAsian: EAST_ASIAN_SCRIPTS.has(script),
+        complex: COMPLEX_SCRIPTS.has(script)
+      })
+    }));
+  }
+  return SETTINGS.get(key);
+}
+function validateWritingMode(data, errors) {
+  if (data["writing-mode"] !== "vertical") {
+    return;
+  }
+  const language = projectLanguage(data);
+  if (languageScript(language) === "Mong") {
+    errors.push(err("unsupported-writing-mode", `story.md writing-mode vertical is not supported yet for ${language}: traditional Mongolian runs its columns left to right (vertical-lr), so builds ignore it`, "story.md"));
+  } else if (!supportsVertical(language)) {
+    errors.push(err("unsupported-writing-mode", `story.md writing-mode vertical needs a language set in vertical columns, such as ja, zh, zh-Hant, or ko; ${language} is set horizontally, so builds ignore it`, "story.md"));
+  }
+}
+
+// src/numerals.js
+var CHAPTER_NUMERALS = new Set(["western", "native"]);
+var DIGIT_ZEROS = {
+  arab: 1632,
+  arabext: 1776,
+  nkoo: 1984,
+  deva: 2406,
+  beng: 2534,
+  guru: 2662,
+  gujr: 2790,
+  orya: 2918,
+  tamldec: 3046,
+  telu: 3174,
+  knda: 3302,
+  mlym: 3430,
+  thai: 3664,
+  laoo: 3792,
+  tibt: 3872,
+  mymr: 4160,
+  khmr: 6112,
+  mong: 6160,
+  mtei: 44016
+};
+var SCRIPT_DIGITS = {
+  Arab: "arab",
+  Nkoo: "nkoo",
+  Deva: "deva",
+  Beng: "beng",
+  Guru: "guru",
+  Gujr: "gujr",
+  Orya: "orya",
+  Taml: "tamldec",
+  Telu: "telu",
+  Knda: "knda",
+  Mlym: "mlym",
+  Thai: "thai",
+  Laoo: "laoo",
+  Tibt: "tibt",
+  Mymr: "mymr",
+  Khmr: "khmr",
+  Mong: "mong",
+  Mtei: "mtei"
+};
+var NUMERAL_SCRIPTS = { nqo: "Nkoo", mni: "Beng", prs: "Arab", "az-ir": "Arab", "uz-af": "Arab" };
+var EXTENDED_ARABIC = new Set(["fa", "prs", "ur", "ps", "ks", "pa", "az", "uz"]);
+var HAN_DIGITS = "〇一二三四五六七八九";
+var HAN_UNITS = ["", "十", "百", "千"];
+var HAN_GROUPS = { jpan: ["", "万", "億", "兆"], hans: ["", "万", "亿", "万亿"], hant: ["", "萬", "億", "兆"] };
+function nativeNumerals(language) {
+  const { primary, script: subtag, region } = parseTag(language);
+  const script = subtag ?? NUMERAL_SCRIPTS[`${primary}-${region}`] ?? NUMERAL_SCRIPTS[primary] ?? languageScript(language);
+  if (script === "Jpan" || script === "Hira" || script === "Kana" || script === "Hani" && primary === "ja") {
+    return "jpan";
+  }
+  if (script === "Hans" || script === "Hant") {
+    return script.toLowerCase();
+  }
+  if (script === "Hani" && primary !== "ko" || script === "Bopo") {
+    return hanScript(language).toLowerCase();
+  }
+  if (script === "Arab" && EXTENDED_ARABIC.has(primary)) {
+    return "arabext";
+  }
+  return SCRIPT_DIGITS[script] ?? null;
+}
+function chapterNumerals(data) {
+  return data?.["chapter-numerals"] === "native" ? nativeNumerals(projectLanguage(data)) ?? "latn" : "latn";
+}
+function formatNumeral(value, system = "latn") {
+  const text = String(value);
+  if (DIGIT_ZEROS[system] !== undefined && /^\d+$/.test(text)) {
+    return text.replace(/\d/g, (digit) => String.fromCodePoint(DIGIT_ZEROS[system] + Number(digit)));
+  }
+  if (HAN_GROUPS[system] !== undefined && Number.isSafeInteger(value) && value >= 0) {
+    return hanNumeral(value, system);
+  }
+  return text;
+}
+function hanNumeral(value, system) {
+  const chinese = system !== "jpan";
+  if (value === 0) {
+    return chinese ? "零" : HAN_DIGITS[0];
+  }
+  const groups = [];
+  for (let rest = value;rest > 0; rest = Math.floor(rest / 1e4)) {
+    groups.push(rest % 1e4);
+  }
+  let text = "";
+  let gap = false;
+  for (let index = groups.length - 1;index >= 0; index -= 1) {
+    const group = groups[index];
+    if (group === 0) {
+      gap = text !== "";
+      continue;
+    }
+    if (chinese && text !== "" && (gap || group < 1000)) {
+      text += "零";
+    }
+    const unit = system === "hans" && index === 3 && groups[2] !== 0 ? "万" : HAN_GROUPS[system][index];
+    text += hanGroup(group, chinese, text === "") + unit;
+    gap = false;
+  }
+  return text;
+}
+function hanGroup(group, chinese, leading) {
+  const digits = String(group).padStart(4, "0").split("").map(Number);
+  let text = "";
+  let zero = false;
+  digits.forEach((digit, position) => {
+    const unit = HAN_UNITS[3 - position];
+    if (digit === 0) {
+      zero = text !== "";
+      return;
+    }
+    if (chinese && zero) {
+      text += "零";
+    }
+    zero = false;
+    const one = digit === 1 && unit !== "" && (!chinese || unit === "十" && leading && text === "");
+    text += `${one ? "" : HAN_DIGITS[digit]}${unit}`;
+  });
+  return text;
+}
+function validateChapterNumerals(data, errors) {
+  if (data["chapter-numerals"] !== "native") {
+    return;
+  }
+  const language = projectLanguage(data);
+  if (nativeNumerals(language) === null) {
+    errors.push(err("unsupported-chapter-numerals", `story.md chapter-numerals native needs a language with its own numerals, such as ja, zh, ar, fa, hi, or th; ${language} prints 0-9, so builds ignore it`, "story.md"));
+  }
+}
+
+// src/words.js
+var CJK = "\\p{Script=Han}\\p{Script=Hiragana}\\p{Script=Katakana}\\u30FC";
+var SOUTHEAST_ASIAN = "\\p{Script=Thai}\\p{Script=Lao}\\p{Script=Khmer}\\p{Script=Myanmar}";
+var JOINER = "\\u00AD\\u200C\\u200D";
+var UNSPACED_LETTERS = `${CJK}${SOUTHEAST_ASIAN}`;
+var UNSPACED = new RegExp(`[${CJK}]|[${SOUTHEAST_ASIAN}](?:[${SOUTHEAST_ASIAN}]|[${JOINER}]+(?=[${SOUTHEAST_ASIAN}]))*`, "gu");
+var CJK_CHARACTER = new RegExp(`^[${CJK}]$`, "u");
+var WINDOW = 1e4;
+var RESTART_WORDS = 4;
+var segmenter;
+function segmentRun(run, window = WINDOW) {
+  segmenter ??= new Intl.Segmenter("en", { granularity: "word" });
+  const words = [];
+  let offset = 0;
+  while (offset < run.length) {
+    const end = offset + window;
+    const found = [];
+    for (const { segment, index, isWordLike } of segmenter.segment(run.slice(offset, end))) {
+      if (isWordLike) {
+        found.push([segment, offset + index]);
+      }
+    }
+    const restart = end < run.length && found.length > RESTART_WORDS ? found[found.length - RESTART_WORDS][1] : end;
+    for (const word of found) {
+      if (word[1] < restart) {
+        words.push(word);
+      }
+    }
+    offset = restart;
+  }
+  return words;
+}
+function wordSpans(text, pattern) {
+  const source = String(text);
+  const spans = [];
+  let last = 0;
+  const between = (end) => {
+    if (end > last) {
+      for (const match of source.slice(last, end).matchAll(pattern)) {
+        spans.push({ word: match[0], start: last + match.index, end: last + match.index + match[0].length });
+      }
+    }
+  };
+  for (const match of source.matchAll(UNSPACED)) {
+    between(match.index);
+    if (CJK_CHARACTER.test(match[0])) {
+      spans.push({ word: match[0], start: match.index, end: match.index + match[0].length });
+    } else {
+      for (const [word, offset] of segmentRun(match[0])) {
+        spans.push({ word, start: match.index + offset, end: match.index + offset + word.length });
+      }
+    }
+    last = match.index + match[0].length;
+  }
+  between(source.length);
+  return spans;
+}
+function unspacedBoundaries(text) {
+  const boundaries = new Set;
+  for (const { start, end } of wordSpans(text, /(?!)/gu)) {
+    boundaries.add(start);
+    boundaries.add(end);
+  }
+  return boundaries;
+}
+var SPACED_LETTER = `(?![${UNSPACED_LETTERS}])[\\p{L}\\p{M}\\p{N}]`;
+var UNSPACED_LETTER = new RegExp(`[${UNSPACED_LETTERS}]`, "u");
+var UNSPACED_START = new RegExp(`^[${UNSPACED_LETTERS}]`, "u");
+var UNSPACED_END = new RegExp(`[${UNSPACED_LETTERS}]$`, "u");
+var JOINER_CHARACTER = new RegExp(`[${JOINER}]`, "u");
+function wholeWords(body, phrase) {
+  const before = UNSPACED_START.test(phrase) ? "" : `(?<!${SPACED_LETTER})`;
+  const after = UNSPACED_END.test(phrase) ? "(?!\\p{M})" : `(?!${SPACED_LETTER})`;
+  return `${before}${body}${after}`;
+}
+function wordMatcher(text, cased = null) {
+  const source = String(text);
+  const searched = cased?.text ?? source;
+  let boundaries = null;
+  return (pattern, { first = false } = {}) => {
+    const spans = [];
+    pattern.lastIndex = 0;
+    let match;
+    while ((match = pattern.exec(searched)) !== null) {
+      const end = match.index + match[0].length;
+      const span = cased === null ? [match.index, end] : cased.original(match.index, end);
+      const edges = span.map((offset) => joinedEdge(source, offset)).filter(Boolean);
+      if (edges.length > 0) {
+        boundaries ??= unspacedBoundaries(source);
+      }
+      if (edges.every(([from, to]) => boundaries.has(from) || boundaries.has(to))) {
+        spans.push(span);
+        if (first) {
+          break;
+        }
+        pattern.lastIndex = end > match.index ? end : nextCharacter(searched, match.index);
+      } else {
+        pattern.lastIndex = nextCharacter(searched, match.index);
+      }
+    }
+    pattern.lastIndex = 0;
+    return spans;
+  };
+}
+function joinedEdge(text, offset) {
+  let from = offset;
+  let to = offset;
+  while (from > 0 && JOINER_CHARACTER.test(text[from - 1])) {
+    from -= 1;
+  }
+  while (to < text.length && JOINER_CHARACTER.test(text[to])) {
+    to += 1;
+  }
+  return UNSPACED_LETTER.test(text[from - 1] ?? "") && UNSPACED_LETTER.test(text[to] ?? "") ? [from, to] : null;
+}
+function nextCharacter(text, index) {
+  return index + (text.codePointAt(index) > 65535 ? 2 : 1);
+}
+
 // src/markdown.js
 var LATIN_FOLDS = {
   "Æ": "AE",
@@ -1056,22 +6558,111 @@ var LATIN_FOLD_PATTERN = new RegExp(`[${Object.keys(LATIN_FOLDS).join("")}]`, "g
 function foldLatin(value) {
   return String(value).replace(LATIN_FOLD_PATTERN, (letter) => LATIN_FOLDS[letter]).normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
 }
-function kebabCase(value) {
-  return foldLatin(value).replace(/['\u2018\u2019]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+var CYRILLIC = {
+  а: "a",
+  б: "b",
+  в: "v",
+  г: "g",
+  д: "d",
+  е: "e",
+  ё: "e",
+  ж: "zh",
+  з: "z",
+  и: "i",
+  й: "y",
+  к: "k",
+  л: "l",
+  м: "m",
+  н: "n",
+  о: "o",
+  п: "p",
+  р: "r",
+  с: "s",
+  т: "t",
+  у: "u",
+  ф: "f",
+  х: "kh",
+  ц: "ts",
+  ч: "ch",
+  ш: "sh",
+  щ: "shch",
+  ъ: "",
+  ы: "y",
+  ь: "",
+  э: "e",
+  ю: "yu",
+  я: "ya",
+  є: "ye",
+  і: "i",
+  ї: "yi",
+  ґ: "g",
+  ў: "u",
+  ђ: "dj",
+  ј: "j",
+  љ: "lj",
+  њ: "nj",
+  ћ: "c",
+  џ: "dz",
+  ѓ: "gj",
+  ќ: "kj",
+  ѕ: "dz",
+  ѐ: "e",
+  ѝ: "i"
+};
+var GREEK_DIGRAPHS = { αυ: "av", ευ: "ev", ηυ: "iv", ου: "ou", γγ: "ng", γξ: "nx", γχ: "nch" };
+var GREEK = {
+  α: "a",
+  β: "v",
+  γ: "g",
+  δ: "d",
+  ε: "e",
+  ζ: "z",
+  η: "i",
+  θ: "th",
+  ι: "i",
+  κ: "k",
+  λ: "l",
+  μ: "m",
+  ν: "n",
+  ξ: "x",
+  ο: "o",
+  π: "p",
+  ρ: "r",
+  σ: "s",
+  ς: "s",
+  τ: "t",
+  υ: "y",
+  φ: "f",
+  χ: "ch",
+  ψ: "ps",
+  ω: "o",
+  ϊ: "i",
+  ϋ: "y"
+};
+var TRANSLITERATIONS = { ...GREEK_DIGRAPHS, ...CYRILLIC, ...GREEK };
+var TRANSLITERATION_PATTERN = new RegExp(`${Object.keys(GREEK_DIGRAPHS).join("|")}|[${Object.keys(CYRILLIC).join("")}${Object.keys(GREEK).join("")}]`, "g");
+var UNTRANSLITERATED_LETTER = /[\p{Script=Cyrillic}\p{Script=Greek}]/u;
+function transliterate(value) {
+  const spelled = String(value).toLowerCase().normalize("NFD").replace(/([\u0370-\u03ff])([\u0300-\u036f]+)/g, (_, letter, marks) => letter + (marks.includes("̈") ? "̈" : "")).normalize("NFC").replace(/\u02bc/g, "").replace(TRANSLITERATION_PATTERN, (letters) => TRANSLITERATIONS[letters]);
+  return UNTRANSLITERATED_LETTER.test(spelled) ? null : spelled;
+}
+function kebabCase(value, { transliterate: scripts = true } = {}) {
+  return foldLatin((scripts ? transliterate(value) : null) ?? value).replace(/['‘’]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 function titleCaseSlug(slug) {
   return String(slug).split("-").filter(Boolean).map((part) => `${part.slice(0, 1).toUpperCase()}${part.slice(1)}`).join(" ");
 }
-function chapterHeading(number, title, word = "Chapter") {
+function chapterHeading(number, title, labels = undefined, numerals = "latn") {
   const text = String(title ?? "").trim();
-  const name = String(word ?? "").trim() || "Chapter";
-  const label = name.includes("{n}") ? name.replace(/\{n\}/g, String(number)) : `${name} ${number}`;
-  return text === "" || text.toLowerCase() === label.toLowerCase() ? label : `${label}: ${text}`;
+  const chapter = (n) => fillLabel(labels, "chapter", { n }).trim() || fillLabel(undefined, "chapter", { n });
+  const label = chapter(formatNumeral(number, numerals));
+  const fold = (value) => value.normalize("NFKC").toLowerCase();
+  const repeats = [label, chapter(String(number))].some((form) => fold(text) === fold(form));
+  return text === "" || repeats ? label : fillLabel(labels, "chapter-heading", { chapter: label, title: text });
 }
 var WORD_CHARS = "\\p{L}\\p{M}\\p{N}\\u200C\\u200D\\u00AD";
 var URL_PLACEHOLDER = "";
 var WORD_PATTERN = new RegExp(`${URL_PLACEHOLDER}|[\\p{L}\\p{N}][${WORD_CHARS}]*(?:(?:['’‐‑-]|(?<=\\p{N})[.,:](?=\\p{N}))[\\p{L}\\p{N}][${WORD_CHARS}]*)*`, "gu");
-var CJK_CHARACTER = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\u30FC]/gu;
 var URL_OR_EMAIL = /(?<![a-z0-9+.-])(?:[a-z][a-z0-9+.-]*:\/\/|www\.)[^\s<>()[\]`]*[^\s<>()[\]`.,;:!?'"\u2019\u201d*_~]|(?<![\p{L}\p{N}._%+-])[\p{L}\p{N}][\p{L}\p{N}._%+-]*@[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+/giu;
 function plainLinks(text) {
   return String(text).replace(/!\[[^\]]{0,1000}\]\([^)]{0,1000}\)/g, "").replace(/\[([^\]]{0,1000})\]\([^)]{0,1000}\)/g, "$1");
@@ -1090,9 +6681,9 @@ function splitWords(markdown) {
   const normalized = plainLinks(withoutFenceMarkers(String(markdown).replace(/\uE000/g, " "))).replace(URL_OR_EMAIL, (match) => {
     urls.push(match);
     return ` ${URL_PLACEHOLDER} `;
-  }).replace(/\\([!-/:-@[-`{-~])/g, "$1").replace(/[#>*_~|`]/g, " ").replace(/(?<!\p{N}):|:(?!\p{N})/gu, " ").replace(CJK_CHARACTER, " $& ");
+  }).replace(/\\([!-/:-@[-`{-~])/g, "$1").replace(/[#>*_~|`]/g, " ").replace(/(?<!\p{N}):|:(?!\p{N})/gu, " ");
   let next = 0;
-  return (normalized.match(WORD_PATTERN) ?? []).map((word) => word === URL_PLACEHOLDER ? urls[next++] : word);
+  return wordSpans(normalized, WORD_PATTERN).map(({ word }) => word === URL_PLACEHOLDER ? urls[next++] : word);
 }
 function isSceneBreak(paragraph) {
   const text = String(paragraph).replace(/\\([*_~-])/g, "$1").trim();
@@ -1100,6 +6691,18 @@ function isSceneBreak(paragraph) {
 }
 function wordCount(markdown) {
   return splitWords(markdown).length;
+}
+var graphemes;
+function characterCount(markdown) {
+  const text = plainLinks(withoutFenceMarkers(String(markdown).replace(//g, " "))).split(`
+`).filter((line) => !isSceneBreak(line)).join(`
+`).replace(/\\([!-/:-@[-`{-~])/g, "$1").replace(/[#>*_~|`\s]+/gu, "");
+  graphemes ??= new Intl.Segmenter("en", { granularity: "grapheme" });
+  let count = 0;
+  for (const _ of graphemes.segment(text)) {
+    count += 1;
+  }
+  return count;
 }
 function chapterProse(markdownBody, commentReplacement = "") {
   return scanComments(proseSection(markdownBody), commentReplacement).text;
@@ -1328,62 +6931,15 @@ function leadingHeadingLength(masked) {
 
 // src/names.js
 var MAJOR_ROLES = new Set(["protagonist", "antagonist", "deuteragonist", "narrator"]);
-var TITLE_WORDS = new Set([
-  "the",
-  "a",
-  "an",
-  "lord",
-  "lady",
-  "sir",
-  "dame",
-  "dr",
-  "doctor",
-  "mr",
-  "mrs",
-  "ms",
-  "miss",
-  "master",
-  "mistress",
-  "captain",
-  "capt",
-  "king",
-  "queen",
-  "prince",
-  "princess",
-  "duke",
-  "duchess",
-  "count",
-  "countess",
-  "baron",
-  "baroness",
-  "father",
-  "mother",
-  "sister",
-  "brother",
-  "uncle",
-  "aunt",
-  "councillor",
-  "councilor",
-  "general",
-  "colonel",
-  "major",
-  "sergeant",
-  "lieutenant",
-  "commander",
-  "professor",
-  "prof",
-  "saint",
-  "st",
-  "old",
-  "young",
-  "little"
-]);
-function givenName(name) {
+var NO_WORDS = new Set;
+function givenName(name, pack = languagePack()) {
+  const titles = checkSet(pack, "titleWords") ?? NO_WORDS;
   const words = splitWords(String(name));
-  const index = words.findIndex((word) => !TITLE_WORDS.has(word.toLowerCase().replace(/[.’']/g, "")));
+  const index = words.findIndex((word) => !titles.has(lowerCase(word, pack).replace(/[.’']/g, "")));
   return index === -1 ? "" : words[index];
 }
 function existingNames(project) {
+  const pack = project.pack ?? languagePack();
   const names = [];
   const add = (kind, id, name, role = "", given = false, full = name) => {
     if (typeof name === "string" && name.trim() !== "") {
@@ -1394,7 +6950,7 @@ function existingNames(project) {
     if (character.status === "cut") {
       continue;
     }
-    const first = givenName(character.name);
+    const first = givenName(character.name, pack);
     const single = first !== "" && first === String(character.name).trim();
     add("character", character.id, String(character.name), character.role, single);
     if (first !== "" && !single) {
@@ -1417,7 +6973,7 @@ function existingNames(project) {
   }
   return names;
 }
-function checkNames(candidates, names) {
+function checkNames(candidates, names, pack = languagePack()) {
   const errors = [];
   const warnings = [];
   const results = [];
@@ -1427,7 +6983,7 @@ function checkNames(candidates, names) {
       continue;
     }
     const key = normalize(candidate);
-    const first = normalize(givenName(candidate));
+    const first = normalize(givenName(candidate, pack));
     const clashes = [];
     const lookalikes = [];
     const initials = [];
@@ -1492,35 +7048,139 @@ function formatNames(report) {
 `;
 }
 
+// src/punctuation.js
+var SENTENCE_OPENERS = "¿¡";
+var QUESTION_MARKS = "?？؟";
+var EXCLAMATION_MARKS = "!！";
+var QUOTATION_DASH = "―";
+var FULL_WIDTH = /^[　-〿＀-￯]$/u;
+var APOSTROPHES = new Set(["'", "’"]);
+var CACHE = new WeakMap;
+function punctuation(pack = languagePack()) {
+  if (!CACHE.has(pack)) {
+    CACHE.set(pack, buildPunctuation(pack));
+  }
+  return CACHE.get(pack);
+}
+function buildPunctuation(pack) {
+  const pairs = (pack.quotes ?? []).map(([open, close]) => ({
+    open,
+    close,
+    kind: APOSTROPHES.has(close) ? "single" : open === close ? "straight" : "explicit"
+  }));
+  const byOpener = new Map;
+  for (const pair of pairs) {
+    byOpener.set(pair.open, [...byOpener.get(pair.open) ?? [], pair]);
+  }
+  const ends = pack.sentenceEnd ?? [];
+  return {
+    pairs,
+    byOpener,
+    openers: unique(pairs.map((pair) => pair.open)),
+    closers: unique(pairs.map((pair) => pair.close)),
+    spacedEnds: unique(ends.filter((mark) => !FULL_WIDTH.test(mark))),
+    fullWidthEnds: unique(ends.filter((mark) => FULL_WIDTH.test(mark))),
+    dashes: pack.dialogueDash ? unique([...[].concat(pack.dialogueDash), QUOTATION_DASH]) : ""
+  };
+}
+function unique(marks) {
+  return [...new Set(marks.join(""))].join("");
+}
+function charClass(marks) {
+  return marks.replace(/[\\\]\[^-]/g, "\\$&");
+}
+function anyOf(marks) {
+  return marks === "" ? "(?!)" : `[${charClass(marks)}]`;
+}
+
 // src/sentences.js
-var TITLE_ABBREVIATIONS = /(?:^|[\s(“"‘'])(?:Dr|Mr|Mrs|Ms|St|Mt|Jr|Sr|Prof|Capt|Gen|Col|Lt|Sgt|Rev|Fr|e\.g|i\.e|(?:[A-Za-z]\.)*[A-Za-z])$/;
-var CONTEXT_ABBREVIATIONS = /(?:^|[\s(“"‘'])(?:No|vs|etc|a\.m|p\.m)$/;
-var CALENDAR_WORD = /^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December)(?![\p{L}\p{N}])/u;
-var SENTENCE_END = /[.!?…]+["”’')\]*_]*(?= |$)|[。！？]+[」』）”’"')\]*_]*/g;
+var INITIALS = "(?:[A-Za-z]\\.)*[A-Za-z]";
+var NEVER = "(?!)";
 var CONTEXT_WINDOW = 64;
-var SENTENCE_START = /^["'“‘(\[*_]*[\p{Lu}\p{N}]/u;
-function splitSentences(text, { capitalStart = true } = {}) {
+var CLOSING_MARKS = ")\\]*_";
+var OPENING_MARKS = "(\\[*_";
+var FULL_WIDTH_CLOSERS = "」』）";
+var SPACED_CLOSERS = "»›";
+var SPACED_OPENERS = "«‹";
+var RULES = new WeakMap;
+function sentenceRules(pack) {
+  if (!RULES.has(pack)) {
+    RULES.set(pack, buildRules(pack));
+  }
+  return RULES.get(pack);
+}
+function buildRules(pack) {
+  const words = (name) => (checkList(pack, name) ?? []).map((word) => escapeRegExp(word).replace(/'/g, "['’]"));
+  const either = (list) => list.length === 0 ? NEVER : list.join("|");
+  const marks = punctuation(pack);
+  const openers = charClass(marks.openers + SENTENCE_OPENERS);
+  const closers = charClass(marks.closers);
+  const spacedClosers = [...SPACED_CLOSERS].filter((mark) => marks.closers.includes(mark) && !marks.openers.includes(mark)).join("");
+  const spacedOpeners = [...SPACED_OPENERS].filter((mark) => marks.openers.includes(mark) && !marks.closers.includes(mark)).join("");
+  const opening = `(?:[${openers}${OPENING_MARKS}]|${anyOf(spacedOpeners)} )*`;
+  const ambiguous = [...marks.closers].filter((mark) => marks.openers.includes(mark)).join("");
+  const plainClosers = charClass([...marks.closers].filter((mark) => !ambiguous.includes(mark)).join(""));
+  const ends = [
+    marks.spacedEnds === "" ? null : `${anyOf(marks.spacedEnds)}+(?: ${anyOf(spacedClosers)})?[${closers}${CLOSING_MARKS}]*(?= |$)`,
+    marks.fullWidthEnds === "" ? null : `${anyOf(marks.fullWidthEnds)}+`
+  ].filter(Boolean);
+  const startLetter = pack.cased === false ? "\\p{L}\\p{N}" : "\\p{Lu}\\p{Lo}\\p{N}";
+  return {
+    title: new RegExp(`(?:^|[\\s${openers}(])(?:${[...words("titleAbbreviations"), INITIALS].join("|")})$`),
+    capitalInitial: pack.capitalInitials === true ? new RegExp(`(?:^|[\\s${openers}(])(?:\\p{Lu}\\.)*\\p{Lu}$`, "u") : null,
+    context: new RegExp(`(?:^|[\\s${openers}(])(?:${either([...words("contextAbbreviations"), ...pack.ordinalStop === true ? ["\\d+"] : []])})$`),
+    calendar: new RegExp(`^(?:${either(words("calendarWords"))})(?![\\p{L}\\p{N}])`, "u"),
+    end: new RegExp(ends.join("|") || NEVER, "g"),
+    fullWidth: new RegExp(`^${anyOf(marks.fullWidthEnds)}`),
+    fullWidthCloser: new RegExp(`[${plainClosers}${CLOSING_MARKS}${FULL_WIDTH_CLOSERS}]`),
+    ambiguous,
+    pairs: marks.pairs,
+    start: new RegExp(`^${opening}[${startLetter}]`, "u"),
+    finished: new RegExp(`${anyOf(marks.spacedEnds + marks.fullWidthEnds)}(?: ${anyOf(spacedClosers)})?[${closers})\\]${FULL_WIDTH_CLOSERS}]*$`),
+    firstWord: new RegExp(`^${opening}([\\p{L}\\p{N}'’]+)`, "u")
+  };
+}
+function closingQuotes(text, start, end, rules) {
+  let position = end;
+  while (position < text.length) {
+    const mark = text[position];
+    if (!rules.fullWidthCloser.test(mark) && !(rules.ambiguous.includes(mark) && quoteOpen(text.slice(start, position), mark, rules))) {
+      break;
+    }
+    position += 1;
+  }
+  return position;
+}
+function quoteOpen(sentence, mark, rules) {
+  return rules.pairs.some(({ open, close }) => close === mark && (open === close ? sentence.split(mark).length % 2 === 0 : sentence.lastIndexOf(open) > sentence.lastIndexOf(close)));
+}
+function endsSentence(text, pack = languagePack()) {
+  return sentenceRules(pack).finished.test(String(text).trim());
+}
+function splitSentences(text, { capitalStart = true, pack = languagePack() } = {}) {
   const normalized = String(text).replace(/\s+/g, " ").trim();
   if (normalized === "") {
     return [];
   }
+  const rules = sentenceRules(pack);
   const sentences = [];
   let start = 0;
-  for (const match of normalized.matchAll(SENTENCE_END)) {
-    const end = match.index + match[0].length;
-    if (/^[。！？]/.test(match[0])) {
+  for (const match of normalized.matchAll(rules.end)) {
+    if (rules.fullWidth.test(match[0])) {
+      const end = closingQuotes(normalized, start, match.index + match[0].length, rules);
       sentences.push(normalized.slice(start, end).trim());
       start = end;
       continue;
     }
+    const end = match.index + match[0].length;
     const next = normalized.slice(end + 1, end + 1 + CONTEXT_WINDOW);
-    if (capitalStart && next !== "" && !SENTENCE_START.test(next)) {
+    if (capitalStart && next !== "" && !rules.start.test(next)) {
       continue;
     }
     const from = Math.max(start, match.index - CONTEXT_WINDOW);
     const before = `${from > start ? "x" : ""}${normalized.slice(from, match.index)}`;
-    const abbreviation = match[0] === "." && (CONTEXT_ABBREVIATIONS.test(before) ? /^[\p{Ll}\p{N}]/u.test(next) || CALENDAR_WORD.test(next) : TITLE_ABBREVIATIONS.test(before));
-    const stammer = /^(?:…|\.\.\.)/.test(match[0]) && isStammer(before, next);
+    const abbreviation = match[0] === "." && (rules.context.test(before) ? /^[\p{Ll}\p{N}]/u.test(next) || rules.calendar.test(next) : rules.title.test(before) || rules.capitalInitial !== null && rules.capitalInitial.test(before));
+    const stammer = /^(?:…|\.\.\.)/.test(match[0]) && isStammer(before, next, rules);
     if (abbreviation || stammer) {
       continue;
     }
@@ -1529,13 +7189,13 @@ function splitSentences(text, { capitalStart = true } = {}) {
   }
   const tail = normalized.slice(start).trim();
   if (tail !== "") {
-    sentences.push(/[.!?…。！？]["”’')\]」』）]*$/.test(tail) ? tail : `${tail}.`);
+    sentences.push(rules.finished.test(tail) ? tail : `${tail}.`);
   }
   return sentences.filter((sentence) => sentence !== "");
 }
-function isStammer(before, next) {
+function isStammer(before, next, rules) {
   const last = /([\p{L}\p{N}'’]+)$/u.exec(before);
-  const first = /^["'“‘(\[*_]*([\p{L}\p{N}'’]+)/u.exec(next);
+  const first = rules.firstWord.exec(next);
   return Boolean(last && first) && last[1].toLowerCase() === first[1].toLowerCase();
 }
 
@@ -1563,105 +7223,74 @@ function roundedShares(values) {
 }
 
 // src/voices.js
-var SPEECH_VERBS = [
-  "said",
-  "says",
-  "asked",
-  "asks",
-  "replied",
-  "replies",
-  "answered",
-  "answers",
-  "whispered",
-  "whispers",
-  "shouted",
-  "shouts",
-  "called",
-  "calls",
-  "muttered",
-  "mutters",
-  "murmured",
-  "murmurs",
-  "cried",
-  "cries",
-  "yelled",
-  "yells",
-  "added",
-  "adds",
-  "told",
-  "tells",
-  "snapped",
-  "snaps",
-  "admitted",
-  "admits",
-  "insisted",
-  "insists",
-  "demanded",
-  "demands",
-  "continued",
-  "continues",
-  "began",
-  "begins",
-  "went on",
-  "goes on"
+var VOICE_CHECKS = [
+  { check: "speech-tags", label: "Speech-tag attribution", lists: ["speechVerbs", "speechPronouns"] },
+  { check: "contractions", label: "Contraction counts", lists: ["contractionSuffixes", "contractedIs"] },
+  { check: "signature-words", label: "Signature words", lists: ["voiceStopwords"] }
 ];
-var CONTRACTION_PATTERN = /[\p{L}](?:n['’]t|['’](?:re|ll|ve|m|d))\b|(?<![\p{L}\p{N}])(?:it|that|let|what|there|here|where|who|he|she|how|when|why)['’]s(?![\p{L}\p{N}])/giu;
-var STOPWORDS = new Set([
-  "that",
-  "this",
-  "with",
-  "have",
-  "what",
-  "from",
-  "they",
-  "there",
-  "their",
-  "them",
-  "then",
-  "than",
-  "were",
-  "would",
-  "could",
-  "should",
-  "your",
-  "yours",
-  "just",
-  "know",
-  "been",
-  "will",
-  "when",
-  "where",
-  "which",
-  "about",
-  "into",
-  "some",
-  "because",
-  "want",
-  "like",
-  "only",
-  "here",
-  "does",
-  "didn't",
-  "don't",
-  "it's",
-  "can't",
-  "won't",
-  "i'm",
-  "you're",
-  "we're",
-  "that's",
-  "there's",
-  "what's",
-  "going",
-  "come",
-  "back",
-  "over",
-  "tell",
-  "said",
-  "more",
-  "very",
-  "also"
-]);
+var NEVER2 = "(?!)";
+var RULES2 = new WeakMap;
+function voiceRules(pack) {
+  if (!RULES2.has(pack)) {
+    RULES2.set(pack, buildVoiceRules(pack));
+  }
+  return RULES2.get(pack);
+}
+function buildVoiceRules(pack) {
+  const verbs = checkList(pack, "speechVerbs");
+  const pronouns = checkList(pack, "speechPronouns");
+  const suffixes = checkList(pack, "contractionSuffixes");
+  const contractedIs = checkList(pack, "contractedIs");
+  const elisions = checkList(pack, "elisions") ?? [];
+  const apostrophe = (word) => escape(word).replace(/'/g, "['’]");
+  const marks = punctuation(pack);
+  const closers = `[${charClass(marks.closers)})]*$`;
+  const rules = {
+    marks,
+    opensWithQuote: new RegExp(`^${anyOf(marks.openers)}`),
+    dashOpen: marks.dashes === "" ? null : new RegExp(`^${anyOf(marks.dashes)}\\s*`),
+    dashClose: new RegExp(`\\s${anyOf(marks.dashes)}`),
+    dash: new RegExp(anyOf(marks.dashes)),
+    dashStartsLine: pack.dashStartsLine === true,
+    stop: new RegExp(anyOf(marks.spacedEnds + marks.fullWidthEnds)),
+    stopEnd: new RegExp(`${anyOf(marks.spacedEnds + marks.fullWidthEnds)}[${charClass(marks.closers)})]*$`),
+    tagVerb: null,
+    singleOpen: new Map(marks.pairs.filter((pair) => pair.kind === "single" && pair.open !== pair.close).map((pair) => [pair, new RegExp(`(?<![\\p{L}\\p{N}])${anyOf(pair.open)}`, "u")])),
+    question: new RegExp(`${anyOf(QUESTION_MARKS)}${closers}`),
+    exclamation: new RegExp(`${anyOf(EXCLAMATION_MARKS)}${closers}`),
+    verbs: null,
+    tagAfterQuote: null,
+    tagBeforeQuote: null,
+    dashTag: null,
+    dashIncise: null,
+    incise: null,
+    elision: new RegExp(`^(?:${elisions.map(listWord).join("|") || NEVER2})(?![\\p{L}\\p{N}])`, "iu"),
+    contraction: suffixes === null || contractedIs === null ? null : new RegExp(`[\\p{L}](?:${suffixes.map(apostrophe).join("|") || NEVER2})\\b|(?<![\\p{L}\\p{N}])(?:${contractedIs.map(listWord).join("|") || NEVER2})['’]s(?![\\p{L}\\p{N}])`, "giu"),
+    stopwords: checkSet(pack, "voiceStopwords")
+  };
+  if (verbs === null || pronouns === null) {
+    return rules;
+  }
+  const verbAlternation = verbs.map(listWord).join("|") || NEVER2;
+  const pronounAlternation = pronouns.map(listWord).join("|") || NEVER2;
+  const links = (checkList(pack, "inversionLinks") ?? []).map(listWord).join("|");
+  const inciseVerbs = [...new Set([...verbs, ...checkList(pack, "plainTags") ?? [], ...checkList(pack, "saidBookisms") ?? []])].map(listWord).join("|");
+  const incisePronouns = [...new Set([...pronouns, ...checkList(pack, "beatPronouns") ?? []])].map(listWord).join("|");
+  const inciseCore = `(?:(?:${inciseVerbs})(?:${links || NEVER2})(?:${incisePronouns})|(?:${inciseVerbs})\\s+\\p{Lu}[\\p{L}'’-]*(?:\\s+\\p{Lu}[\\p{L}'’-]*){0,2}|(?:${incisePronouns})\\s+(?:${inciseVerbs}))(?![\\p{L}\\p{N}])`;
+  const inciseDash = pack.inciseTags === true ? `|,\\s+(?=${inciseCore})|(?<=[?!…])\\s+(?=${inciseCore})` : "";
+  const inverted = links === "" ? "" : `|(?:${verbAlternation})(?:${links})(?:${pronounAlternation})`;
+  const pronounTag = `(?:(?:${pronounAlternation})\\s+(?:${verbAlternation})|(?:${verbAlternation})\\s+(?:${pronounAlternation})${inverted})(?![\\p{L}\\p{N}])`;
+  return {
+    ...rules,
+    verbs,
+    tagVerb: new RegExp(`(?<![\\p{L}\\p{N}])(?:${verbAlternation})(?![\\p{L}\\p{N}])`, "iu"),
+    tagAfterQuote: new RegExp(`^[\\s,.;:!?…()—–-]*${pronounTag}`, "iu"),
+    tagBeforeQuote: new RegExp(`(?<![\\p{L}\\p{N}])${pronounTag}[\\s,:…()—–-]*$`, "iu"),
+    incise: pack.inciseTags === true ? new RegExp(`(?:,|(?<=[?!…]))\\s+${inciseCore}\\s*(?:,|[.!?…]?\\s*$)`, "u") : null,
+    dashIncise: pack.inciseTags === true ? new RegExp(`^,\\s+${inciseCore}[^,.!?;:…—–«»"“”]*,`, "u") : null,
+    dashTag: new RegExp(`(?:,\\s+(?:(?:${verbAlternation})\\s+\\p{Lu}|(?:${pronounAlternation})\\s+(?:${verbAlternation})(?![\\p{L}\\p{N}])${inverted === "" ? "" : `${inverted}(?![\\p{L}\\p{N}])`}|\\p{Lu}[\\p{L}'’-]*(?:\\s+\\p{Lu}[\\p{L}'’-]*){0,2}\\s+(?:${verbAlternation})(?![\\p{L}\\p{N}]))${inciseDash})`, "u")
+  };
+}
 var VOICE_THRESHOLDS = {
   minLines: 5,
   sentenceLength: 1.5,
@@ -1670,7 +7299,9 @@ var VOICE_THRESHOLDS = {
   exclamations: 0.1
 };
 function buildVoices(project, chapters) {
-  const speakers = speakerPatterns(project.characters);
+  const pack = project.pack ?? languagePack();
+  const rules = voiceRules(pack);
+  const speakers = speakerPatterns(project.characters, pack, rules);
   const lines = new Map(project.characters.map((character) => [character.id, []]));
   let unattributed = 0;
   for (const chapter of chapters) {
@@ -1684,21 +7315,21 @@ function buildVoices(project, chapters) {
       }
     };
     for (const paragraph of chapter.paragraphs) {
-      const continues = (pending.length > 0 || chainSpeaker !== null) && OPENS_WITH_QUOTE.test(paragraph);
+      const continues = (pending.length > 0 || chainSpeaker !== null) && rules.opensWithQuote.test(paragraph);
       if (!continues) {
         credit(null, pending);
         pending = [];
         chainSpeaker = null;
       }
-      const quotes = quotedSpans(paragraph);
-      const open = splitOpenSpeech(paragraph).open;
+      const quotes = quotedSpans(paragraph, pack);
+      const open = splitOpenSpeech(paragraph, pack).open;
       if (open !== null) {
         quotes.push(open);
       }
       if (quotes.length === 0) {
         continue;
       }
-      const speaker = attribute(paragraph, speakers) ?? chainSpeaker;
+      const speaker = attribute(paragraph, speakers, pack) ?? chainSpeaker;
       if (open !== null && speaker === null) {
         pending.push(...quotes);
         continue;
@@ -1709,22 +7340,29 @@ function buildVoices(project, chapters) {
     }
     credit(null, pending);
   }
-  const profiles = project.characters.map((character) => profile(character, lines.get(character.id))).filter((entry) => entry.lines > 0);
-  signatureWords(profiles);
+  const profiles = project.characters.map((character) => profile(character, lines.get(character.id), pack, rules)).filter((entry) => entry.lines > 0);
+  signatureWords(profiles, pack);
   const warnings = [];
+  const matchers = new Map;
+  const says = (pattern, line) => {
+    if (!matchers.has(line)) {
+      matchers.set(line, wordMatcher(line.text, matchingText(line.text, pack)));
+    }
+    return matchers.get(line)(pattern, { first: true }).length > 0;
+  };
   for (const character of project.characters) {
     const said = lines.get(character.id);
     for (const phrase of stringList(character.voiceAvoid)) {
-      const pattern = phrasePattern(phrase);
-      const chaptersUsing = [...new Set(said.filter((line) => pattern.test(line.text)).map((line) => line.chapter))];
+      const pattern = phrasePattern(phrase, pack);
+      const chaptersUsing = [...new Set(said.filter((line) => says(pattern, line)).map((line) => line.chapter))];
       if (chaptersUsing.length > 0) {
         warnings.push(warn("voice-avoid", `${character.id} says "${phrase}", which is in their voice-avoid list (${chaptersUsing.join(", ")})`));
       }
     }
     if (said.length >= VOICE_THRESHOLDS.minLines) {
       for (const phrase of stringList(character.voiceWords)) {
-        const pattern = phrasePattern(phrase);
-        if (!said.some((line) => pattern.test(line.text))) {
+        const pattern = phrasePattern(phrase, pack);
+        if (!said.some((line) => says(pattern, line))) {
           warnings.push(warn("voice-words-unused", `${character.id} does not say "${phrase}" from their voice-words list in ${said.length} attributed lines of dialogue`));
         }
       }
@@ -1734,33 +7372,32 @@ function buildVoices(project, chapters) {
   for (let left = 0;left < eligible.length; left += 1) {
     for (let right = left + 1;right < eligible.length; right += 1) {
       if (similarVoices(eligible[left], eligible[right])) {
-        warnings.push(warn("voice-sound-alike", `${eligible[left].id} and ${eligible[right].id} may sound alike: similar sentence length, contractions, questions, and exclamations`));
+        const measures = rules.contraction === null ? "sentence length, questions" : "sentence length, contractions, questions";
+        warnings.push(warn("voice-sound-alike", `${eligible[left].id} and ${eligible[right].id} may sound alike: similar ${measures}, and exclamations`));
       }
     }
   }
   return {
     profiles: profiles.sort((left, right) => right.words - left.words || left.id.localeCompare(right.id, "en")),
     unattributed,
-    warnings
+    warnings,
+    language: pack.tag,
+    skipped: skippedChecks(pack, VOICE_CHECKS)
   };
 }
-var PRONOUNS = "he|she|they|i|we";
-var VERB_ALTERNATION = SPEECH_VERBS.map((verb) => verb.replace(/ /g, "\\s+")).join("|");
-var PRONOUN_TAG_SOURCE = `(?:(?:${PRONOUNS})\\s+(?:${VERB_ALTERNATION})|(?:${VERB_ALTERNATION})\\s+(?:${PRONOUNS}))(?![\\p{L}\\p{N}])`;
-var TAG_AFTER_QUOTE = new RegExp(`^[\\s,.;:!?…()—–-]*${PRONOUN_TAG_SOURCE}`, "iu");
-var TAG_BEFORE_QUOTE = new RegExp(`(?<![\\p{L}\\p{N}])${PRONOUN_TAG_SOURCE}[\\s,:…()—–-]*$`, "iu");
 var TAG_WINDOW = 40;
-function hasPronounTag(paragraph) {
-  return quoteMatches(paragraph).some((match) => TAG_AFTER_QUOTE.test(paragraph.slice(match.end, match.end + TAG_WINDOW)) || TAG_BEFORE_QUOTE.test(paragraph.slice(Math.max(0, match.start - TAG_WINDOW), match.start)));
+function hasPronounTag(paragraph, pack) {
+  const rules = voiceRules(pack);
+  return rules.tagAfterQuote !== null && quoteMatches(paragraph, pack).some((match) => rules.tagAfterQuote.test(paragraph.slice(match.end, match.end + TAG_WINDOW)) || rules.tagBeforeQuote.test(paragraph.slice(Math.max(0, match.start - TAG_WINDOW), match.start)));
 }
-function speakerPatterns(characters) {
-  const verbs = SPEECH_VERBS.flatMap((verb) => [verb, `${verb[0].toUpperCase()}${verb.slice(1)}`]).map((verb) => verb.replace(/ /g, "\\s+")).join("|");
+function speakerPatterns(characters, pack, rules) {
+  const verbs = rules.verbs === null ? null : rules.verbs.flatMap((verb) => [verb, `${verb[0].toUpperCase()}${verb.slice(1)}`]).map(listWord).join("|") || NEVER2;
   return characters.filter((character) => character.status !== "cut").map((character) => {
     const names = new Set;
     const full = String(character.name ?? "").trim();
     if (full !== "") {
       names.add(full);
-      const first = givenName(full);
+      const first = givenName(full, pack);
       if (first.length >= 2) {
         names.add(first);
       }
@@ -1776,20 +7413,21 @@ function speakerPatterns(characters) {
     return {
       id: character.id,
       keys,
-      name: new RegExp(`(?<![\\p{L}\\p{N}])(?:${alternatives})(?![\\p{L}\\p{N}])`, "u"),
-      subject: new RegExp(`(?<![\\p{L}\\p{N}])(?:${alternatives})\\s+(?:${verbs})(?![\\p{L}\\p{N}])`, "u"),
-      inverted: new RegExp(`(?<![\\p{L}\\p{N}])(?:${verbs})\\s+(?:${alternatives})(?![\\p{L}\\p{N}])`, "u")
+      name: new RegExp(`(?<!${SPACED_LETTER2})(?:${alternatives})(?!${SPACED_LETTER2})`, "gu"),
+      subject: verbs === null ? null : new RegExp(`(?<![\\p{L}\\p{N}])(?:${alternatives})\\s+(?:${verbs})(?![\\p{L}\\p{N}])`, "u"),
+      inverted: verbs === null ? null : new RegExp(`(?<![\\p{L}\\p{N}])(?:${verbs})\\s+(?:${alternatives})(?![\\p{L}\\p{N}])`, "u")
     };
   }).filter(Boolean);
 }
 var NON_WORD = /[^\p{L}\p{N}]+/u;
-var OPENS_WITH_QUOTE = /^["“‘']/;
-function attribute(paragraph, allSpeakers) {
-  const narration = `${splitOpenSpeech(paragraph).narration} `;
+var SPACED_LETTER2 = `(?![${UNSPACED_LETTERS}])[\\p{L}\\p{N}]`;
+var UNSPACED_LETTER2 = new RegExp(`[${UNSPACED_LETTERS}]`, "u");
+function attribute(paragraph, allSpeakers, pack) {
+  const narration = `${splitOpenSpeech(paragraph, pack).narration} `;
   const words = new Set(narration.split(NON_WORD));
-  const speakers = allSpeakers.filter((speaker) => [...speaker.keys].some((key) => key === "" || words.has(key)));
+  const speakers = allSpeakers.filter((speaker) => [...speaker.keys].some((key) => key === "" || words.has(key) || UNSPACED_LETTER2.test(key) && narration.includes(key)));
   for (const form of ["subject", "inverted"]) {
-    const tagged = speakers.filter((speaker) => speaker[form].test(narration));
+    const tagged = speakers.filter((speaker) => speaker[form] !== null && speaker[form].test(narration));
     if (tagged.length === 1) {
       return tagged[0].id;
     }
@@ -1797,78 +7435,137 @@ function attribute(paragraph, allSpeakers) {
       return null;
     }
   }
-  if (hasPronounTag(paragraph)) {
+  if (hasPronounTag(paragraph, pack)) {
     return null;
   }
-  const named = speakers.filter((speaker) => speaker.name.test(narration));
+  const findWords = wordMatcher(narration);
+  const named = speakers.filter((speaker) => findWords(speaker.name, { first: true }).length > 0);
   return named.length === 1 ? named[0].id : null;
 }
 var LETTER = /[\p{L}\p{N}]/u;
-var ELISION = /^(?:em|tis|twas|cause|cos|til|till|bout|round|n|nuff)(?![\p{L}\p{N}])/iu;
-var DASH_OPEN = /^[—―]\s*/;
-var DASH_TAG = new RegExp(`,\\s+(?:(?:${VERB_ALTERNATION})\\s+\\p{Lu}|(?:${PRONOUNS})\\s+(?:${VERB_ALTERNATION})(?![\\p{L}\\p{N}])|\\p{Lu}[\\p{L}'’-]*(?:\\s+\\p{Lu}[\\p{L}'’-]*){0,2}\\s+(?:${VERB_ALTERNATION})(?![\\p{L}\\p{N}]))`, "u");
-function quoteMatches(paragraph) {
+function quoteMatches(paragraph, pack = languagePack()) {
+  const rules = voiceRules(pack);
   const matches = [];
-  const next = { "”": -1, '"': -1 };
+  const next = new Map;
   const find = (key, from) => {
-    if (next[key] !== Infinity && next[key] < from) {
+    const known = next.get(key) ?? -1;
+    if (known !== Infinity && known < from) {
       const found = paragraph.indexOf(key, from);
-      next[key] = found === -1 ? Infinity : found;
+      next.set(key, found === -1 ? Infinity : found);
     }
-    return next[key];
+    return next.get(key);
   };
-  const singles = singleQuoteMarks(paragraph);
-  let index = 0;
-  const dash = DASH_OPEN.exec(paragraph);
-  if (dash) {
-    const body = paragraph.slice(dash[0].length);
-    const tag = DASH_TAG.exec(body);
-    const closing = /\s[—―]/.exec(body);
-    const stop = Math.min(tag ? tag.index : Infinity, closing ? closing.index + 1 : Infinity);
-    const close = stop === Infinity ? paragraph.length : dash[0].length + stop;
-    matches.push({ start: 0, end: Math.min(close + 1, paragraph.length), text: paragraph.slice(dash[0].length, close) });
-    index = close + 1;
-  }
+  const singles = singleQuoteMarks(paragraph, rules);
+  let index = dashMatches(paragraph, rules, matches);
   while (index < paragraph.length) {
-    const char = paragraph[index];
     let close = Infinity;
-    if (char === "“") {
-      close = find("”", index + 1);
-    } else if (char === '"') {
-      close = find('"', index + 1);
-    } else if (char === "‘" || char === "'") {
-      close = singleClose(singles[char], index);
+    for (const pair of rules.marks.byOpener.get(paragraph[index]) ?? []) {
+      close = Math.min(close, pair.kind === "single" ? singleClose(singles.get(pair), index) : find(pair.close, index + 1));
     }
     if (close === Infinity) {
       index += 1;
       continue;
     }
-    matches.push({ start: index, end: close + 1, text: paragraph.slice(index + 1, close) });
+    matches.push(...splitIncise({ start: index, end: close + 1, text: paragraph.slice(index + 1, close).trim() }, paragraph, rules));
     index = close + 1;
   }
   return matches;
 }
-function singleQuoteMarks(paragraph) {
-  const marks = { "‘": { open: [], close: [] }, "'": { open: [], close: [] } };
-  for (let index = 0;index < paragraph.length; index += 1) {
-    const char = paragraph[index];
-    const before = paragraph[index - 1] ?? "";
-    const after = paragraph[index + 1] ?? "";
-    if (char === "‘" && !LETTER.test(before)) {
-      marks["‘"].open.push(index);
-    } else if (char === "’" && !LETTER.test(after)) {
-      marks["‘"].close.push(index);
-    } else if (char === "'") {
-      if (!LETTER.test(before) && LETTER.test(after) && !ELISION.test(paragraph.slice(index + 1))) {
-        marks["'"].open.push(index);
-      } else if (!LETTER.test(after) && before !== "" && !/\s/.test(before)) {
-        marks["'"].close.push(index);
+function splitIncise(match, paragraph, rules) {
+  const tag = rules.incise === null ? null : rules.incise.exec(paragraph.slice(match.start + 1, match.end - 1));
+  if (tag === null) {
+    return [match];
+  }
+  const tagStart = match.start + 1 + tag.index;
+  const tagEnd = tagStart + tag[0].length;
+  const first = { start: match.start, end: tagStart, text: paragraph.slice(match.start + 1, tagStart).trim() };
+  const rest = paragraph.slice(tagEnd, match.end - 1).trim();
+  return rest === "" ? [first] : [first, { start: tagEnd - 1, end: match.end, text: rest }];
+}
+function dashMatches(paragraph, rules, matches) {
+  const dash = rules.dashOpen === null ? null : rules.dashOpen.exec(paragraph);
+  if (!dash) {
+    return 0;
+  }
+  const search = (pattern) => {
+    const global = new RegExp(pattern.source, `${pattern.flags.replace("g", "")}g`);
+    let found = { index: -1 };
+    return (from) => {
+      if (found !== null && found.index < from) {
+        global.lastIndex = from;
+        found = global.exec(paragraph);
+      }
+      return found === null ? Infinity : found.index;
+    };
+  };
+  const nextTag = rules.dashTag === null ? () => Infinity : search(rules.dashTag);
+  const nextClosing = search(rules.dashClose);
+  const nextDash = search(rules.dash);
+  let start = 0;
+  let from = dash[0].length;
+  let index;
+  do {
+    const tag = nextTag(from);
+    const closing = nextClosing(from) + 1;
+    const close = Math.min(tag, closing, paragraph.length);
+    const text = paragraph.slice(from, close).trim();
+    const closedByDash = closing < Math.min(tag, paragraph.length);
+    const newLine = closedByDash && rules.dashStartsLine && rules.stopEnd.test(text) && /^\s*\p{Lu}/u.test(paragraph.slice(close + 1, close + 4)) && !(rules.tagVerb !== null && rules.tagVerb.test(text));
+    matches.push({ start, end: newLine ? close : Math.min(close + 1, paragraph.length), text });
+    index = close + 1;
+    start = Infinity;
+    const incise = !closedByDash && close === tag && rules.dashIncise !== null ? rules.dashIncise.exec(paragraph.slice(close, close + 120)) : null;
+    if (newLine) {
+      start = close;
+    } else if (incise !== null) {
+      start = close + incise[0].length - 1;
+    } else if (closedByDash) {
+      const next = nextDash(index);
+      start = next !== Infinity && tagCloses(paragraph, index, next, rules) ? next : Infinity;
+    }
+    from = start === Infinity ? Infinity : start + 1 + /^[\s.,;:]*/.exec(paragraph.slice(start + 1, start + 65))[0].length;
+  } while (from < paragraph.length);
+  return index;
+}
+function tagCloses(paragraph, from, dash, rules) {
+  const tag = paragraph.slice(from, dash).trimEnd();
+  if (rules.tagVerb !== null && !rules.tagVerb.test(tag)) {
+    return false;
+  }
+  if (/\s/.test(paragraph[dash - 1] ?? "")) {
+    return /[.!?…,;:]$/.test(tag) && !rules.stop.test(tag.slice(0, -1));
+  }
+  return !LETTER.test(paragraph[dash + 1] ?? "") && !rules.stop.test(tag);
+}
+function singleQuoteMarks(paragraph, rules) {
+  const marks = new Map;
+  for (const pair of rules.marks.pairs) {
+    if (pair.kind !== "single") {
+      continue;
+    }
+    const open = [];
+    const close = [];
+    for (let index = paragraph.indexOf(pair.open);index !== -1; index = paragraph.indexOf(pair.open, index + 1)) {
+      const before = paragraph[index - 1] ?? "";
+      const after = paragraph[index + 1] ?? "";
+      if (pair.open === pair.close) {
+        if (!LETTER.test(before) && LETTER.test(after) && !rules.elision.test(paragraph.slice(index + 1))) {
+          open.push(index);
+        } else if (!LETTER.test(after) && before !== "" && !/\s/.test(before)) {
+          close.push(index);
+        }
+      } else if (!LETTER.test(before)) {
+        open.push(index);
       }
     }
-  }
-  for (const key of Object.keys(marks)) {
-    marks[key].opens = new Set(marks[key].open);
-    marks[key].paragraph = paragraph;
+    if (pair.open !== pair.close) {
+      for (let index = paragraph.indexOf(pair.close);index !== -1; index = paragraph.indexOf(pair.close, index + 1)) {
+        if (!LETTER.test(paragraph[index + 1] ?? "")) {
+          close.push(index);
+        }
+      }
+    }
+    marks.set(pair, { open, close, opens: new Set(open), paragraph });
   }
   return marks;
 }
@@ -1906,37 +7603,36 @@ function firstAfter(sorted, value) {
   const position = firstIndexAfter(sorted, value);
   return position === -1 ? Infinity : sorted[position];
 }
-function replaceQuotes(paragraph) {
+function replaceQuotes(paragraph, pack = languagePack()) {
   let result = "";
   let position = 0;
-  for (const match of quoteMatches(paragraph)) {
+  for (const match of quoteMatches(paragraph, pack)) {
     result += `${paragraph.slice(position, match.start)} `;
     position = match.end;
   }
   return result + paragraph.slice(position);
 }
-function quotedSpans(paragraph) {
-  return quoteMatches(paragraph).map((match) => match.text.trim()).filter((text) => text !== "");
+function quotedSpans(paragraph, pack = languagePack()) {
+  return quoteMatches(paragraph, pack).map((match) => match.text.trim()).filter((text) => text !== "");
 }
-function splitOpenSpeech(paragraph) {
-  const text = replaceQuotes(paragraph);
-  const cuts = [];
-  const curly = text.indexOf("“", text.lastIndexOf("”") + 1);
-  if (curly !== -1) {
-    cuts.push(curly);
-  }
-  const straight = text.indexOf('"');
-  if (straight !== -1) {
-    cuts.push(straight);
-  }
-  const lastSingleClose = text.lastIndexOf("’");
-  const single = /(?<![\p{L}\p{N}])‘/u.exec(text.slice(lastSingleClose + 1));
-  if (single) {
-    cuts.push(lastSingleClose + 1 + single.index);
-  }
-  if (/^'[\p{L}\p{N}]/u.test(text) && !ELISION.test(text.slice(1))) {
-    cuts.push(0);
-  }
+function splitOpenSpeech(paragraph, pack = languagePack()) {
+  const text = replaceQuotes(paragraph, pack);
+  const rules = voiceRules(pack);
+  const cuts = rules.marks.pairs.map((pair) => {
+    const { open, close, kind } = pair;
+    if (kind === "straight") {
+      return text.indexOf(open);
+    }
+    if (kind === "explicit") {
+      return text.indexOf(open, text.lastIndexOf(close) + 1);
+    }
+    if (open !== close) {
+      const lastClose = text.lastIndexOf(close);
+      const single = rules.singleOpen.get(pair).exec(text.slice(lastClose + 1));
+      return single ? lastClose + 1 + single.index : -1;
+    }
+    return text.startsWith(open) && /^[\s\S][\p{L}\p{N}]/u.test(text) && !rules.elision.test(text.slice(1)) ? 0 : -1;
+  }).filter((cut) => cut !== -1);
   if (cuts.length === 0) {
     return { narration: text, open: null };
   }
@@ -1944,38 +7640,41 @@ function splitOpenSpeech(paragraph) {
   const open = text.slice(cut + 1).trim();
   return { narration: text.slice(0, cut), open: open === "" ? null : open };
 }
-function narrationOnly(paragraph) {
-  return splitOpenSpeech(paragraph).narration;
+function narrationOnly(paragraph, pack = languagePack()) {
+  return splitOpenSpeech(paragraph, pack).narration;
 }
-function profile(character, said) {
+function profile(character, said, pack, rules) {
   const text = said.map((line) => line.text).join(" ");
   const words = splitWords(text);
-  const sentences = said.flatMap((line) => splitSentences(line.text).filter((sentence) => splitWords(sentence).length > 0));
-  const questions = sentences.filter((sentence) => /\?["'”’)]*$/.test(sentence.trim())).length;
-  const exclamations = sentences.filter((sentence) => /!["'”’)]*$/.test(sentence.trim())).length;
+  const sentences = said.flatMap((line) => splitSentences(line.text, { pack }).filter((sentence) => splitWords(sentence).length > 0));
+  const questions = sentences.filter((sentence) => rules.question.test(sentence.trim())).length;
+  const exclamations = sentences.filter((sentence) => rules.exclamation.test(sentence.trim())).length;
   return {
     id: character.id,
     lines: said.length,
     words: words.length,
     sentenceLength: sentences.length === 0 ? 0 : words.length / sentences.length,
-    contractions: words.length === 0 ? 0 : (text.match(CONTRACTION_PATTERN) ?? []).length * 100 / words.length,
+    contractions: rules.contraction === null ? null : words.length === 0 ? 0 : (text.match(rules.contraction) ?? []).length * 100 / words.length,
     questions: sentences.length === 0 ? 0 : questions / sentences.length,
     exclamations: sentences.length === 0 ? 0 : exclamations / sentences.length,
-    counts: wordCounts(words),
+    counts: wordCounts(words, rules.stopwords, pack),
     signature: []
   };
 }
-function wordCounts(words) {
+function wordCounts(words, stopwords, pack) {
   const counts = new Map;
+  if (stopwords === null) {
+    return counts;
+  }
   for (const raw of words) {
-    const word = raw.toLowerCase().replace(/’/g, "'");
-    if (word.length >= 4 && !STOPWORDS.has(word) && !/^\d+$/.test(word)) {
+    const word = lowerCase(raw, pack).replace(/’/g, "'");
+    if (word.length >= 4 && !stopwords.has(word) && !/^\d+$/.test(word)) {
       counts.set(word, (counts.get(word) ?? 0) + 1);
     }
   }
   return counts;
 }
-function signatureWords(profiles) {
+function signatureWords(profiles, pack) {
   const totals = new Map;
   let allWords = 0;
   for (const entry of profiles) {
@@ -1997,17 +7696,21 @@ function signatureWords(profiles) {
         scored.push({ word, count, score: own - others });
       }
     }
-    entry.signature = scored.sort((left, right) => right.score - left.score || right.count - left.count || left.word.localeCompare(right.word, "en")).slice(0, 5).map((item) => item.word);
+    entry.signature = scored.sort((left, right) => right.score - left.score || right.count - left.count || compareText(pack)(left.word, right.word)).slice(0, 5).map((item) => item.word);
     delete entry.counts;
   }
 }
 function similarVoices(left, right) {
   const limits = VOICE_THRESHOLDS;
   const close = (a, b, limit) => Math.abs(a - b) < limit - 0.000000001;
-  return close(left.sentenceLength, right.sentenceLength, limits.sentenceLength) && close(left.contractions, right.contractions, limits.contractions) && close(left.questions, right.questions, limits.questions) && close(left.exclamations, right.exclamations, limits.exclamations);
+  return close(left.sentenceLength, right.sentenceLength, limits.sentenceLength) && (left.contractions === null || close(left.contractions, right.contractions, limits.contractions)) && close(left.questions, right.questions, limits.questions) && close(left.exclamations, right.exclamations, limits.exclamations);
 }
-function phrasePattern(phrase) {
-  return new RegExp(`(?<![\\p{L}\\p{M}\\p{N}])${escape(String(phrase).trim()).replace(/['’]/g, "['’]")}(?![\\p{L}\\p{M}\\p{N}])`, "iu");
+function phrasePattern(phrase, pack) {
+  const trimmed = String(phrase).trim();
+  return new RegExp(wholeWords(escape(matchingCase(trimmed, pack)).replace(/['’]/g, "['’]"), trimmed), "giu");
+}
+function listWord(word) {
+  return escape(word).replace(/'/g, "['’]").replace(/ /g, "\\s+");
 }
 function escape(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -2016,15 +7719,18 @@ function stringList(value) {
   return (Array.isArray(value) ? value : []).filter((item) => typeof item === "string" && item.trim() !== "");
 }
 function formatVoices(report) {
-  const lines = [`Voices: ${plural(report.profiles.length, "speaking character")}, ${plural(report.unattributed, "unattributed line")}`];
+  const skipped = report.skipped ?? [];
+  const lines = [`Voices: ${plural(report.profiles.length, "speaking character")}, ${plural(report.unattributed, "unattributed line")}`, ...skippedLines(skipped)];
   if (report.profiles.length === 0) {
     lines.push("", `- None: tag dialogue with a character's name and a speech verb ("...," Mara said)`);
     return `${lines.join(`
 `)}
 `;
   }
+  const signatures = !skipped.some((entry) => entry.check === "signature-words");
   for (const entry of report.profiles) {
-    lines.push("", `${entry.id}: ${plural(entry.lines, "line")}, ${plural(entry.words, "word")}`, `  Sentence length ${entry.sentenceLength.toFixed(1)}, contractions ${entry.contractions.toFixed(1)} per 100 words, questions ${Math.round(entry.questions * 100)}%, exclamations ${Math.round(entry.exclamations * 100)}%`, `  Signature words: ${entry.signature.join(", ") || "none yet"}`);
+    const contractions = entry.contractions === null ? "" : `, contractions ${entry.contractions.toFixed(1)} per 100 words`;
+    lines.push("", `${entry.id}: ${plural(entry.lines, "line")}, ${plural(entry.words, "word")}`, `  Sentence length ${entry.sentenceLength.toFixed(1)}${contractions}, questions ${Math.round(entry.questions * 100)}%, exclamations ${Math.round(entry.exclamations * 100)}%`, ...signatures ? [`  Signature words: ${entry.signature.join(", ") || "none yet"}`] : []);
   }
   return `${lines.join(`
 `)}
@@ -2032,270 +7738,23 @@ function formatVoices(report) {
 }
 
 // src/prose.js
-var FILTER_WORDS = [
-  "felt",
-  "saw",
-  "heard",
-  "noticed",
-  "realized",
-  "realised",
-  "wondered",
-  "seemed",
-  "watched",
-  "knew",
-  "decided",
-  "thought",
-  "sensed"
+var PROSE_CHECKS = [
+  { check: "filter-words", label: "Filter words", lists: ["filterWords"] },
+  { check: "adverbs", label: "Adverbs", lists: ["adverbSuffixes", "adverbExceptions"] },
+  { check: "dialogue-tags", label: "Dialogue tags", lists: ["plainTags", "saidBookisms", "beatPronouns"] },
+  { check: "echoes", label: "Echoes", lists: ["echoStopwords"] },
+  { check: "repeated-phrases", label: "Repeated phrases", lists: ["phraseStopwords"] }
 ];
-var SAID_BOOKISMS = [
-  "barked",
-  "bellowed",
-  "breathed",
-  "chuckled",
-  "cooed",
-  "declared",
-  "exclaimed",
-  "gasped",
-  "grinned",
-  "groaned",
-  "growled",
-  "grunted",
-  "hissed",
-  "inquired",
-  "interjected",
-  "intoned",
-  "laughed",
-  "opined",
-  "purred",
-  "queried",
-  "quipped",
-  "retorted",
-  "shrieked",
-  "sighed",
-  "smiled",
-  "smirked",
-  "snapped",
-  "snarled",
-  "sneered",
-  "spat",
-  "stated"
+var BASELINE_CHECKS = [
+  { check: "signature-words", label: "Baseline signature words", lists: ["echoStopwords", "phraseStopwords"] }
 ];
-var PLAIN_TAGS = ["said", "asked", "says", "asks"];
-var NOT_ADVERBS = new Set([
-  "ally",
-  "anomaly",
-  "apply",
-  "assembly",
-  "belly",
-  "bully",
-  "burly",
-  "butterfly",
-  "chilly",
-  "comply",
-  "costly",
-  "curly",
-  "daily",
-  "deadly",
-  "dolly",
-  "dragonfly",
-  "early",
-  "elderly",
-  "family",
-  "fly",
-  "folly",
-  "friendly",
-  "ghastly",
-  "ghostly",
-  "gully",
-  "holly",
-  "holy",
-  "homely",
-  "hourly",
-  "imply",
-  "italy",
-  "jelly",
-  "jolly",
-  "july",
-  "lily",
-  "likely",
-  "lively",
-  "lonely",
-  "lovely",
-  "melancholy",
-  "monopoly",
-  "monthly",
-  "multiply",
-  "oily",
-  "only",
-  "orderly",
-  "prickly",
-  "rally",
-  "rely",
-  "reply",
-  "sickly",
-  "silly",
-  "sly",
-  "smelly",
-  "stately",
-  "supply",
-  "surly",
-  "tally",
-  "ugly",
-  "unlikely",
-  "weekly",
-  "wobbly",
-  "woolly",
-  "yearly"
-]);
-var ECHO_STOPWORDS = new Set([
-  "about",
-  "above",
-  "after",
-  "again",
-  "against",
-  "along",
-  "always",
-  "among",
-  "another",
-  "around",
-  "because",
-  "before",
-  "behind",
-  "being",
-  "below",
-  "between",
-  "could",
-  "couldn't",
-  "didn't",
-  "doesn't",
-  "don't",
-  "every",
-  "first",
-  "hadn't",
-  "haven't",
-  "isn't",
-  "might",
-  "never",
-  "other",
-  "right",
-  "should",
-  "since",
-  "something",
-  "still",
-  "their",
-  "there",
-  "these",
-  "thing",
-  "things",
-  "those",
-  "though",
-  "three",
-  "through",
-  "until",
-  "wasn't",
-  "where",
-  "which",
-  "while",
-  "without",
-  "would",
-  "wouldn't",
-  "you're",
-  "they're",
-  "we're"
-]);
-var PHRASE_STOPWORDS = new Set([
-  "a",
-  "an",
-  "and",
-  "as",
-  "at",
-  "be",
-  "but",
-  "by",
-  "for",
-  "from",
-  "had",
-  "has",
-  "have",
-  "he",
-  "her",
-  "his",
-  "i",
-  "in",
-  "into",
-  "is",
-  "it",
-  "its",
-  "me",
-  "my",
-  "not",
-  "of",
-  "on",
-  "or",
-  "she",
-  "so",
-  "that",
-  "the",
-  "their",
-  "them",
-  "then",
-  "they",
-  "this",
-  "to",
-  "was",
-  "we",
-  "were",
-  "with",
-  "you"
-]);
-var DIALECT_PAIRS = [
-  ["armour", "armor"],
-  ["armoured", "armored"],
-  ["centre", "center"],
-  ["centres", "centers"],
-  ["centred", "centered"],
-  ["colour", "color"],
-  ["colours", "colors"],
-  ["coloured", "colored"],
-  ["colourful", "colorful"],
-  ["defence", "defense"],
-  ["defences", "defenses"],
-  ["favour", "favor"],
-  ["favours", "favors"],
-  ["favoured", "favored"],
-  ["favourite", "favorite"],
-  ["grey", "gray"],
-  ["greying", "graying"],
-  ["harbour", "harbor"],
-  ["harbours", "harbors"],
-  ["honour", "honor"],
-  ["honours", "honors"],
-  ["honoured", "honored"],
-  ["honourable", "honorable"],
-  ["jewellery", "jewelry"],
-  ["labour", "labor"],
-  ["mould", "mold"],
-  ["mouldy", "moldy"],
-  ["neighbour", "neighbor"],
-  ["neighbours", "neighbors"],
-  ["odour", "odor"],
-  ["offence", "offense"],
-  ["plough", "plow"],
-  ["rumour", "rumor"],
-  ["rumours", "rumors"],
-  ["sceptic", "skeptic"],
-  ["sceptical", "skeptical"],
-  ["smoulder", "smolder"],
-  ["smouldering", "smoldering"],
-  ["theatre", "theater"],
-  ["towards", "toward"],
-  ["travelled", "traveled"],
-  ["travelling", "traveling"],
-  ["traveller", "traveler"],
-  ["cancelled", "canceled"],
-  ["vapour", "vapor"],
-  ["whisky", "whiskey"]
-];
+var DIALECT_CHECK = { check: "dialect-spellings", label: "British and American spellings", lists: ["dialectPairs"] };
+function checkRuns(pack, check) {
+  return hasLists(pack, [...PROSE_CHECKS, ...BASELINE_CHECKS].find((definition) => definition.check === check).lists);
+}
+function adverbLabel(pack) {
+  return checkList(pack, "adverbLabel") ?? "adverbs";
+}
 var PROSE_THRESHOLDS = {
   filterPerThousand: 10,
   adverbsPerThousand: 12,
@@ -2324,19 +7783,23 @@ function proseThresholds(options = {}) {
   }
   return thresholds;
 }
-function proseRules(styleData, names) {
+function proseRules(styleData, names, pack = languagePack()) {
   const data = styleData ?? {};
-  const allow = new Set(stringList2(data["allow-words"]).map(normalizeWord));
+  const skipped = skippedChecks(pack, PROSE_CHECKS);
+  const allow = new Set(stringList2(data["allow-words"]).map((word) => normalizeWord(word, pack)));
   const variants = [];
   for (const entry of Array.isArray(data.preferred) ? data.preferred : []) {
-    if (entry && typeof entry.use === "string" && typeof entry.avoid === "string" && entry.use.trim() !== "" && entry.avoid.trim() !== "" && normalizeWord(entry.use.trim()) !== normalizeWord(entry.avoid.trim())) {
+    if (entry && typeof entry.use === "string" && typeof entry.avoid === "string" && entry.use.trim() !== "" && entry.avoid.trim() !== "" && normalizeWord(entry.use.trim(), pack) !== normalizeWord(entry.avoid.trim(), pack)) {
       variants.push({ use: entry.use.trim(), avoid: entry.avoid.trim(), source: "style sheet" });
     }
   }
   const dialect = typeof data.dialect === "string" ? data.dialect : "unspecified";
-  if (dialect === "british" || dialect === "american") {
-    const claimed = new Set(variants.flatMap((variant) => [normalizeWord(variant.use), normalizeWord(variant.avoid)]).concat([...allow]));
-    for (const [british, american] of DIALECT_PAIRS) {
+  const dialectPairs = checkList(pack, "dialectPairs");
+  if ((dialect === "british" || dialect === "american") && dialectPairs === null) {
+    skipped.push(skippedCheck(pack, DIALECT_CHECK));
+  } else if (dialect === "british" || dialect === "american") {
+    const claimed = new Set(variants.flatMap((variant) => [normalizeWord(variant.use, pack), normalizeWord(variant.avoid, pack)]).concat([...allow]));
+    for (const [british, american] of dialectPairs) {
       const [use, avoid] = dialect === "british" ? [british, american] : [american, british];
       if (!claimed.has(use) && !claimed.has(avoid)) {
         variants.push({ use, avoid, source: `${dialect} dialect` });
@@ -2346,15 +7809,30 @@ function proseRules(styleData, names) {
   const nameTokens = new Set;
   for (const name of names) {
     for (const token of splitWords(String(name))) {
-      nameTokens.add(nameKey(token));
+      nameTokens.add(nameKey(token, pack));
     }
   }
+  const allowed = (name) => {
+    const list = checkList(pack, name);
+    return list === null ? null : new Set(list.filter((word) => !allow.has(word)));
+  };
+  const tags = !skipped.some((entry) => entry.check === "dialogue-tags");
   return {
+    pack,
+    skipped,
     allow,
-    variants: variants.map((variant) => ({ ...variant, pattern: phrasePattern2(variant.avoid) })),
-    watch: stringList2(data["watch-words"]).map((word) => ({ word, pattern: phrasePattern2(word) })),
-    filterWords: new Set(FILTER_WORDS.filter((word) => !allow.has(word))),
-    bookisms: new Set(SAID_BOOKISMS.filter((word) => !allow.has(word))),
+    variants: variants.map((variant) => ({ ...variant, pattern: phrasePattern2(variant.avoid, pack) })),
+    watch: stringList2(data["watch-words"]).map((word) => ({ word, pattern: phrasePattern2(word, pack) })),
+    filterWords: allowed("filterWords"),
+    bookisms: tags ? allowed("saidBookisms") : null,
+    plainTags: tags ? checkSet(pack, "plainTags") : null,
+    beatPronouns: tags ? checkSet(pack, "beatPronouns") : null,
+    inversionLinks: checkList(pack, "inversionLinks") ?? [],
+    adverbSuffixes: checkList(pack, "adverbExceptions") === null ? null : checkList(pack, "adverbSuffixes"),
+    adverbExceptions: checkSet(pack, "adverbExceptions"),
+    adverbBlockers: checkSet(pack, "adverbBlockers"),
+    echoStopwords: checkSet(pack, "echoStopwords"),
+    phraseStopwords: checkSet(pack, "phraseStopwords"),
     nameTokens
   };
 }
@@ -2364,14 +7842,15 @@ function analyzeChapter(prose, rules) {
 
 `);
   const words = splitWords(text);
-  const narration = splitWords(paragraphs.map(narrationOnly).join(`
+  const narration = splitWords(paragraphs.map((paragraph) => narrationOnly(paragraph, rules.pack)).join(`
 
 `));
-  const sentenceList = paragraphs.flatMap((paragraph) => splitSentences(paragraph));
+  const sentenceList = paragraphs.flatMap((paragraph) => splitSentences(paragraph, { pack: rules.pack }));
   const sentences = sentenceList.map((sentence) => splitWords(sentence).length).filter((count) => count > 0);
-  const filterWords = countMatching(narration, (word) => rules.filterWords.has(word));
-  const adverbs = countMatching(narration, (word) => isAdverb(word, rules));
-  const tags = dialogueTags(paragraphs, rules);
+  const filterWords = rules.filterWords === null ? [] : countMatching(narration, (word) => rules.filterWords.has(word), rules.pack);
+  const adverbs = rules.adverbSuffixes === null ? [] : countAdverbs(narration, rules);
+  const tags = rules.plainTags === null ? { plain: [], bookisms: [] } : dialogueTags(paragraphs, rules);
+  const find = rules.watch.length + rules.variants.length === 0 ? null : wordMatcher(text, matchingText(text, rules.pack));
   return {
     words: words.length,
     narrationWords: narration.length,
@@ -2382,12 +7861,12 @@ function analyzeChapter(prose, rules) {
     plainTags: tags.plain,
     bookisms: tags.bookisms,
     echoes: echoes(words, rules),
-    watch: rules.watch.map(({ word, pattern }) => ({ word, count: countPattern(text, pattern) })).filter((entry) => entry.count > 0),
-    variants: rules.variants.map(({ use, avoid, source, pattern }) => ({ use, avoid, source, count: countVariant(text, pattern, rules) })).filter((entry) => entry.count > 0),
-    phraseSentences: sentenceList.map((sentence) => splitWords(sentence).map(normalizeWord))
+    watch: rules.watch.map(({ word, pattern }) => ({ word, count: find(pattern).length })).filter((entry) => entry.count > 0),
+    variants: rules.variants.map(({ use, avoid, source, pattern }) => ({ use, avoid, source, count: countVariant(text, find(pattern), rules) })).filter((entry) => entry.count > 0),
+    phraseSentences: sentenceList.map((sentence) => splitWords(sentence).map((word) => normalizeWord(word, rules.pack)))
   };
 }
-function chapterFindings(label, analysis, thresholds = PROSE_THRESHOLDS, { baseline = false } = {}) {
+function chapterFindings(label, analysis, thresholds = PROSE_THRESHOLDS, { baseline = false, pack = languagePack() } = {}) {
   const findings = [];
   for (const variant of analysis.variants) {
     findings.push(warn("prose-avoided-spelling", `${label} uses "${variant.avoid}" ${times(variant.count)}; ${variant.source} prefers "${variant.use}"`, label));
@@ -2399,7 +7878,7 @@ function chapterFindings(label, analysis, thresholds = PROSE_THRESHOLDS, { basel
   }
   const adverbRate = perThousand(total(analysis.adverbs), analysis.narrationWords);
   if (!baseline && rated && adverbRate > thresholds.adverbsPerThousand) {
-    findings.push(warn("prose-adverbs", `${label} has ${formatAgainst(adverbRate, thresholds.adverbsPerThousand, "over")} -ly adverbs per 1,000 narration words (over ${thresholds.adverbsPerThousand}): ${formatCounts(analysis.adverbs, 5)}`, label));
+    findings.push(warn("prose-adverbs", `${label} has ${formatAgainst(adverbRate, thresholds.adverbsPerThousand, "over")} ${adverbLabel(pack)} per 1,000 narration words (over ${thresholds.adverbsPerThousand}): ${formatCounts(analysis.adverbs, 5)}`, label));
   }
   const bookisms = total(analysis.bookisms);
   if (bookisms > thresholds.maxBookisms) {
@@ -2422,7 +7901,7 @@ var BASELINE_TOLERANCES = {
   signatureWords: 20,
   signatureMinCount: 3
 };
-function baselineProfile(samples) {
+function baselineProfile(samples, pack = languagePack()) {
   const analyses = samples.map((sample) => sample.analysis);
   const sum = (pick) => analyses.reduce((total, analysis) => total + pick(analysis), 0);
   const words = sum((analysis) => analysis.words);
@@ -2441,19 +7920,22 @@ function baselineProfile(samples) {
     sentences: sentenceStats(lengths),
     paragraphMean: sum((analysis) => analysis.paragraphs) === 0 ? 0 : words / sum((analysis) => analysis.paragraphs),
     dialogueShare: words === 0 ? 0 : (words - narrationWords) * 100 / words,
-    filterPerThousand: perThousand(sum((analysis) => total(analysis.filterWords)), narrationWords),
-    adverbsPerThousand: perThousand(sum((analysis) => total(analysis.adverbs)), narrationWords),
-    signatureWords: sortCounts(counts).filter((entry) => entry.count >= BASELINE_TOLERANCES.signatureMinCount).slice(0, BASELINE_TOLERANCES.signatureWords).map((entry) => entry.word),
+    filterPerThousand: checkRuns(pack, "filter-words") ? perThousand(sum((analysis) => total(analysis.filterWords)), narrationWords) : null,
+    adverbsPerThousand: checkRuns(pack, "adverbs") ? perThousand(sum((analysis) => total(analysis.adverbs)), narrationWords) : null,
+    signatureWords: checkRuns(pack, "signature-words") ? sortCounts(counts, pack).filter((entry) => entry.count >= BASELINE_TOLERANCES.signatureMinCount).slice(0, BASELINE_TOLERANCES.signatureWords).map((entry) => entry.word) : null,
     usable: narrationWords >= BASELINE_TOLERANCES.minSampleWords
   };
 }
 function contentWords(prose, rules) {
+  if (rules.echoStopwords === null || rules.phraseStopwords === null) {
+    return [];
+  }
   return splitWords(proseParagraphs(prose).join(`
 
-`)).map(normalizeWord).filter((word) => word.length >= 4 && !ECHO_STOPWORDS.has(word) && !PHRASE_STOPWORDS.has(word) && !isName(word, rules) && !/^\p{N}+$/u.test(word));
+`)).map((word) => normalizeWord(word, rules.pack)).filter((word) => word.length >= 4 && !rules.echoStopwords.has(word) && !rules.phraseStopwords.has(word) && !isName(word, rules) && !/^\p{N}+$/u.test(word));
 }
-function sentenceLengths(prose) {
-  return proseParagraphs(prose).flatMap((paragraph) => splitSentences(paragraph)).map((sentence) => splitWords(sentence).length).filter((count) => count > 0);
+function sentenceLengths(prose, pack = languagePack()) {
+  return proseParagraphs(prose).flatMap((paragraph) => splitSentences(paragraph, { pack })).map((sentence) => splitWords(sentence).length).filter((count) => count > 0);
 }
 function baselineFigures(analysis, profile, chapterWords) {
   const used = new Set(chapterWords);
@@ -2461,12 +7943,12 @@ function baselineFigures(analysis, profile, chapterWords) {
     sentenceMean: analysis.sentences.mean,
     paragraphMean: analysis.paragraphs === 0 ? 0 : analysis.words / analysis.paragraphs,
     dialogueShare: analysis.words === 0 ? 0 : (analysis.words - analysis.narrationWords) * 100 / analysis.words,
-    filterPerThousand: perThousand(total(analysis.filterWords), analysis.narrationWords),
-    adverbsPerThousand: perThousand(total(analysis.adverbs), analysis.narrationWords),
-    signatureWordsUsed: profile.signatureWords.filter((word) => used.has(word)).length
+    filterPerThousand: profile.filterPerThousand === null ? null : perThousand(total(analysis.filterWords), analysis.narrationWords),
+    adverbsPerThousand: profile.adverbsPerThousand === null ? null : perThousand(total(analysis.adverbs), analysis.narrationWords),
+    signatureWordsUsed: profile.signatureWords === null ? null : profile.signatureWords.filter((word) => used.has(word)).length
   };
 }
-function baselineFindings(label, analysis, figures, profile, tolerances = BASELINE_TOLERANCES) {
+function baselineFindings(label, analysis, figures, profile, tolerances = BASELINE_TOLERANCES, pack = languagePack()) {
   const findings = [];
   if (!profile.usable || analysis.words < PROSE_THRESHOLDS.minRateWords) {
     return findings;
@@ -2484,6 +7966,9 @@ function baselineFindings(label, analysis, figures, profile, tolerances = BASELI
     findings.push(warn("prose-baseline-dialogue", `${label} is ${formatRate(figures.dialogueShare)}% dialogue, ${direction(figures.dialogueShare, profile.dialogueShare, "more", "less")} than your samples' ${formatRate(profile.dialogueShare)}% (tolerance ${tolerances.dialogueShare} points)`, label));
   }
   const rateDrift = (name, field) => {
+    if (profile[field] === null) {
+      return null;
+    }
     const allowed = Math.max(tolerances.rateFloor, profile[field] * tolerances.rateShare);
     return Math.abs(figures[field] - profile[field]) > allowed ? `${label} has ${formatRate(figures[field])} ${name} per 1,000 narration words, ${direction(figures[field], profile[field], "more", "fewer")} than your samples' ${formatRate(profile[field])} (tolerance ${formatRate(allowed)})` : null;
   };
@@ -2491,20 +7976,24 @@ function baselineFindings(label, analysis, figures, profile, tolerances = BASELI
   if (filterDrift !== null) {
     findings.push(warn("prose-baseline-filter-words", filterDrift, label));
   }
-  const adverbDrift = rated ? rateDrift("-ly adverbs", "adverbsPerThousand") : null;
+  const adverbDrift = rated ? rateDrift(adverbLabel(pack), "adverbsPerThousand") : null;
   if (adverbDrift !== null) {
     findings.push(warn("prose-baseline-adverbs", adverbDrift, label));
   }
   return findings;
 }
-function repeatedPhrases(analyses, thresholds = PROSE_THRESHOLDS) {
+function repeatedPhrases(analyses, thresholds = PROSE_THRESHOLDS, pack = languagePack()) {
+  const stopwords = checkSet(pack, "phraseStopwords");
+  if (stopwords === null) {
+    return [];
+  }
   const counts = new Map;
   const size = thresholds.phraseLength;
   for (const analysis of analyses) {
     for (const sentence of analysis.phraseSentences) {
       for (let index = 0;index + size <= sentence.length; index += 1) {
         const gram = sentence.slice(index, index + size);
-        if (gram.every((word) => PHRASE_STOPWORDS.has(word))) {
+        if (gram.every((word) => stopwords.has(word))) {
           continue;
         }
         const key = gram.join(" ");
@@ -2513,10 +8002,10 @@ function repeatedPhrases(analyses, thresholds = PROSE_THRESHOLDS) {
     }
   }
   const repeated = new Map([...counts].filter(([, count]) => count >= thresholds.phraseMinCount));
-  return sortCounts(repeated).slice(0, thresholds.phraseLimit).map((entry) => ({ phrase: entry.word, count: entry.count }));
+  return sortCounts(repeated, pack).slice(0, thresholds.phraseLimit).map((entry) => ({ phrase: entry.word, count: entry.count }));
 }
-function similarNames(characters) {
-  const firsts = characters.map((character) => ({ id: character.id, name: String(character.name), first: givenName(character.name).toLowerCase() })).filter((entry) => entry.first.length >= 3).sort((left, right) => left.id.localeCompare(right.id, "en"));
+function similarNames(characters, pack = languagePack()) {
+  const firsts = characters.map((character) => ({ id: character.id, name: String(character.name), first: lowerCase(givenName(character.name, pack), pack) })).filter((entry) => entry.first.length >= 3).sort((left, right) => left.id.localeCompare(right.id, "en"));
   const pairs = [];
   for (let left = 0;left < firsts.length; left += 1) {
     for (let right = left + 1;right < firsts.length; right += 1) {
@@ -2536,25 +8025,50 @@ function formatProseReport(report) {
   if (!report.styleSheet) {
     lines.push("No style-sheet.md: spelling and watch-word checks are off");
   }
+  const skipped = report.skipped ?? [];
+  lines.push(...skippedLines(skipped));
+  const runs = (check) => !skipped.some((entry) => entry.check === check);
+  const adverbs = adverbLabel(languagePack(report.language));
   const profile = report.baseline;
   if (profile) {
     const stats = profile.sentences;
-    lines.push(`Baseline from ${profile.samples.length} ${profile.samples.length === 1 ? "sample" : "samples"} (${profile.words} words): sentences ${formatRate(stats.mean)} words (spread ${formatRate(stats.spread)}), paragraphs ${formatRate(profile.paragraphMean)} words, ${formatRate(profile.dialogueShare)}% dialogue, ${formatRate(profile.filterPerThousand)} filter words and ${formatRate(profile.adverbsPerThousand)} -ly adverbs per 1k narration words`);
-    lines.push(profile.usable ? `  Signature words: ${profile.signatureWords.join(", ") || "none"}` : `  Too few sample words to compare with (${profile.narrationWords} of ${BASELINE_TOLERANCES.minSampleWords} narration words): the fixed limits apply`);
+    const rates = [];
+    if (profile.filterPerThousand !== null) {
+      rates.push(`${formatRate(profile.filterPerThousand)} filter words`);
+    }
+    if (profile.adverbsPerThousand !== null) {
+      rates.push(`${formatRate(profile.adverbsPerThousand)} ${adverbs}`);
+    }
+    const rateText = rates.length === 0 ? "" : `, ${rates.join(" and ")} per 1k narration words`;
+    lines.push(`Baseline from ${profile.samples.length} ${profile.samples.length === 1 ? "sample" : "samples"} (${profile.words} words): sentences ${formatRate(stats.mean)} words (spread ${formatRate(stats.spread)}), paragraphs ${formatRate(profile.paragraphMean)} words, ${formatRate(profile.dialogueShare)}% dialogue${rateText}`);
+    if (!profile.usable) {
+      lines.push(`  Too few sample words to compare with (${profile.narrationWords} of ${BASELINE_TOLERANCES.minSampleWords} narration words): the fixed limits apply`);
+    } else if (profile.signatureWords !== null) {
+      lines.push(`  Signature words: ${profile.signatureWords.join(", ") || "none"}`);
+    }
   }
   for (const chapter of report.chapters) {
     const analysis = chapter.analysis;
     const stats = analysis.sentences;
     lines.push("", `${chapter.file}: ${chapter.title} (${analysis.words} words)`);
     lines.push(`  Sentences: ${stats.count}, average ${formatRate(stats.mean)} words, longest ${stats.longest}, spread ${formatRate(stats.spread)}`);
-    lines.push(`  Filter words: ${formatRate(perThousand(total(analysis.filterWords), analysis.narrationWords))} per 1k narration words${countSuffix(analysis.filterWords)}`);
-    lines.push(`  -ly adverbs: ${formatRate(perThousand(total(analysis.adverbs), analysis.narrationWords))} per 1k narration words${countSuffix(analysis.adverbs)}`);
-    lines.push(`  Dialogue tags: ${formatCounts(analysis.plainTags, 4) || "none plain"}; said-bookisms: ${formatCounts(analysis.bookisms, 5) || "none"}`);
+    if (runs("filter-words")) {
+      lines.push(`  Filter words: ${formatRate(perThousand(total(analysis.filterWords), analysis.narrationWords))} per 1k narration words${countSuffix(analysis.filterWords)}`);
+    }
+    if (runs("adverbs")) {
+      lines.push(`  ${adverbs[0].toUpperCase()}${adverbs.slice(1)}: ${formatRate(perThousand(total(analysis.adverbs), analysis.narrationWords))} per 1k narration words${countSuffix(analysis.adverbs)}`);
+    }
+    if (runs("dialogue-tags")) {
+      lines.push(`  Dialogue tags: ${formatCounts(analysis.plainTags, 4) || "none plain"}; said-bookisms: ${formatCounts(analysis.bookisms, 5) || "none"}`);
+    }
     if (chapter.baseline && profile.usable) {
       const figures = chapter.baseline;
-      lines.push(`  Against the baseline: paragraphs ${formatRate(figures.paragraphMean)} words, ${formatRate(figures.dialogueShare)}% dialogue, signature words ${figures.signatureWordsUsed} of ${profile.signatureWords.length}`);
+      const signature = figures.signatureWordsUsed === null ? "" : `, signature words ${figures.signatureWordsUsed} of ${profile.signatureWords.length}`;
+      lines.push(`  Against the baseline: paragraphs ${formatRate(figures.paragraphMean)} words, ${formatRate(figures.dialogueShare)}% dialogue${signature}`);
     }
-    lines.push(`  Echoes within ${PROSE_THRESHOLDS.echoWindow} words: ${formatCounts(analysis.echoes, 5) || "none"}`);
+    if (runs("echoes")) {
+      lines.push(`  Echoes within ${PROSE_THRESHOLDS.echoWindow} words: ${formatCounts(analysis.echoes, 5) || "none"}`);
+    }
     if (analysis.watch.length > 0) {
       lines.push(`  Watch words: ${analysis.watch.map((entry) => `${entry.word} ${entry.count}`).join(", ")}`);
     }
@@ -2562,10 +8076,15 @@ function formatProseReport(report) {
       lines.push(`  Spelling: ${analysis.variants.map((entry) => `${entry.avoid} ${entry.count} (use ${entry.use})`).join(", ")}`);
     }
   }
-  lines.push("", report.passage ? "Passage:" : "Manuscript:");
-  lines.push(`  Repeated ${PROSE_THRESHOLDS.phraseLength}-word phrases: ${report.phrases.map((entry) => `"${entry.phrase}" ${entry.count}`).join(", ") || "none"}`);
+  const whole = [];
+  if (runs("repeated-phrases")) {
+    whole.push(`  Repeated ${PROSE_THRESHOLDS.phraseLength}-word phrases: ${report.phrases.map((entry) => `"${entry.phrase}" ${entry.count}`).join(", ") || "none"}`);
+  }
   if (!report.passage) {
-    lines.push(`  Similar character names: ${report.similarNames.map(([a, b]) => `${a.name} / ${b.name}`).join(", ") || "none"}`);
+    whole.push(`  Similar character names: ${report.similarNames.map(([a, b]) => `${a.name} / ${b.name}`).join(", ") || "none"}`);
+  }
+  if (whole.length > 0) {
+    lines.push("", report.passage ? "Passage:" : "Manuscript:", ...whole);
   }
   return `${lines.join(`
 `)}
@@ -2574,20 +8093,19 @@ function formatProseReport(report) {
 function proseParagraphs(prose) {
   return withoutFenceMarkers(scanComments(String(prose), " ").text).split(/\r?\n\s*\r?\n/).map((paragraph) => paragraph.split(/\r?\n/).filter((line) => !/^\s{0,3}#/.test(line)).join(" ")).map((paragraph) => paragraph.replace(/\s+/g, " ").trim()).filter((paragraph) => paragraph !== "" && !/^([*_-])( ?\1){2,}$/.test(paragraph));
 }
-var BEAT_PRONOUNS = new Set(["he", "she", "they", "i", "we", "it", "you"]);
 function dialogueTags(paragraphs, rules) {
   const plain = new Map;
   const bookisms = new Map;
   for (const paragraph of paragraphs) {
-    for (const match of quoteMatches(paragraph)) {
+    for (const match of quoteMatches(paragraph, rules.pack)) {
       const after = splitWords(paragraph.slice(match.end, match.end + 200).split(/[.!?;:“"]/)[0]).slice(0, 3);
-      const tag = tagKind(match.text, after[0] ?? "");
+      const tag = tagKind(match.text, after[0] ?? "", rules);
       if (tag === "none") {
         continue;
       }
       for (const raw of after) {
-        const word = raw.toLowerCase();
-        if (PLAIN_TAGS.includes(word)) {
+        const word = tagWord(normalizeWord(raw, rules.pack), rules);
+        if (rules.plainTags.has(word)) {
           increment(plain, word);
           break;
         }
@@ -2598,34 +8116,60 @@ function dialogueTags(paragraphs, rules) {
       }
     }
   }
-  return { plain: sortCounts(plain), bookisms: sortCounts(bookisms) };
+  return { plain: sortCounts(plain, rules.pack), bookisms: sortCounts(bookisms, rules.pack) };
 }
-function tagKind(quoted, nextWord) {
+function tagWord(word, rules) {
+  for (const link of rules.inversionLinks) {
+    const index = word.indexOf(link);
+    if (index > 0 && rules.beatPronouns.has(word.slice(index + link.length))) {
+      return word.slice(0, index);
+    }
+  }
+  return word;
+}
+function tagKind(quoted, nextWord, rules) {
   const end = quoted.trim().replace(/["'”’)\]*_]+$/, "").slice(-1);
   if (end === ".") {
     return "none";
   }
   if (/[?!…—–-]/.test(end) && /^\p{Lu}/u.test(nextWord)) {
-    return BEAT_PRONOUNS.has(nextWord.toLowerCase()) ? "none" : "plain";
+    return rules.beatPronouns.has(lowerCase(nextWord, rules.pack)) ? "none" : "plain";
   }
   return "any";
 }
+function countAdverbs(words, rules) {
+  if (rules.adverbBlockers === null) {
+    return countMatching(words, (word) => isAdverb(word, rules), rules.pack);
+  }
+  const counts = new Map;
+  let previous = "";
+  for (const raw of words) {
+    const word = normalizeWord(raw, rules.pack);
+    const elision = /^\p{L}{1,2}'(?=\p{L})/u.exec(word)?.[0] ?? "";
+    const bare = word.slice(elision.length);
+    if (!rules.adverbBlockers.has(previous) && !rules.adverbBlockers.has(elision) && isAdverb(bare, rules)) {
+      increment(counts, bare);
+    }
+    previous = word;
+  }
+  return sortCounts(counts, rules.pack);
+}
 function isAdverb(word, rules) {
-  return word.length > 4 && word.endsWith("ly") && !NOT_ADVERBS.has(word) && !rules.allow.has(word) && !isName(word, rules);
+  return word.length > 4 && rules.adverbSuffixes.some((suffix) => word.endsWith(suffix)) && !rules.adverbExceptions.has(word) && !rules.allow.has(word) && !isName(word, rules);
 }
 function isName(word, rules) {
-  return rules.nameTokens.has(word) || rules.nameTokens.has(nameKey(word));
+  return rules.nameTokens.has(word) || rules.nameTokens.has(nameKey(word, rules.pack));
 }
-function normalizeWord(word) {
-  return String(word).toLowerCase().replace(/’/g, "'");
+function normalizeWord(word, pack) {
+  return lowerCase(word, pack).replace(/’/g, "'");
 }
-function nameKey(word) {
-  return normalizeWord(word).replace(/'s$/, "");
+function nameKey(word, pack) {
+  return normalizeWord(word, pack).replace(/'s$/, "");
 }
-function countVariant(text, pattern, rules) {
+function countVariant(text, spans, rules) {
   let count = 0;
-  for (const match of text.matchAll(pattern)) {
-    const first = splitWords(match[0])[0] ?? "";
+  for (const [start, end] of spans) {
+    const first = splitWords(text.slice(start, end))[0] ?? "";
     if (/^\p{Lu}/u.test(first) && isName(first, rules)) {
       continue;
     }
@@ -2634,11 +8178,14 @@ function countVariant(text, pattern, rules) {
   return count;
 }
 function echoes(words, rules) {
+  if (rules.echoStopwords === null) {
+    return [];
+  }
   const lastSeen = new Map;
   const counts = new Map;
   words.forEach((raw, index) => {
-    const word = normalizeWord(raw);
-    if (word.length < PROSE_THRESHOLDS.echoMinLength || ECHO_STOPWORDS.has(word) || isName(word, rules) || rules.allow.has(word) || /^\p{N}+$/u.test(word)) {
+    const word = normalizeWord(raw, rules.pack);
+    if (word.length < PROSE_THRESHOLDS.echoMinLength || rules.echoStopwords.has(word) || isName(word, rules) || rules.allow.has(word) || /^\p{N}+$/u.test(word)) {
       return;
     }
     if (lastSeen.has(word) && index - lastSeen.get(word) <= PROSE_THRESHOLDS.echoWindow) {
@@ -2646,7 +8193,7 @@ function echoes(words, rules) {
     }
     lastSeen.set(word, index);
   });
-  return sortCounts(counts);
+  return sortCounts(counts, rules.pack);
 }
 function sentenceStats(lengths) {
   if (lengths.length === 0) {
@@ -2656,22 +8203,19 @@ function sentenceStats(lengths) {
   const variance = lengths.reduce((sum, value) => sum + (value - mean) ** 2, 0) / lengths.length;
   return { count: lengths.length, mean, longest: Math.max(...lengths), spread: Math.sqrt(variance) };
 }
-function countMatching(words, predicate) {
+function countMatching(words, predicate, pack) {
   const counts = new Map;
   for (const raw of words) {
-    const word = normalizeWord(raw);
+    const word = normalizeWord(raw, pack);
     if (predicate(word)) {
       increment(counts, word);
     }
   }
-  return sortCounts(counts);
+  return sortCounts(counts, pack);
 }
-function phrasePattern2(phrase) {
-  const body = phrase.trim().split(/\s+/).map((word) => escapeRegExp(word).replace(/['’]/g, "['’]")).join("\\s+");
-  return new RegExp(`(?<![\\p{L}\\p{M}\\p{N}])${body}(?![\\p{L}\\p{M}\\p{N}])`, "giu");
-}
-function countPattern(text, pattern) {
-  return (text.match(pattern) ?? []).length;
+function phrasePattern2(phrase, pack) {
+  const body = matchingCase(phrase.trim(), pack).split(/\s+/).map((word) => escapeRegExp(word).replace(/['’]/g, "['’]")).join("\\s+");
+  return new RegExp(wholeWords(body, phrase.trim()), "giu");
 }
 function formatAgainst(value, threshold, side) {
   for (let places = 1;places < 6; places += 1) {
@@ -2696,9 +8240,8 @@ function editDistance(a, b) {
 function increment(counts, key) {
   counts.set(key, (counts.get(key) ?? 0) + 1);
 }
-var COLLATOR = new Intl.Collator("en");
-function sortCounts(counts) {
-  return [...counts.entries()].map(([word, count]) => ({ word, count })).sort((left, right) => right.count - left.count || COLLATOR.compare(left.word, right.word));
+function sortCounts(counts, pack) {
+  return [...counts.entries()].map(([word, count]) => ({ word, count })).sort((left, right) => right.count - left.count || compareText(pack)(left.word, right.word));
 }
 function stringList2(value) {
   return Array.isArray(value) ? value.filter((item) => typeof item === "string" && item.trim() !== "").map((item) => item.trim()) : [];
@@ -2735,6 +8278,7 @@ var OPTIONS = [
   { name: "tense", value: "<tense>", help: ["Narrative tense for init or import"] },
   { name: "form", value: "<form>", help: ["Story form for init (novel, novella, novelette,", "short-story, flash, serial, picture-book,", "chapter-book); sets a default target-words"] },
   { name: "synopsis", value: "<text>", help: ["Starter synopsis for init or import"] },
+  { name: "language", value: "<tag>", help: ["Manuscript language for import, a BCP 47 tag", "such as fr; defaults to the existing story.md"] },
   { name: "series", value: "<id>", help: ["Series id for init"] },
   { name: "book-number", value: "<n>", help: ["Publication order for init"] },
   { name: "follows", value: "<path>", repeatable: true, help: ["Init a sequel set after this story project;", "repeatable"] },
@@ -2970,7 +8514,7 @@ function parseArgs(argv, suggestFrom = OPTIONS.map((option) => option.name)) {
 }
 
 // src/exemptions.js
-var EXEMPTIONS_FILE = path3.join("continuity", "exemptions.md");
+var EXEMPTIONS_FILE = path4.join("continuity", "exemptions.md");
 var MATCH_KEYS = ["pattern", "code", "file", "chapter"];
 var MIN_PATTERN_LENGTH = 4;
 function portable(text) {
@@ -2981,7 +8525,7 @@ function exemptionFile(value) {
   if (text.startsWith("/") || /^[A-Za-z]:/.test(text) || text.split("/").includes("..") || text.includes("\x00")) {
     return null;
   }
-  const normalized = path3.posix.normalize(text).replace(/\/$/, "");
+  const normalized = path4.posix.normalize(text).replace(/\/$/, "");
   return normalized === "." ? null : normalized;
 }
 function exemptionProblems(entry, label = "exemption") {
@@ -3080,7 +8624,7 @@ function parseExemptions(entries) {
 }
 function readExemptionLog(root) {
   try {
-    return parseExemptions(parseFrontmatter(readTextFile(path3.join(root, EXEMPTIONS_FILE))).data.exemptions);
+    return parseExemptions(parseFrontmatter(readTextFile(path4.join(root, EXEMPTIONS_FILE))).data.exemptions);
   } catch {
     return [];
   }
@@ -3106,219 +8650,6 @@ function dismissByExemptions(result, exemptions, { errors: withErrors }) {
     return result;
   }
   return { ...result, ok: withErrors ? errors.length === 0 : result.ok, errors, warnings, dismissed };
-}
-
-// src/progressions.js
-var PROGRESSION_KINDS = ["character", "location", "faction"];
-var RESERVED_FIELDS = new Set(["progressions", "id", "died-in", "revived-in"]);
-function progressionEntry(item) {
-  if (!item || typeof item !== "object" || Array.isArray(item)) {
-    return null;
-  }
-  const from = idText(item.from);
-  const field = typeof item.field === "string" ? item.field : "";
-  if (from === "" || field === "" || item.value === undefined || item.value === null) {
-    return null;
-  }
-  return { from, field, value: item.value };
-}
-function setOwn(target, key, value) {
-  Object.defineProperty(target, key, { value, enumerable: true, configurable: true, writable: true });
-}
-function chapterPosition(chronology, id) {
-  if (chronology.numbers.has(id)) {
-    return chronology.numbers.get(id);
-  }
-  const match = /^chapter-(\d+)$/.exec(id);
-  return match && Number(match[1]) > 0 ? Number(match[1]) : Number.NaN;
-}
-function happensAfter(chronology, later, earlier) {
-  if (chronology.numbers.has(later) && chronology.numbers.has(earlier)) {
-    return chronology.after(later, earlier);
-  }
-  return chapterPosition(chronology, later) > chapterPosition(chronology, earlier);
-}
-function sortProgressions(list, chronology) {
-  const known = [];
-  const unknown = [];
-  for (const item of list) {
-    const from = item && typeof item === "object" && !Array.isArray(item) ? idText(item.from) : "";
-    (Number.isNaN(chapterPosition(chronology, from)) ? unknown : known).push({ item, from });
-  }
-  known.sort((left, right) => happensAfter(chronology, left.from, right.from) ? 1 : happensAfter(chronology, right.from, left.from) ? -1 : 0);
-  return [...known, ...unknown].map((entry) => entry.item);
-}
-function entityStateAt(data, atChapterId, chronology) {
-  if (Number.isNaN(chapterPosition(chronology, atChapterId))) {
-    throw usageError(`Unknown chapter ${atChapterId}`);
-  }
-  const state = {};
-  for (const [key, value] of Object.entries(data ?? {})) {
-    if (key !== "progressions") {
-      setOwn(state, key, value);
-    }
-  }
-  const entries = (Array.isArray(data?.progressions) ? data.progressions : []).map(progressionEntry).filter((entry) => entry !== null && !Number.isNaN(chapterPosition(chronology, entry.from)) && !happensAfter(chronology, entry.from, atChapterId));
-  entries.sort((left, right) => happensAfter(chronology, left.from, right.from) ? 1 : happensAfter(chronology, right.from, left.from) ? -1 : 0);
-  const changes = [];
-  for (const entry of entries) {
-    changes.push({ field: entry.field, value: entry.value, from: entry.from, previous: Object.hasOwn(state, entry.field) ? state[entry.field] : undefined });
-    setOwn(state, entry.field, entry.value);
-  }
-  return { state, changes };
-}
-function validateProgressions(data, label, rules, chronology, errors) {
-  if (data.progressions === undefined) {
-    return;
-  }
-  if (!Array.isArray(data.progressions)) {
-    errors.push(err("field-not-list", `${label} frontmatter field progressions must be a list`, label));
-    return;
-  }
-  const seen = new Map;
-  let latest = null;
-  for (const [index, item] of data.progressions.entries()) {
-    const entryLabel = `${label} progressions[${index}]`;
-    if (!item || typeof item !== "object" || Array.isArray(item)) {
-      errors.push(err("entry-not-mapping", `${entryLabel} must be a mapping with from, field, and value`, label));
-      continue;
-    }
-    const from = idText(item.from);
-    if (from === "") {
-      errors.push(err("missing-field", `${entryLabel} is missing from (the chapter the change takes effect)`, label));
-    }
-    const field = item.field;
-    let fieldOk = false;
-    if (typeof field !== "string" || field.trim() === "") {
-      errors.push(err("missing-field", `${entryLabel} is missing field`, label));
-    } else if (field !== kebabCase(field)) {
-      errors.push(err("id-not-kebab", `${entryLabel} field ${field} must be kebab-case`, label));
-    } else if (RESERVED_FIELDS.has(field)) {
-      errors.push(err("progression-fixed-field", `${entryLabel} cannot change ${field}${field === "died-in" || field === "revived-in" ? "; set it on the character and story continuity reads it by chapter" : ""}`, label));
-    } else if (rules.lists.has(field)) {
-      errors.push(err("progression-list-field", `${entryLabel} cannot change ${field}, which is a list; a progression holds a single value`, label));
-    } else {
-      fieldOk = true;
-    }
-    const value = item.value;
-    if (value === undefined || value === null) {
-      errors.push(err("missing-field", `${entryLabel} is missing value`, label));
-    } else if (typeof value === "object") {
-      errors.push(err("field-not-scalar", `${entryLabel} value must be a single value, not a list or mapping`, label));
-    } else if (fieldOk && rules.enums.has(field) && !rules.enums.get(field).has(value)) {
-      errors.push(err("unsupported-value", `${entryLabel} ${field} has unsupported value ${value}`, label));
-    }
-    if (from !== "" && fieldOk) {
-      const key = `${from}\x00${field}`;
-      if (seen.has(key)) {
-        errors.push(err("progression-duplicate", `${entryLabel} repeats ${field} from ${from} (progressions[${seen.get(key)}])`, label));
-      } else {
-        seen.set(key, index);
-      }
-    }
-    if (Number.isNaN(chapterPosition(chronology, from))) {
-      continue;
-    }
-    if (latest && happensAfter(chronology, latest.from, from)) {
-      errors.push(err("progression-out-of-order", `${entryLabel} from ${from} comes before progressions[${latest.index}] from ${latest.from} in the story; list progressions in story order`, label));
-      continue;
-    }
-    latest = { from, index };
-  }
-}
-function formatStateChanges(changes, atChapterId) {
-  if (changes.length === 0) {
-    return "";
-  }
-  const lines = [`State at ${atChapterId}:`];
-  for (const change of changes) {
-    const previous = change.previous === undefined ? "" : `, was ${change.previous}`;
-    lines.push(`- ${change.field}: ${change.value === "" ? "(cleared)" : change.value} (from ${change.from}${previous})`);
-  }
-  return `${lines.join(`
-`)}
-`;
-}
-
-// src/deaths.js
-var STATUS_PROGRESSIONS = new WeakMap;
-function statusProgressions(character) {
-  if (!STATUS_PROGRESSIONS.has(character)) {
-    const list = Array.isArray(character.frontmatter.progressions) ? character.frontmatter.progressions : [];
-    STATUS_PROGRESSIONS.set(character, list.map((item, index) => ({ index, entry: progressionEntry(item) })).filter(({ entry }) => entry !== null && entry.field === "status").map(({ index, entry }) => ({ index, from: entry.from, value: String(entry.value) })));
-  }
-  return STATUS_PROGRESSIONS.get(character);
-}
-function progressionStatusAt(character, chapterId, chronology) {
-  let status = String(character.status);
-  let from = "";
-  let deadFrom = "";
-  if (chronology.numbers.has(chapterId) && statusProgressions(character).length > 0) {
-    for (const change of entityStateAt(character.frontmatter, chapterId, chronology).changes) {
-      if (change.field !== "status") {
-        continue;
-      }
-      const value = String(change.value);
-      if (value === "deceased" && status !== "deceased") {
-        deadFrom = change.from;
-      }
-      status = value;
-      from = change.from;
-    }
-  }
-  return { status, from, deadFrom };
-}
-function progressionDeathAt(character, chapterId, chronology) {
-  const from = progressionDeathFrom(character, chapterId, chronology);
-  if (from === null || from !== "" && !happensAfter(chronology, chapterId, from)) {
-    return null;
-  }
-  return { from };
-}
-function progressionDeathFrom(character, chapterId, chronology) {
-  const { status, deadFrom } = progressionStatusAt(character, chapterId, chronology);
-  if (status !== "deceased" || character.diedIn && deadFrom === "") {
-    return null;
-  }
-  if (character.diedIn && (character.revivedIn === "" || !happensAfter(chronology, deadFrom, character.revivedIn))) {
-    return null;
-  }
-  return deadFrom;
-}
-function characterLifeline(character, chronology) {
-  const status = String(character.status ?? "");
-  const chapters = storyOrder(chronology);
-  if (chapters.length === 0 || character.diedIn && !chronology.numbers.has(character.diedIn)) {
-    const dead = status === "deceased";
-    return { deadAtStart: dead, deadAtEnd: dead, events: [] };
-  }
-  const leadIn = status === "deceased" && Boolean(character.diedIn) && statusProgressions(character).some(({ from, value }) => value !== "deceased" && happensAfter(chronology, character.diedIn, from));
-  const deadAtStart = status === "deceased" && (!character.diedIn || leadIn);
-  if (!character.diedIn && statusProgressions(character).length === 0) {
-    return { deadAtStart, deadAtEnd: deadAtStart, events: [] };
-  }
-  const window = deathWindow(character, chronology);
-  const events = [];
-  let dead = deadAtStart;
-  for (const chapter of chapters) {
-    const byDiedIn = window !== null && (chapter === window.died || window.deadIn(chapter));
-    const beforeDeath = leadIn && happensAfter(chronology, window.died, chapter) && progressionStatusAt(character, chapter, chronology).status === "deceased";
-    const now = byDiedIn || beforeDeath || progressionDeathFrom(character, chapter, chronology) !== null;
-    if (!now && dead && chapter !== window?.revived && progressionStatusAt(character, chapter, chronology).from === "") {
-      continue;
-    }
-    if (now !== dead) {
-      events.push(now ? { type: "death", chapter, source: chapter === window?.died ? "died-in" : "progression" } : { type: "revival", chapter, source: chapter === window?.revived ? "revived-in" : "progression" });
-      dead = now;
-    }
-  }
-  return { deadAtStart, deadAtEnd: dead, events };
-}
-function revivedBy(lifeline, chapterId, chronology) {
-  return chronology.numbers.has(chapterId) && lifeline.events.some((event) => event.type === "revival" && !happensAfter(chronology, event.chapter, chapterId));
-}
-function storyOrder(chronology) {
-  return [...chronology.numbers.keys()].sort((left, right) => chronology.numbers.get(left) - chronology.numbers.get(right) || (left < right ? -1 : left > right ? 1 : 0)).sort((left, right) => chronology.after(left, right) ? 1 : chronology.after(right, left) ? -1 : 0);
 }
 
 // src/continuity.js
@@ -3654,7 +8985,7 @@ function checkContinuityState(project, context, errors, warnings) {
   if (!project.continuity) {
     return;
   }
-  const label = path4.join("continuity", "state.md");
+  const label = path5.join("continuity", "state.md");
   const data = project.continuity.data;
   const currentChapter = data["current-chapter"];
   if (Number.isInteger(currentChapter)) {
@@ -3787,7 +9118,7 @@ function checkStateAgainstStory(project, context, warnings) {
   if (!project.continuity) {
     return;
   }
-  const label = path4.join("continuity", "state.md");
+  const label = path5.join("continuity", "state.md");
   const data = project.continuity.data;
   const { chronology } = context;
   const currentChapter = Number.isInteger(data["current-chapter"]) ? data["current-chapter"] : -Infinity;
@@ -3961,7 +9292,7 @@ function requireMapping(entry, entryLabel, file, errors) {
   return true;
 }
 function relative(project, file) {
-  return path4.relative(project.root, file);
+  return path5.relative(project.root, file);
 }
 function chapterOf(record) {
   const id = record.chapter !== undefined ? idText(record.chapter) : record.id;
@@ -4629,8 +9960,8 @@ function buildContext(project, targetId, readBody, options = {}) {
   const unit = target.scene ?? target.chapter;
   const pov = idText(unit.pov) || idText(target.chapter.pov);
   const cast = [...new Set([pov, ...unit.characters.map(idText)].filter(Boolean))];
-  const relative = (file) => path5.relative(project.root, file);
-  const statePath = path5.join("continuity", "state.md");
+  const relative = (file) => path6.relative(project.root, file);
+  const statePath = path6.join("continuity", "state.md");
   const sections = [];
   const chapterBody = readBody(target.chapter.file);
   const chapterScenes = project.scenes.filter((scene) => scene.chapter === target.chapter.id);
@@ -4645,7 +9976,7 @@ function buildContext(project, targetId, readBody, options = {}) {
     field("Date", [unit.date, unit.time].filter(Boolean).join(" ")),
     field("Outcome", target.scene ? target.scene.outcome : ""),
     field("Hook", target.chapter.hook),
-    field("Target words", target.chapter.targetWords || "")
+    project.unit?.name === "characters" ? field("Target characters", target.chapter.targetCount || "") : field("Target words", target.chapter.targetWords || "")
   ];
   const outline = extractSection(chapterBody, "Outline").split(/^[ \t]*(?:-{3,}|\*{3,})[ \t]*$/m)[0].trim();
   if (outline !== "" && !PLACEHOLDERS.has(outline)) {
@@ -4847,716 +10178,13 @@ function formatContext(context) {
 `;
 }
 
-// src/series.js
-import fs2 from "node:fs";
-import path6 from "node:path";
-var SERIES_LINK_INVERSES = [["follows", "precedes"], ["precedes", "follows"]];
-var MAX_SERIES_BOOKS = 100;
-var SHARED_CANON = [
-  ["characters", "Characters", "name"],
-  ["locations", "Locations", "name"],
-  ["systems", "Systems", "name"],
-  ["factions", "Factions", "name"],
-  ["artifacts", "Artifacts", "name"],
-  ["glossaryTerms", "Glossary terms", "term"]
-];
-function isBookNumber(value) {
-  return typeof value === "number" && Number.isFinite(value) && value >= 0;
-}
-function seriesDisplayName(data) {
-  const title = data?.["series-title"];
-  return typeof title === "string" && title.trim() !== "" ? title.trim() : seriesId(data);
-}
-function seriesLinkPath(fromRoot, toRoot) {
-  return path6.relative(fromRoot, toRoot).split(path6.sep).join("/");
-}
-function seriesLinks(root, data, field) {
-  const raw = data[field];
-  const values = Array.isArray(raw) ? raw : typeof raw === "string" ? [raw] : [];
-  return values.filter((value) => typeof value === "string" && value.trim() !== "").map((value) => path6.resolve(root, value));
-}
-function seriesId(data) {
-  const value = data?.series;
-  if (value === undefined || value === null) {
-    return;
-  }
-  return String(value).trim() === "" ? undefined : value;
-}
-function areSiblingBooks(left, right) {
-  return path6.dirname(canonicalPath(left)) === path6.dirname(canonicalPath(right));
-}
-function linksInclude(links, root) {
-  const key = canonicalPath(root);
-  return links.some((link) => link === root || canonicalPath(link) === key);
-}
-function readBookFrontmatter(root) {
-  const storyPath = path6.join(root, "story.md");
-  if (!fs2.existsSync(storyPath)) {
-    return null;
-  }
-  return parseFrontmatter(readTextFile(storyPath), storyPath).data;
-}
-function validateSeriesLinks(root, data, errors) {
-  for (const [field, inverse] of SERIES_LINK_INVERSES) {
-    const raw = Array.isArray(data[field]) ? data[field] : [data[field]];
-    const backslashed = raw.filter((value) => typeof value === "string" && value.includes("\\"));
-    for (const value of backslashed) {
-      errors.push(err("series-link-backslash", `story.md ${field} ${value} uses a backslash; write ${value.replace(/\\/g, "/")} so the link works on every system`, "story.md"));
-    }
-    for (const target of seriesLinks(root, { [field]: raw.filter((value) => !backslashed.includes(value)) }, field)) {
-      const label = `story.md ${field} ${seriesLinkPath(root, target)}`;
-      if (target === root || canonicalPath(target) === canonicalPath(root)) {
-        errors.push(err("series-link-self", `${label} points at this book`, "story.md"));
-        continue;
-      }
-      let other;
-      try {
-        other = readBookFrontmatter(target);
-      } catch (error) {
-        errors.push(err("series-link-unreadable", `${label}: ${error.message}`, "story.md"));
-        continue;
-      }
-      if (!other) {
-        errors.push(err("series-link-not-project", `${label} is not a story project: missing story.md`, "story.md"));
-        continue;
-      }
-      if (!areSiblingBooks(root, target)) {
-        errors.push(err("series-link-not-sibling", `${label} is not in the same parent folder as this book; story series only follows links between sibling book folders`, "story.md"));
-      }
-      if (!linksInclude(seriesLinks(target, other, inverse), root)) {
-        errors.push(err("series-missing-backlink", `${label} is missing backlink: add ${seriesLinkPath(target, root)} to its ${inverse}`, "story.md"));
-      }
-      const ownSeries = seriesId(data);
-      const otherSeries = seriesId(other);
-      if (ownSeries !== undefined && otherSeries !== undefined && ownSeries !== otherSeries) {
-        errors.push(err("series-link-other-series", `${label} belongs to series ${otherSeries}, not ${ownSeries}`, "story.md"));
-      }
-    }
-  }
-}
-function withSeriesBacklink(targetRoot, field, linkedRoot, newSeriesId) {
-  const storyPath = path6.join(targetRoot, "story.md");
-  const markdown = readTextFile(storyPath);
-  const { data } = parseFrontmatter(markdown, storyPath);
-  const current = data[field];
-  const existing = Array.isArray(current) ? current : typeof current === "string" && current.trim() !== "" ? [current] : [];
-  const linked = linksInclude(seriesLinks(targetRoot, { [field]: existing }, field), linkedRoot);
-  const addSeries = seriesId(data) === undefined && newSeriesId !== undefined;
-  if (linked && !addSeries) {
-    return null;
-  }
-  return replaceFrontmatter(markdown, {
-    ...data,
-    ...addSeries ? { series: newSeriesId } : {},
-    ...linked ? {} : { [field]: existing.concat(seriesLinkPath(targetRoot, linkedRoot)) }
-  });
-}
-function buildSeries(startRoot, scan) {
-  const errors = [];
-  const warnings = [];
-  const books = discoverBooks(startRoot, scan, errors).books;
-  if (books.length === 0) {
-    return {
-      root: startRoot,
-      series: null,
-      books: [],
-      ordered: false,
-      shared: [],
-      ok: false,
-      errors,
-      warnings
-    };
-  }
-  const seriesIds = [...new Set(books.map((book) => book.series).filter((series) => series !== undefined))].sort();
-  if (seriesIds.length > 1) {
-    errors.push(err("series-conflict", `Linked books belong to different series: ${seriesIds.join(", ")}`));
-  }
-  const unnamed = books.filter((book) => book.series === undefined);
-  if (seriesIds.length === 1 && unnamed.length > 0) {
-    warnings.push(warn("series-id-missing", `Linked books ${unnamed.map((book) => book.title).join(", ")} set no series id; add series: ${seriesIds[0]}`));
-  }
-  for (const book of books.filter((candidate) => candidate.invalidBookNumber)) {
-    errors.push(err("invalid-book-number", `${book.label}: story.md book-number ${JSON.stringify(book.project.story.data["book-number"])} is not a number 0 or more; the book is listed as unnumbered`, path6.join(book.label, "story.md")));
-  }
-  const seriesTitles = [...new Set(books.map((book) => book.seriesTitle).filter((title) => title !== undefined))].sort();
-  if (seriesTitles.length > 1) {
-    warnings.push(warn("series-title-mismatch", `Linked books set different series-title values: ${seriesTitles.map((title) => `"${title}"`).join(", ")}; keep the series name identical everywhere`));
-  }
-  checkDuplicateBookNumbers(books, errors);
-  const chronology = chronologicalOrder(books, errors);
-  if (chronology) {
-    checkSharedCanon(chronology, errors, warnings);
-  }
-  return {
-    root: startRoot,
-    series: books[0]?.series ?? seriesIds[0] ?? null,
-    seriesTitle: books[0]?.seriesTitle ?? seriesTitles[0] ?? null,
-    books: (chronology ? chronology.order : books).map((book) => ({
-      title: book.title,
-      label: book.label,
-      bookNumber: book.bookNumber,
-      status: book.status
-    })),
-    ordered: Boolean(chronology),
-    shared: sharedCanon(books),
-    ok: errors.length === 0,
-    errors,
-    warnings
-  };
-}
-function formatSeriesReport(report) {
-  const lines = [
-    `# Series: ${report.seriesTitle ?? report.series ?? "Unnamed series"}`,
-    "",
-    report.ordered ? "Chronological order:" : "Books (unordered):"
-  ];
-  report.books.forEach((book, index) => {
-    const details = [book.bookNumber === null ? "unnumbered" : `book ${book.bookNumber}`, book.status || "no status"];
-    lines.push(`${index + 1}. ${book.title} (${details.join(", ")}) - ${book.label}`);
-  });
-  lines.push("", "Shared canon:");
-  if (report.shared.length === 0) {
-    lines.push("- None");
-  }
-  for (const entry of report.shared) {
-    lines.push(`- ${entry.label}: ${entry.ids.join(", ")}`);
-  }
-  return `${lines.join(`
-`)}
-
-`;
-}
-function canonicalPath(target) {
-  const resolved = path6.resolve(target);
-  const tail = [];
-  let current = resolved;
-  while (current !== path6.dirname(current)) {
-    try {
-      const real = fs2.realpathSync(current);
-      return tail.length === 0 ? real : path6.join(real, ...tail.reverse());
-    } catch {
-      tail.push(path6.basename(current));
-      current = path6.dirname(current);
-    }
-  }
-  try {
-    return path6.join(fs2.realpathSync(current), ...tail.reverse());
-  } catch {
-    return path6.join(current, ...tail.reverse());
-  }
-}
-function discoverBooks(startRoot, scan, errors) {
-  const startResolved = path6.resolve(startRoot);
-  const scopeRoot = path6.dirname(startResolved);
-  const scopeReal = canonicalPath(scopeRoot);
-  const visited = new Map;
-  const queue = [startResolved];
-  while (queue.length > 0) {
-    const root = queue.shift();
-    const resolved = path6.resolve(root);
-    const effective = canonicalPath(resolved);
-    if (visited.has(effective)) {
-      continue;
-    }
-    if (visited.size >= MAX_SERIES_BOOKS) {
-      errors.push(err("series-too-many-books", "Series links exceed the " + MAX_SERIES_BOOKS + " book limit; refusing to traverse further"));
-      break;
-    }
-    const label = seriesLinkPath(startRoot, root) || ".";
-    if (path6.dirname(resolved) !== scopeRoot || path6.dirname(effective) !== scopeReal) {
-      const outside = !isPathInside2(scopeRoot, resolved) || !isPathInside2(scopeReal, effective);
-      errors.push(outside ? err("series-link-outside", label + " points outside the series directory " + scopeRoot + "; refusing to follow") : err("series-link-not-sibling", label + " is not a sibling folder in the series directory " + scopeRoot + "; keep series books side by side, refusing to follow"));
-      visited.set(effective, null);
-      continue;
-    }
-    if (!fs2.existsSync(path6.join(root, "story.md"))) {
-      errors.push(err("series-link-not-project", `${label} is not a story project: missing story.md`));
-      visited.set(effective, null);
-      continue;
-    }
-    let project;
-    try {
-      project = scan(root);
-    } catch (error) {
-      errors.push(err("series-link-unreadable", `${label}: ${error.message}`));
-      visited.set(effective, null);
-      continue;
-    }
-    for (const scanError of project.fileErrors ?? []) {
-      errors.push({ ...scanError, message: `${label}: ${scanError.message}`, file: path6.join(label, scanError.file) });
-    }
-    if (project.story?.unreadable) {
-      visited.set(effective, null);
-      continue;
-    }
-    const data = project.story.data;
-    const book = {
-      root,
-      key: effective,
-      label,
-      project,
-      title: String(data.title ?? path6.basename(root)),
-      series: seriesId(data),
-      status: data.status,
-      bookNumber: isBookNumber(data["book-number"]) ? data["book-number"] : null,
-      invalidBookNumber: data["book-number"] !== undefined && !isBookNumber(data["book-number"]),
-      seriesTitle: typeof data["series-title"] === "string" && data["series-title"].trim() !== "" ? data["series-title"].trim() : undefined,
-      follows: seriesLinks(root, data, "follows"),
-      precedes: seriesLinks(root, data, "precedes")
-    };
-    visited.set(effective, book);
-    for (const next of book.follows.concat(book.precedes)) {
-      queue.push(next);
-    }
-  }
-  const books = [...visited.values()].filter(Boolean);
-  return { books, complete: books.length === visited.size };
-}
-function discoverSeriesBooks(startRoot, scan) {
-  const errors = [];
-  const { books, complete } = discoverBooks(startRoot, scan, errors);
-  return { books, complete, errors };
-}
-function isPathInside2(root, target) {
-  const relativePath = path6.relative(root, target);
-  return !path6.isAbsolute(relativePath) && (relativePath === "" || !relativePath.split(path6.sep).includes(".."));
-}
-function chronologicalOrder(books, errors) {
-  const byKey = new Map(books.map((book) => [book.key, book]));
-  const later = new Map(books.map((book) => [book.key, new Set]));
-  for (const book of books) {
-    for (const earlier of book.follows.map(canonicalPath)) {
-      if (byKey.has(earlier) && earlier !== book.key) {
-        later.get(earlier).add(book.key);
-      }
-    }
-    for (const next of book.precedes.map(canonicalPath)) {
-      if (byKey.has(next) && next !== book.key) {
-        later.get(book.key).add(next);
-      }
-    }
-  }
-  const indegree = new Map(books.map((book) => [book.key, 0]));
-  for (const targets of later.values()) {
-    for (const target of targets) {
-      indegree.set(target, indegree.get(target) + 1);
-    }
-  }
-  const order = [];
-  const ready = books.filter((book) => indegree.get(book.key) === 0);
-  while (ready.length > 0) {
-    ready.sort(compareBooks);
-    const book = ready.shift();
-    order.push(book);
-    for (const target of later.get(book.key)) {
-      indegree.set(target, indegree.get(target) - 1);
-      if (indegree.get(target) === 0) {
-        ready.push(byKey.get(target));
-      }
-    }
-  }
-  if (order.length < books.length) {
-    const cycle = books.filter((book) => !order.includes(book)).map((book) => book.title);
-    errors.push(err("series-cycle", `Series chronology has a cycle between ${cycle.join(", ")}; check follows and precedes`));
-    return null;
-  }
-  return { order, later };
-}
-function checkDuplicateBookNumbers(books, errors) {
-  const byNumber = new Map;
-  for (const book of books) {
-    if (book.bookNumber !== null) {
-      byNumber.set(book.bookNumber, (byNumber.get(book.bookNumber) ?? []).concat(book.label));
-    }
-  }
-  for (const [number, labels] of [...byNumber].sort((left, right) => left[0] - right[0])) {
-    if (labels.length > 1) {
-      errors.push(err("duplicate-book-number", `Books ${labels.join(", ")} share book-number ${number}; book-number is publication order and must be unique`));
-    }
-  }
-}
-function compareBooks(left, right) {
-  return (left.bookNumber ?? Infinity) - (right.bookNumber ?? Infinity) || left.title.localeCompare(right.title, "en") || (left.key < right.key ? -1 : left.key > right.key ? 1 : 0);
-}
-function checkSharedCanon({ order, later }, errors, warnings) {
-  const reachable = new Map(order.map((book) => [book.key, collectLater(book.key, later, new Set)]));
-  for (const book of order) {
-    const earlierBooks = order.filter((candidate) => reachable.get(candidate.key).has(book.key));
-    checkCanonNames(book, earlierBooks, warnings);
-    checkCanonDeaths(book, earlierBooks, errors);
-    checkDestroyedArtifacts(book, earlierBooks, errors, warnings);
-    checkKnownFacts(book, earlierBooks, errors);
-  }
-}
-function collectLater(root, later, seen) {
-  for (const next of later.get(root)) {
-    if (!seen.has(next)) {
-      seen.add(next);
-      collectLater(next, later, seen);
-    }
-  }
-  return seen;
-}
-function checkCanonNames(book, earlierBooks, warnings) {
-  for (const [key, , field] of SHARED_CANON) {
-    const canon = new Map;
-    for (const earlier of earlierBooks) {
-      for (const entity of earlier.project[key]) {
-        canon.set(entity.id, { book: earlier, entity });
-      }
-    }
-    for (const entity of book.project[key]) {
-      const match = canon.get(entity.id);
-      if (match && canonText(entity[field]) !== canonText(match.entity[field])) {
-        warnings.push(warn("canon-name-mismatch", `${bookFile(book, entity.file)} ${field} "${entity[field]}" differs from "${match.entity[field]}" in ${bookFile(match.book, match.entity.file)}`, bookFile(book, entity.file)));
-      }
-      const said = pronunciationText(entity.pronunciation);
-      const saidBefore = pronunciationText(match?.entity.pronunciation);
-      if (said !== "" && saidBefore !== "" && said !== saidBefore) {
-        warnings.push(warn("canon-pronunciation-mismatch", `${bookFile(book, entity.file)} pronunciation "${said}" differs from "${saidBefore}" in ${bookFile(match.book, match.entity.file)}`, bookFile(book, entity.file)));
-      }
-    }
-  }
-}
-function pronunciationText(value) {
-  return typeof value === "string" ? value.trim().normalize("NFC") : "";
-}
-function canonText(value) {
-  return typeof value === "string" ? value.normalize("NFC") : value;
-}
-function checkCanonDeaths(book, earlierBooks, errors) {
-  const deaths = deathsBefore(earlierBooks);
-  const { chronology, lifelines } = bookLifelines(book);
-  const deadAt = (id, chapterId) => deaths.has(id) && !(lifelines.has(id) && revivedBy(lifelines.get(id), chapterId, chronology));
-  for (const character of book.project.characters) {
-    const death = deaths.get(character.id);
-    if (!death) {
-      continue;
-    }
-    if (character.status !== "deceased") {
-      errors.push(err("canon-death-status", `${bookFile(book, character.file)} has status ${character.status || "unset"}, but ${character.id} is deceased in earlier book ${death.title}; set status: deceased`, bookFile(book, character.file)));
-    }
-  }
-  for (const record of book.project.chapters.concat(book.project.scenes)) {
-    const chapterId = record.chapter ?? record.id;
-    for (const [id, death] of deaths) {
-      if ((record.characters.includes(id) || record.pov === id && !record.mentions.includes(id)) && deadAt(id, chapterId)) {
-        errors.push(err("canon-posthumous-appearance", `${bookFile(book, record.file)} lists ${id}, who died in earlier book ${death.title}; move appearances to mentions`, bookFile(book, record.file)));
-      }
-    }
-  }
-  for (const entry of knowledgeEntries(book)) {
-    const death = deaths.get(entry.character);
-    if (death && entry.learnedIn && deadAt(entry.character, entry.learnedIn)) {
-      errors.push(err("canon-posthumous-learning", `${bookFile(book, entry.file)} knowledge-state[${entry.index}] has ${entry.character} learn something in ${entry.learnedIn}, but ${entry.character} died in earlier book ${death.title}; drop learned-in or the entry`, bookFile(book, entry.file)));
-    }
-  }
-}
-function deathsBefore(earlierBooks) {
-  const deaths = new Map;
-  for (const earlier of earlierBooks) {
-    const { lifelines } = bookLifelines(earlier);
-    for (const character of earlier.project.characters) {
-      const lifeline = lifelines.get(character.id);
-      if (lifeline.deadAtEnd && (lifeline.events.length > 0 || !deaths.has(character.id))) {
-        deaths.set(character.id, earlier);
-      } else if (!lifeline.deadAtEnd && lifeline.events.some((event) => event.type === "revival")) {
-        deaths.delete(character.id);
-      }
-    }
-  }
-  return deaths;
-}
-var LIFELINES = new WeakMap;
-function bookLifelines(book) {
-  if (!LIFELINES.has(book.project)) {
-    const chronology = chapterChronology(book.project);
-    const lifelines = new Map(book.project.characters.map((character) => [character.id, characterLifeline(character, chronology)]));
-    LIFELINES.set(book.project, { chronology, lifelines });
-  }
-  return LIFELINES.get(book.project);
-}
-function checkDestroyedArtifacts(book, earlierBooks, errors, warnings) {
-  const destroyed = firstMatching(earlierBooks, "artifacts", (artifact) => artifact.status === "destroyed");
-  for (const artifact of book.project.artifacts) {
-    const earlier = destroyed.get(artifact.id);
-    if (earlier && artifact.status !== "destroyed") {
-      warnings.push(warn("canon-destroyed-status", `${bookFile(book, artifact.file)} has status ${artifact.status || "unset"}, but ${artifact.id} was destroyed in earlier book ${earlier.title}`, bookFile(book, artifact.file)));
-    }
-  }
-  for (const scene of book.project.scenes) {
-    for (const [id, earlier] of destroyed) {
-      if (scene.stateChanges.some((change) => change && typeof change === "object" && String(change.target ?? "") === id)) {
-        errors.push(err("canon-destroyed-artifact-used", `${bookFile(book, scene.file)} uses ${id}, which was destroyed in earlier book ${earlier.title}; account for its return or remove the state change`, bookFile(book, scene.file)));
-      }
-    }
-  }
-}
-function checkKnownFacts(book, earlierBooks, errors) {
-  const known = new Map;
-  for (const earlier of earlierBooks) {
-    for (const entry of knowledgeFacts(earlier)) {
-      if (!known.has(entry.key)) {
-        known.set(entry.key, { book: earlier, entry });
-      }
-    }
-  }
-  for (const entry of knowledgeFacts(book)) {
-    const prior = known.get(entry.key);
-    if (prior && entry.learnedIn) {
-      errors.push(err("canon-fact-relearned", `${bookFile(book, entry.file)} knowledge-state[${entry.index}] has ${entry.character} learn ${entry.fact} in ${entry.learnedIn}, but they already know it in earlier book ${prior.book.title} (${bookFile(prior.book, prior.entry.file)} knowledge-state[${prior.entry.index}])`, bookFile(book, entry.file)));
-    }
-  }
-}
-function knowledgeEntries(book) {
-  const continuity = book.project.continuity;
-  const entries = continuity && Array.isArray(continuity.data["knowledge-state"]) ? continuity.data["knowledge-state"] : [];
-  const file = path6.join(book.root, "continuity", "state.md");
-  return entries.flatMap((entry, index) => entry && typeof entry === "object" && typeof entry.character === "string" ? [{ index, file, character: entry.character, learnedIn: entry["learned-in"] ? String(entry["learned-in"]) : "" }] : []);
-}
-function knowledgeFacts(book) {
-  const continuity = book.project.continuity;
-  const entries = continuity && Array.isArray(continuity.data["knowledge-state"]) ? continuity.data["knowledge-state"] : [];
-  const file = path6.join(book.root, "continuity", "state.md");
-  const facts = [];
-  entries.forEach((entry, index) => {
-    const fact = entry && typeof entry === "object" ? String(entry.fact ?? "") : "";
-    if (fact !== "" && typeof entry.character === "string") {
-      facts.push({
-        index,
-        file,
-        character: entry.character,
-        fact,
-        key: `${entry.character}\x00${fact}`,
-        learnedIn: entry["learned-in"] ? String(entry["learned-in"]) : ""
-      });
-    }
-  });
-  return facts;
-}
-function firstMatching(books, key, predicate) {
-  const matches = new Map;
-  for (const book of books) {
-    for (const entity of book.project[key]) {
-      if (!matches.has(entity.id) && predicate(entity)) {
-        matches.set(entity.id, book);
-      }
-    }
-  }
-  return matches;
-}
-function sharedCanon(books) {
-  const shared = [];
-  for (const [key, label] of SHARED_CANON) {
-    const counts = new Map;
-    for (const book of books) {
-      for (const entity of book.project[key]) {
-        counts.set(entity.id, (counts.get(entity.id) ?? 0) + 1);
-      }
-    }
-    const ids = [...counts].filter(([, count]) => count > 1).map(([id]) => id).sort();
-    if (ids.length > 0) {
-      shared.push({ label, ids });
-    }
-  }
-  const factBooks = new Map;
-  for (const book of books) {
-    for (const entry of knowledgeFacts(book)) {
-      factBooks.set(entry.fact, (factBooks.get(entry.fact) ?? new Set).add(book.root));
-    }
-  }
-  const facts = [...factBooks].filter(([, roots]) => roots.size > 1).map(([fact]) => fact).sort();
-  if (facts.length > 0) {
-    shared.push({ label: "Facts", ids: facts });
-  }
-  return shared;
-}
-function bookFile(book, file) {
-  return path6.join(book.label, path6.relative(book.root, file));
-}
-
-// src/publishing.js
-var MAX_KEYWORDS = 7;
-var BISAC_PATTERN = /^[A-Z]{3}\d{6}$/;
-var LANGUAGE_PATTERN = /^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/;
-var SCALAR_FIELDS = ["author", "language", "isbn", "publisher", "publication-date", "description", "copyright", "cover-alt", "ai-disclosure", "chapter-label", "contents-label"];
-function isPlaceholder(value) {
-  return typeof value === "string" && /^\[TODO\b/i.test(value.trim());
-}
-var RTL_LANGUAGES = new Set(["ar", "arc", "ckb", "dv", "fa", "he", "iw", "ji", "ks", "ku", "ps", "sd", "syr", "ug", "ur", "yi"]);
-var RTL_SCRIPTS = new Set(["adlm", "arab", "hebr", "mand", "nkoo", "rohg", "samr", "syrc", "thaa"]);
-function textDirection(language) {
-  const [primary, ...subtags] = String(language ?? "").trim().toLowerCase().split("-");
-  const script = subtags.find((subtag) => /^[a-z]{4}$/.test(subtag));
-  if (script !== undefined) {
-    return RTL_SCRIPTS.has(script) ? "rtl" : "ltr";
-  }
-  return RTL_LANGUAGES.has(primary) ? "rtl" : "ltr";
-}
-function publishingMeta(data) {
-  const text = (field) => typeof data[field] === "string" && !isPlaceholder(data[field]) ? data[field].trim() : "";
-  const list = (field) => Array.isArray(data[field]) ? data[field].filter((item) => typeof item === "string" && item.trim() !== "" && !isPlaceholder(item)).map((item) => item.trim()) : [];
-  const authors = list("authors");
-  const author = text("author");
-  return {
-    authors: authors.length > 0 ? authors : author === "" ? [] : [author],
-    language: text("language") || "en",
-    isbn: normalizeIsbn(typeof data.isbn === "number" ? String(data.isbn) : text("isbn")),
-    publisher: text("publisher"),
-    publicationDate: text("publication-date"),
-    description: text("description"),
-    keywords: list("keywords"),
-    subjects: list("subjects"),
-    copyright: text("copyright"),
-    coverAlt: text("cover-alt"),
-    aiDisclosure: text("ai-disclosure"),
-    chapterLabel: text("chapter-label") || "Chapter",
-    contentsLabel: text("contents-label") || "Contents"
-  };
-}
-function validatePublishing(data, errors, warnings) {
-  for (const field of SCALAR_FIELDS) {
-    if (data[field] !== undefined && typeof data[field] !== "string" && !(field === "isbn" && typeof data[field] === "number")) {
-      errors.push(err("field-not-text", `story.md frontmatter field ${field} must be text`, "story.md"));
-    }
-  }
-  for (const field of ["keywords", "subjects", "authors"]) {
-    if (data[field] !== undefined && (!Array.isArray(data[field]) || data[field].some((item) => typeof item !== "string"))) {
-      errors.push(err("field-not-list", `story.md frontmatter field ${field} must be a list of text`, "story.md"));
-    }
-  }
-  if (typeof data.language === "string" && !isPlaceholder(data.language) && !LANGUAGE_PATTERN.test(data.language.trim())) {
-    errors.push(err("invalid-language", `story.md language ${data.language} must be a BCP 47 tag such as en, en-GB, or fr`, "story.md"));
-  }
-  const isbn = typeof data.isbn === "number" ? String(data.isbn) : data.isbn;
-  if (typeof isbn === "string" && isbn.trim() !== "" && !isPlaceholder(isbn) && normalizeIsbn(isbn) === "") {
-    const hint = typeof data.isbn === "number" ? "; quote it so leading zeros survive" : "";
-    errors.push(err("invalid-isbn", `story.md isbn ${isbn} is not a valid ISBN-13 or ISBN-10 (check the digits and checksum${hint})`, "story.md"));
-  }
-  if (typeof data["publication-date"] === "string" && !isPlaceholder(data["publication-date"])) {
-    const dateError = storyDateError(data["publication-date"]);
-    if (dateError !== "") {
-      errors.push(err("invalid-date", `story.md publication-date ${dateError}`, "story.md"));
-    }
-  }
-  if (Array.isArray(data.subjects)) {
-    for (const subject of data.subjects) {
-      if (typeof subject === "string" && !isPlaceholder(subject) && !BISAC_PATTERN.test(subject.trim())) {
-        errors.push(err("invalid-subject", `story.md subject ${subject} must be a BISAC code such as FIC022000`, "story.md"));
-      }
-    }
-  }
-  if (Array.isArray(data.keywords) && data.keywords.length > MAX_KEYWORDS) {
-    warnings.push(warn("too-many-keywords", `story.md lists ${data.keywords.length} keywords; most retailers accept ${MAX_KEYWORDS}`, "story.md"));
-  }
-  for (const field of [...SCALAR_FIELDS, "authors", "keywords", "subjects"]) {
-    const values = Array.isArray(data[field]) ? data[field] : [data[field]];
-    if (values.some(isPlaceholder)) {
-      warnings.push(warn("todo-placeholder", `story.md ${field} is still a [TODO] placeholder; builds leave it out`, "story.md"));
-    }
-  }
-  if (data.author !== undefined && data.authors !== undefined) {
-    warnings.push(warn("author-and-authors", "story.md sets both author and authors; builds use authors", "story.md"));
-  }
-}
-function normalizeIsbn(value) {
-  const compact = String(value ?? "").replace(/[\s-]/g, "").toUpperCase();
-  if (/^97[89]\d{10}$/.test(compact)) {
-    const sum = [...compact.slice(0, 12)].reduce((total, digit, index) => total + Number(digit) * (index % 2 === 0 ? 1 : 3), 0);
-    return (10 - sum % 10) % 10 === Number(compact[12]) ? compact : "";
-  }
-  if (/^\d{9}[\dX]$/.test(compact)) {
-    const sum = [...compact].reduce((total, char, index) => total + (char === "X" ? 10 : Number(char)) * (10 - index), 0);
-    return sum % 11 === 0 ? compact : "";
-  }
-  return "";
-}
-function copyrightPage(meta) {
-  const lines = [meta.copyright, "", "All rights reserved."];
-  if (meta.publisher !== "") {
-    lines.push("", `Published by ${meta.publisher}`);
-  }
-  if (meta.isbn !== "") {
-    lines.push("", `ISBN ${meta.isbn}`);
-  }
-  if (meta.aiDisclosure !== "") {
-    lines.push("", meta.aiDisclosure);
-  }
-  return lines.join(`
-`);
-}
-var DESCRIPTION_LIMIT = 4000;
-function metadataSheet(input) {
-  const { title, data, meta, words, pages } = input;
-  const seriesName = seriesDisplayName(data);
-  const series = typeof seriesName === "string" ? `${seriesName}${isBookNumber(data["book-number"]) ? `, book ${data["book-number"]}` : ""}` : "";
-  const rows = [
-    ["Title", title],
-    ["Series", series],
-    ["Author(s)", meta.authors.join("; ")],
-    ["ISBN", meta.isbn],
-    ["Publisher", meta.publisher],
-    ["Publication date", meta.publicationDate],
-    ["Language", meta.language],
-    ["Genre", [data.genre, data["sub-genre"]].filter((value) => typeof value === "string" && value !== "").join(" / ")],
-    ["Form", typeof data.form === "string" ? data.form : ""],
-    ["Word count", String(words)],
-    ["Estimated print pages", Object.entries(pages).map(([trim, count]) => `${count} at ${trim}`).join(", ")],
-    ["Description", meta.description === "" ? "" : `${meta.description.length} characters (limit ${DESCRIPTION_LIMIT})`],
-    ["Keywords", meta.keywords.length === 0 ? "" : `${meta.keywords.length} of ${MAX_KEYWORDS}: ${meta.keywords.join("; ")}`],
-    ["BISAC subjects", meta.subjects.join("; ")],
-    ["Copyright", meta.copyright],
-    ["Cover", typeof data.cover === "string" ? data.cover : ""],
-    ["Cover alt text", meta.coverAlt],
-    ["AI disclosure", meta.aiDisclosure]
-  ];
-  const checks = [
-    ["Author named (`author` or `authors`)", meta.authors.length > 0],
-    ["ISBN for this edition (`isbn`), or a retailer-assigned identifier", meta.isbn !== ""],
-    ["Publisher or imprint (`publisher`)", meta.publisher !== ""],
-    ["Publication date (`publication-date`)", meta.publicationDate !== ""],
-    [`Description under ${DESCRIPTION_LIMIT} characters (\`description\`)`, meta.description !== "" && meta.description.length <= DESCRIPTION_LIMIT],
-    [`Keywords, up to ${MAX_KEYWORDS} (\`keywords\`)`, meta.keywords.length > 0 && meta.keywords.length <= MAX_KEYWORDS],
-    ["BISAC subjects (`subjects`)", meta.subjects.length > 0],
-    ["Copyright line (`copyright`) or copyright matter page", meta.copyright !== "" || input.hasCopyrightPage],
-    ["Cover image (`cover`)", Boolean(input.coverReady)],
-    ["Cover alt text (`cover-alt`)", meta.coverAlt !== ""],
-    ["AI-use statement decided (`ai-disclosure`)", meta.aiDisclosure !== ""],
-    [`Permissions cleared for quoted matter (\`permission\`${(input.pendingPermissions ?? []).length > 0 ? `; pending: ${input.pendingPermissions.join(", ")}` : ""})`, (input.pendingPermissions ?? []).length === 0],
-    [`No \`[TODO\` markers in chapter prose${(input.todoChapters ?? []).length > 0 ? ` (found in: ${input.todoChapters.join(", ")})` : ""}`, (input.todoChapters ?? []).length === 0],
-    ["Story status is complete", data.status === "complete"]
-  ];
-  return [
-    `# ${title}: Retailer Metadata`,
-    "",
-    "Generated from story.md. Retailer limits change; check each retailer's current requirements before upload.",
-    "",
-    "| Field | Value |",
-    "| --- | --- |",
-    ...rows.map(([field, value]) => `| ${field} | ${value === "" ? "(missing)" : tableCell(value)} |`),
-    "",
-    "## Description",
-    "",
-    meta.description === "" ? "(missing)" : meta.description,
-    "",
-    "## Readiness",
-    "",
-    ...checks.map(([label, ok]) => `- [${ok ? "x" : " "}] ${label}`),
-    ""
-  ].join(`
-`);
-}
-function tableCell(value) {
-  return String(value).replace(/\|/g, "\\|").replace(/\n/g, " ");
-}
-
 // src/html.js
 var TRIM_SIZES = new Map([
-  ["5x8", { width: "5in", height: "8in", wordsPerPage: 230 }],
-  ["5.25x8", { width: "5.25in", height: "8in", wordsPerPage: 250 }],
-  ["5.5x8.5", { width: "5.5in", height: "8.5in", wordsPerPage: 275 }],
-  ["6x9", { width: "6in", height: "9in", wordsPerPage: 300 }],
-  ["a5", { width: "148mm", height: "210mm", wordsPerPage: 270 }]
+  ["5x8", { width: "5in", height: "8in", wordsPerPage: 230, charactersPerPage: 480 }],
+  ["5.25x8", { width: "5.25in", height: "8in", wordsPerPage: 250, charactersPerPage: 520 }],
+  ["5.5x8.5", { width: "5.5in", height: "8.5in", wordsPerPage: 275, charactersPerPage: 580 }],
+  ["6x9", { width: "6in", height: "9in", wordsPerPage: 300, charactersPerPage: 640 }],
+  ["a5", { width: "148mm", height: "210mm", wordsPerPage: 270, charactersPerPage: 560 }]
 ]);
 var DEFAULT_TRIM = "5.5x8.5";
 function labelledParagraphs(part) {
@@ -5573,8 +10201,11 @@ function paragraphLabels(book) {
   return book.parts.flatMap((part) => labelledParagraphs(part).filter((entry) => entry !== null).map((entry) => ({ label: entry.label, key: part.key, text: entry.paragraph.text })));
 }
 function openingWords(text, count = 6) {
-  const words = String(text).split(/\s+/).filter((word) => word !== "");
-  return words.length > count ? `${words.slice(0, count).join(" ")}…` : words.join(" ");
+  const source = String(text);
+  const words = wordSpans(source, /\S*[\p{L}\p{N}]\S*/gu);
+  const opening = words.length > count ? source.slice(0, words[count].start) : source;
+  const collapsed = opening.split(/\s+/).filter((word) => word !== "").join(" ");
+  return words.length > count ? `${collapsed}…` : collapsed;
 }
 function noteHref(noteUrl, label, stamp, text) {
   const params = [["title", `[${label}] `], ["anchor", label]];
@@ -5589,8 +10220,11 @@ function noteHref(noteUrl, label, stamp, text) {
   return `${base}${base.includes("?") ? "&" : "?"}${query}${fragment}`;
 }
 function reviewHtml(book, { stamp = "", noteUrl = "" } = {}) {
-  const contents = book.contentsLabel ?? "Contents";
-  const rtl = textDirection(book.language) === "rtl";
+  const labels = book.labels;
+  const label = (key, values) => fillLabel(labels, key, values);
+  const contents = label("contents");
+  const type = typesetting(book.language, book.writingMode);
+  const rtl = type.rtl;
   const toc = [];
   const sections = [];
   for (const part of book.parts) {
@@ -5599,12 +10233,12 @@ function reviewHtml(book, { stamp = "", noteUrl = "" } = {}) {
     const body = [];
     for (const entry of labelledParagraphs(part)) {
       if (entry === null) {
-        body.push({ quote: false, markup: `<hr class="scene-break" aria-label="Scene break">` });
+        body.push({ quote: false, markup: `<hr class="scene-break" aria-label="${escapeHtml(label("scene-break"))}">` });
         continue;
       }
       const { label: anchor, paragraph } = entry;
-      const note = noteUrl === "" ? "" : `<a class="note-link" href="${escapeHtml(noteHref(noteUrl, anchor, stamp, paragraph.text))}" title="Write a note on ${anchor}" target="_blank" rel="noopener">Note</a>`;
-      body.push({ quote: paragraph.quote, markup: `<p id="${anchor}"><a class="anchor" href="#${anchor}" title="Link to ${anchor}">${anchor}</a>${note}${paragraph.html}</p>` });
+      const note = noteUrl === "" ? "" : `<a class="note-link" href="${escapeHtml(noteHref(noteUrl, anchor, stamp, paragraph.text))}" title="${escapeHtml(label("note-title", { label: anchor }))}" target="_blank" rel="noopener">${escapeHtml(label("note"))}</a>`;
+      body.push({ quote: paragraph.quote, markup: `<p id="${anchor}"><a class="anchor" href="#${anchor}" title="${escapeHtml(label("anchor-title", { label: anchor }))}">${anchor}</a>${note}${paragraph.html}</p>` });
     }
     const heading = part.heading ? `<h2>${escapeHtml(part.title)}</h2>` : `<h2 class="visually-hidden">${escapeHtml(part.title)}</h2>`;
     sections.push(`<section id="${sectionId}" class="${part.kind}">${heading}
@@ -5612,18 +10246,26 @@ ${withBlockquotes(body).join(`
 `)}
 </section>`);
   }
-  const byline = book.authors.length === 0 ? "" : `<p class="byline">${escapeHtml(book.authors.join(" and "))}</p>`;
+  const byline = book.authors.length === 0 ? "" : `<p class="byline">${escapeHtml(joinNames(book.authors, labels))}</p>`;
+  const sentence = (key, values) => fillLabel(labels, key, values, escapeHtml);
+  const code = (text) => `<code>${escapeHtml(text)}</code>`;
+  const intro = joinSentences([
+    stamp === "" ? sentence("review-intro") : sentence("review-intro-build", { build: code(stamp) }),
+    sentence("review-labels", { label: code("ch03-p12") }),
+    sentence(stamp === "" ? "review-quote" : "review-quote-build"),
+    noteUrl === "" ? "" : sentence("review-note-link")
+  ]);
   return `<!DOCTYPE html>
 ${htmlRoot(book.language)}
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${escapeHtml(book.title)}: review copy</title>
+<title>${escapeHtml(label("review-title", { title: book.title }))}</title>
 <style>
 :root { --bg: #fdfcf8; --fg: #1d1b16; --muted: #6b665c; --rule: #ddd6c8; --accent: #7c3aed; }
 @media (prefers-color-scheme: dark) { :root { --bg: #16150f; --fg: #ece8dd; --muted: #a39e92; --rule: #3a372f; --accent: #b794f4; } }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 1.1rem/1.65 Georgia, "Iowan Old Style", "Palatino Linotype", serif; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 1.1rem/1.65 ${type.fonts.body}; }
 main { max-width: 38rem; margin: 0 auto; padding: 2rem 1rem 6rem; }
 header h1 { font-size: 2rem; line-height: 1.2; margin: 2rem 0 0.25rem; }
 .byline, .note { color: var(--muted); margin: 0 0 1rem; }
@@ -5649,14 +10291,14 @@ p:hover .note-link, p:target .note-link, .note-link:focus { opacity: 1; }
 [dir="rtl"] .anchor { left: auto; right: -5.5rem; text-align: left; }
 @media (max-width: 52rem) { [dir="rtl"] .anchor { text-align: right; } }
 ${noteUrl === "" ? "" : `[dir="rtl"] .note-link { left: auto; right: -5.5rem; text-align: left; }
-`}` : ""}</style>
+`}` : ""}${type.vertical ? REVIEW_VERTICAL : ""}</style>
 </head>
 <body>
 <main>
 <header>
 <h1>${escapeHtml(book.title)}</h1>
 ${byline}
-<p class="note">Review copy${stamp === "" ? "" : `, build <code>${escapeHtml(stamp)}</code>`}. Every paragraph has a label such as <code>ch03-p12</code> (chapter 3, paragraph 12). Quote the label${stamp === "" ? "" : " and the build"} with each note, with the paragraph's first few words, so the author can find the exact spot after the text changes.${noteUrl === "" ? "" : " The Note link beside each label opens a note with these filled in."}</p>
+<p class="note">${intro}</p>
 </header>
 <nav aria-label="${escapeHtml(contents)}"><h2>${escapeHtml(contents)}</h2><ol>
 ${toc.join(`
@@ -5669,6 +10311,23 @@ ${sections.join(`
 </html>
 `;
 }
+var REVIEW_VERTICAL = `html { writing-mode: vertical-rl; }
+main { max-width: none; max-height: 38rem; margin: auto 0; padding: 1rem 2rem 1rem 6rem; }
+header h1 { margin: 0; margin-block: 2rem 0.25rem; }
+.byline, .note, p { margin: 0; margin-block-end: 1rem; }
+.note { border-left: 0; padding-left: 0; border-top: 3px solid var(--accent); padding-top: 0.75rem; }
+nav ol { padding-left: 0; padding-top: 1.25rem; }
+section { border-top: 0; margin-top: 0; padding-top: 0; border-right: 1px solid var(--rule); margin-right: 3rem; padding-right: 1rem; }
+h2 { margin: 0; margin-block: 1rem 1.5rem; }
+.anchor, .note-link { position: static; display: block; width: auto; margin: 0; text-align: start; opacity: 0.6; }
+blockquote { margin: 0; margin-inline-start: 1.5rem; margin-block-end: 1rem; }
+.scene-break { margin: 0 2rem; }
+`;
+var PRINT_VERTICAL = `html { writing-mode: vertical-rl; }
+h1 { margin: 1in 0 0 0.5in; }
+blockquote { margin: 1.5em 0.8em; }
+p.scene-break { margin: 0 0.8em; }
+`;
 function printHtml(book, trimName = DEFAULT_TRIM) {
   const trim = TRIM_SIZES.get(trimName);
   if (!trim) {
@@ -5676,10 +10335,12 @@ function printHtml(book, trimName = DEFAULT_TRIM) {
   }
   const pages = estimateBookPages(book, trimName);
   const inside = insideMargin(pages);
-  const author = book.authors.join(" and ");
-  const rtl = textDirection(book.language) === "rtl";
-  const recto = rtl ? "left" : "right";
-  const verso = rtl ? "right" : "left";
+  const author = joinNames(book.authors, book.labels);
+  const type = typesetting(book.language, book.writingMode);
+  const rtl = type.rtl;
+  const recto = rtl || type.vertical ? "left" : "right";
+  const verso = rtl || type.vertical ? "right" : "left";
+  const heads = `${type.cased ? "italic " : ""}9pt ${type.fonts.heads}`;
   const toc = [];
   const sections = [];
   for (const part of book.parts) {
@@ -5687,7 +10348,7 @@ function printHtml(book, trimName = DEFAULT_TRIM) {
     let first = true;
     for (const paragraph of part.paragraphs) {
       if (paragraph === null) {
-        paragraphs.push({ quote: false, markup: `<p class="scene-break" aria-label="Scene break">*&#8195;*&#8195;*</p>` });
+        paragraphs.push({ quote: false, markup: `<p class="scene-break" aria-label="${escapeHtml(fillLabel(book.labels, "scene-break"))}">*&#8195;*&#8195;*</p>` });
         first = true;
         continue;
       }
@@ -5716,49 +10377,51 @@ ${htmlRoot(book.language)}
        npx pagedjs-cli book.print.html -o book.pdf
        weasyprint book.print.html book.pdf
        prince book.print.html -o book.pdf
-     Check the printer's current specs for margins, bleed, and fonts before upload. -->
+${type.vertical ? `     Vertical text needs an engine that sets it, such as Vivliostyle or Prince.
+` : ""}     Check the printer's current specs for margins, bleed, and fonts before upload. -->
 <style>
 @page { size: ${trim.width} ${trim.height}; margin: 0.75in 0.5in 0.75in ${inside}; }
 @page :left { margin-left: 0.5in; margin-right: ${inside}; }
 @page :${verso} {
-  @top-center { content: "${cssString(author || book.title)}"; font: italic 9pt Georgia, serif; } }
+  @top-center { content: "${cssString(author || book.title)}"; font: ${heads}; } }
 @page :${recto} {
-  @top-center { content: string(chapter-title, first-except); font: italic 9pt Georgia, serif; } }
-@page chapter { @bottom-center { content: counter(page); font: 9pt Georgia, serif; } }
+  @top-center { content: string(chapter-title, first-except); font: ${heads}; } }
+@page chapter { @bottom-center { content: counter(page); font: 9pt ${type.fonts.heads}; } }
 @page :blank { @top-center { content: none; } @bottom-center { content: none; } }
 @page front { @top-center { content: none; } @bottom-center { content: none; } }
-html { font: 11pt/1.4 Georgia, "Iowan Old Style", "Palatino Linotype", serif; }
+html { font: 11pt/1.4 ${type.fonts.body}; }
 body { margin: 0; hyphens: auto; }
 .title-page, .toc, section.front { page: front; break-before: ${recto}; }
 section.front.copyright-page { break-before: page; font-size: 9pt; }
 .title-page { text-align: center; padding-top: 30%; }
 .title-page h1 { font-size: 26pt; font-weight: normal; margin: 0 0 1em; }
-.title-page .author { font-size: 14pt; font-variant: small-caps; letter-spacing: 0.05em; }
-.toc h1 { font-size: 14pt; font-weight: normal; text-align: center; font-variant: small-caps; }
+.title-page .author { font-size: 14pt${type.cased ? "; font-variant: small-caps; letter-spacing: 0.05em" : ""}; }
+.toc h1 { font-size: 14pt; font-weight: normal; text-align: center${type.cased ? "; font-variant: small-caps" : ""}; }
 .toc ol { list-style: none; padding: 0; }
 .toc a { color: inherit; text-decoration: none; }
-.toc a::after { content: " " target-counter(attr(href), page); float: ${rtl ? "left" : "right"}; }
+.toc a::after { content: " " target-counter(attr(href), page); float: ${type.vertical ? "none" : rtl ? "left" : "right"}; }
 section.chapter, section.back { page: chapter; break-before: ${recto}; }
 section.chapter > h1, section.back > h1, section.back > .running-head { string-set: chapter-title content(text); }
 .running-head { height: 0; margin: 0; }
 h1 { font-size: 16pt; font-weight: normal; text-align: center; margin: 1.5in 0 0.5in; break-after: avoid; }
 p { margin: 0; text-indent: 1.5em; text-align: justify; widows: 2; orphans: 2; }
 p.first, p.scene-break + p { text-indent: 0; }
-/* A raised initial: floated drop caps render inconsistently across engines. */
+${type.cased ? `/* A raised initial: floated drop caps render inconsistently across engines. */
 section.chapter > h1 + p.first::first-letter { font-size: 2.4em; line-height: 1; }
-p.scene-break { text-align: center; text-indent: 0; margin: 0.8em 0; break-after: avoid; }
+` : ""}p.scene-break { text-align: center; text-indent: 0; margin: 0.8em 0; break-after: avoid; }
 blockquote { margin: 0.8em 1.5em; }
 blockquote p { text-indent: 0; text-align: start; }
 section.front p, section.back p { text-indent: 0; margin-bottom: 0.6em; text-align: ${rtl ? "right" : "left"}; }
 section.front:not(.copyright-page) p { text-align: center; }
 @media screen { body { max-width: ${trim.width}; margin: 2rem auto; padding: 0 1rem; } section { margin-top: 3rem; } }
-</style>
+${type.vertical ? `${PRINT_VERTICAL}@media screen { body { max-width: none; max-height: ${trim.height}; margin: auto 2rem; padding: 1rem 0; } section { margin-top: 0; margin-right: 3rem; } }
+` : ""}</style>
 </head>
 <body>
 <section class="title-page"><h1>${escapeHtml(book.title)}</h1>${author === "" ? "" : `<p class="author">${escapeHtml(author)}</p>`}</section>
 ${beforeToc.join(`
 `)}
-<nav class="toc"><h1>${escapeHtml(book.contentsLabel ?? "Contents")}</h1><ol>
+<nav class="toc"><h1>${escapeHtml(fillLabel(book.labels, "contents"))}</h1><ol>
 ${toc.join(`
 `)}
 </ol></nav>
@@ -5768,19 +10431,23 @@ ${afterToc.join(`
 </html>
 `;
 }
+function joinSentences(sentences) {
+  return sentences.filter((sentence) => sentence !== "").reduce((text, sentence) => text === "" || /[。！？]$/u.test(text) ? `${text}${sentence}` : `${text} ${sentence}`, "");
+}
 function htmlRoot(language) {
-  const dir = textDirection(language) === "rtl" ? ` dir="rtl"` : "";
+  const dir = typesetting(language).rtl ? ` dir="rtl"` : "";
   return `<html lang="${escapeHtml(language)}"${dir}>`;
 }
 var OPENING_SINK_PAGES = 0.3;
 var CONTENTS_ENTRIES_PER_PAGE = 25;
 function estimateBookPages(book, trimName = DEFAULT_TRIM) {
   const trim = TRIM_SIZES.get(trimName) ?? TRIM_SIZES.get(DEFAULT_TRIM);
+  const [perPage, length] = book.unit === "characters" ? [trim.charactersPerPage, (part) => part.characters] : [trim.wordsPerPage, (part) => part.words];
   const chapters = book.parts.filter((part) => part.kind === "chapter").length;
   let pages = 2 + Math.max(1, Math.ceil(chapters / CONTENTS_ENTRIES_PER_PAGE)) + 0.5;
   for (const part of book.parts.filter((entry) => !(entry.copyright && entry.placement === "front"))) {
     const sink = part.heading ? OPENING_SINK_PAGES : 0;
-    pages += Math.max(1, Math.ceil((part.words ?? 0) / trim.wordsPerPage + sink)) + 0.5;
+    pages += Math.max(1, Math.ceil((length(part) ?? 0) / perPage + sink)) + 0.5;
   }
   return Math.ceil(pages);
 }
@@ -5824,17 +10491,17 @@ function cssString(value) {
 var PROGRESS_FILE = "progress.md";
 var PACE_SESSIONS = 7;
 var PROJECTION_HORIZON_DAYS = 100 * 366;
-function withSession(sessions, date, words) {
+function withSession(sessions, date, counts) {
   let found = false;
   const kept = (Array.isArray(sessions) ? sessions : []).map((session) => {
     if (!found && session && typeof session === "object" && sessionDate(session) === date) {
       found = true;
-      return { ...session, words };
+      return { ...session, ...counts };
     }
     return session;
   });
   if (!found) {
-    kept.push({ date, words });
+    kept.push({ date, ...counts });
   }
   return kept.sort((left, right) => sessionDate(left).localeCompare(sessionDate(right), "en"));
 }
@@ -5843,23 +10510,36 @@ function sessionDate(session) {
 }
 function cleanSessions(value) {
   const sessions = [];
+  const count = (number) => Number.isInteger(number) && number >= 0;
   for (const entry of Array.isArray(value) ? value : []) {
-    if (entry && typeof entry === "object" && parseClockDate(sessionDate(entry)) && Number.isInteger(entry.words) && entry.words >= 0) {
-      sessions.push({ date: sessionDate(entry), words: entry.words });
+    if (entry && typeof entry === "object" && parseClockDate(sessionDate(entry)) && count(entry.words)) {
+      sessions.push({ date: sessionDate(entry), words: entry.words, characters: count(entry.characters) ? entry.characters : null });
     }
   }
   return sessions.sort((left, right) => left.date.localeCompare(right.date, "en"));
 }
-function computeProgress({ words, target, deadline, today, chapters, sessions }) {
+function computeProgress({ unit = "words", words, characters = null, target, deadline, today, chapters, sessions }) {
+  const characterBook = unit === "characters";
+  const inUnit = (entry) => characterBook ? entry.characters ?? null : entry.words;
+  const length = characterBook ? characters : words;
+  const measured = (Array.isArray(sessions) ? sessions : []).filter((session) => inUnit(session) !== null);
   const todayDays = parseClockDate(today).days;
   const result = {
+    unit,
     words,
+    characterCount: characterBook ? characters : null,
     target: target ?? null,
-    percent: target ? words * 100 / target : null,
-    remaining: target ? Math.max(0, target - words) : null,
+    percent: target ? length * 100 / target : null,
+    remaining: target ? Math.max(0, target - length) : null,
     deadline: null,
-    chapters: chapters.filter((chapter) => chapter.target > 0).map((chapter) => ({ ...chapter, percent: chapter.words * 100 / chapter.target })),
-    sessions: sessions.length,
+    chapters: chapters.filter((chapter) => chapter.target > 0).map((chapter) => ({
+      id: chapter.id,
+      words: chapter.words,
+      characterCount: characterBook ? chapter.characters : null,
+      target: chapter.target,
+      percent: inUnit(chapter) * 100 / chapter.target
+    })),
+    sessions: measured.length,
     lastSession: null,
     pace: null,
     projected: null
@@ -5873,13 +10553,13 @@ function computeProgress({ words, target, deadline, today, chapters, sessions })
       perDay: result.remaining !== null && daysLeft >= 0 ? Math.ceil(result.remaining / Math.max(daysLeft, 1)) : null
     };
   }
-  if (sessions.length > 0) {
-    const last = sessions[sessions.length - 1];
-    result.lastSession = { date: last.date, words: last.words, since: words - last.words };
-    const recent = sessions.slice(-PACE_SESSIONS);
+  if (measured.length > 0) {
+    const last = measured[measured.length - 1];
+    result.lastSession = { date: last.date, words: last.words, characterCount: characterBook ? last.characters : null, since: length - inUnit(last) };
+    const recent = measured.slice(-PACE_SESSIONS);
     const span = parseClockDate(recent[recent.length - 1].date).days - parseClockDate(recent[0].date).days;
     if (recent.length > 1 && span > 0) {
-      result.pace = (recent[recent.length - 1].words - recent[0].words) / span;
+      result.pace = (inUnit(recent[recent.length - 1]) - inUnit(recent[0])) / span;
       const daysNeeded = Math.ceil(result.remaining / result.pace);
       if (result.remaining > 0 && Math.round(result.pace) > 0 && daysNeeded <= PROJECTION_HORIZON_DAYS) {
         result.projected = formatDate(todayDays + daysNeeded);
@@ -5889,12 +10569,15 @@ function computeProgress({ words, target, deadline, today, chapters, sessions })
   return result;
 }
 function formatProgress(progress) {
+  const characters = progress.unit === "characters";
+  const noun = characters ? "character" : "word";
+  const count = (entry) => characters ? entry.characterCount : entry.words;
   const lines = [];
   if (progress.target === null) {
-    lines.push(`Progress: ${formatNumber(progress.words)} words (no target-words in story.md)`);
+    lines.push(`Progress: ${formatNumber2(count(progress))} ${noun}s (no target-${noun}s in story.md)`);
   } else {
-    lines.push(`Progress: ${formatNumber(progress.words)} of ${formatNumber(progress.target)} words (${formatPercent(progress.percent, 1)}%)`);
-    lines.push(`Remaining: ${plural2(progress.remaining, "word", formatNumber)}`);
+    lines.push(`Progress: ${formatNumber2(count(progress))} of ${formatNumber2(progress.target)} ${noun}s (${formatPercent(progress.percent, 1)}%)`);
+    lines.push(`Remaining: ${plural2(progress.remaining, noun, formatNumber2)}`);
   }
   if (progress.deadline) {
     const { date, daysLeft, perDay } = progress.deadline;
@@ -5903,19 +10586,19 @@ function formatProgress(progress) {
     } else if (perDay === null) {
       lines.push(`Deadline: ${date} (${daysLeft === 0 ? "today" : `${plural2(daysLeft, "day")} left`})`);
     } else if (daysLeft === 0) {
-      lines.push(`Deadline: ${date} (today): ${plural2(perDay, "word", formatNumber)} needed`);
+      lines.push(`Deadline: ${date} (today): ${plural2(perDay, noun, formatNumber2)} needed`);
     } else {
-      lines.push(`Deadline: ${date} (${plural2(daysLeft, "day")} left): ${formatNumber(perDay)} words a day needed`);
+      lines.push(`Deadline: ${date} (${plural2(daysLeft, "day")} left): ${formatNumber2(perDay)} ${noun}s a day needed`);
     }
   }
   if (progress.lastSession) {
     const { date, since } = progress.lastSession;
-    lines.push(`Sessions: ${progress.sessions} logged; last ${date} (${since >= 0 ? "+" : ""}${formatNumber(since)} words since)`);
+    lines.push(`Sessions: ${progress.sessions} logged; last ${date} (${since >= 0 ? "+" : ""}${formatNumber2(since)} ${noun}s since)`);
   } else {
     lines.push("Sessions: none logged (run story progress --log after a writing session)");
   }
   if (progress.pace !== null) {
-    lines.push(`Pace: ${formatNumber(Math.round(progress.pace))} words a day over the last ${Math.min(progress.sessions, PACE_SESSIONS)} sessions`);
+    lines.push(`Pace: ${formatNumber2(Math.round(progress.pace))} ${noun}s a day over the last ${Math.min(progress.sessions, PACE_SESSIONS)} sessions`);
   }
   if (progress.projected) {
     lines.push(`Projected finish at this pace: ${progress.projected}`);
@@ -5923,7 +10606,7 @@ function formatProgress(progress) {
   if (progress.chapters.length > 0) {
     lines.push("", "Chapter targets:");
     for (const chapter of progress.chapters) {
-      lines.push(`- ${chapter.id}: ${formatNumber(chapter.words)} of ${formatNumber(chapter.target)} words (${formatPercent(chapter.percent, 0)}%)`);
+      lines.push(`- ${chapter.id}: ${formatNumber2(count(chapter))} of ${formatNumber2(chapter.target)} ${noun}s (${formatPercent(chapter.percent, 0)}%)`);
     }
   }
   return `${lines.join(`
@@ -5948,7 +10631,7 @@ function formatPercent(percent, places) {
   }
   return value.toFixed(places);
 }
-function formatNumber(value) {
+function formatNumber2(value) {
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -6050,7 +10733,7 @@ function formatComparison(comparison, label) {
   const lines = [
     `Compared with ${label}`,
     `Chapters: ${comparison.beforeChapters} then, ${comparison.afterChapters} now (${added} added, ${removed} removed${moved > 0 ? `, ${moved} moved` : ""})`,
-    `Words: ${formatNumber2(comparison.beforeWords)} then, ${formatNumber2(comparison.afterWords)} now (${signed(comparison.afterWords - comparison.beforeWords)})`,
+    `Words: ${formatNumber3(comparison.beforeWords)} then, ${formatNumber3(comparison.afterWords)} now (${signed(comparison.afterWords - comparison.beforeWords)})`,
     ""
   ];
   if (comparison.chapters.length === 0) {
@@ -6059,13 +10742,13 @@ function formatComparison(comparison, label) {
   for (const chapter of comparison.chapters) {
     const name = `${chapter.id} ${chapter.title}${chapter.movedFrom ? ` (moved from ${chapter.movedFrom})` : ""}`;
     if (chapter.status === "added") {
-      lines.push(`- ${name}: added (${formatNumber2(chapter.after)} words)`);
+      lines.push(`- ${name}: added (${formatNumber3(chapter.after)} words)`);
     } else if (chapter.status === "removed") {
-      lines.push(`- ${name}: removed (was ${formatNumber2(chapter.before)} words)`);
+      lines.push(`- ${name}: removed (was ${formatNumber3(chapter.before)} words)`);
     } else if (chapter.status === "unchanged") {
-      lines.push(`- ${name}: unchanged (${formatNumber2(chapter.after)} words)`);
+      lines.push(`- ${name}: unchanged (${formatNumber3(chapter.after)} words)`);
     } else {
-      lines.push(`- ${name}: ${formatNumber2(chapter.before)} -> ${formatNumber2(chapter.after)} words (${signed(chapter.after - chapter.before)}), ${formatPercent(chapter.unchanged * 100, 0)}% of paragraphs unchanged`);
+      lines.push(`- ${name}: ${formatNumber3(chapter.before)} -> ${formatNumber3(chapter.after)} words (${signed(chapter.after - chapter.before)}), ${formatPercent(chapter.unchanged * 100, 0)}% of paragraphs unchanged`);
     }
   }
   return `${lines.join(`
@@ -6123,7 +10806,7 @@ function normalise(text) {
 }
 function wordBag(text) {
   const bag = new Map;
-  for (const word of String(text).toLowerCase().match(/[\p{L}\p{N}]+(?:['\u2019][\p{L}\p{N}]+)*/gu) ?? []) {
+  for (const { word } of wordSpans(String(text).toLowerCase(), /[\p{L}\p{N}]+(?:['\u2019][\p{L}\p{N}]+)*/gu)) {
     bag.set(word, (bag.get(word) ?? 0) + 1);
   }
   return bag;
@@ -6158,9 +10841,9 @@ function formatLabelMapping(mapping, label) {
 `;
 }
 function signed(value) {
-  return `${value > 0 ? "+" : value < 0 ? "-" : "±"}${formatNumber2(Math.abs(value))}`;
+  return `${value > 0 ? "+" : value < 0 ? "-" : "±"}${formatNumber3(Math.abs(value))}`;
 }
-function formatNumber2(value) {
+function formatNumber3(value) {
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -6173,9 +10856,7 @@ var SIMILARITY_DEFAULTS = { minWords: 8 };
 var MIN_SHINGLE = 5;
 var MAX_PLACES = 1000;
 var QUOTE_WORDS = 24;
-var CJK = "\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}";
-var WORD_CHAR = `(?:(?![${CJK}])[\\p{L}\\p{N}\\p{M}])`;
-var WORD_PATTERN2 = new RegExp(`[${CJK}]|${WORD_CHAR}+(?:['’ʼ]${WORD_CHAR}+)*`, "gu");
+var WORD_PATTERN2 = /[\p{L}\p{N}\p{M}]+(?:['’ʼ][\p{L}\p{N}\p{M}]+)*/gu;
 function similarityOptions(options = {}) {
   const settings = { ...SIMILARITY_DEFAULTS };
   const raw = options["min-words"];
@@ -6191,13 +10872,8 @@ function similarityOptions(options = {}) {
 function tokenizeDocument(paragraphs) {
   const words = [];
   paragraphs.forEach((paragraph, index) => {
-    for (const match of paragraph.text.normalize("NFC").matchAll(WORD_PATTERN2)) {
-      words.push({
-        word: match[0].toLowerCase().replace(/[’ʼ]/g, "'"),
-        paragraph: index,
-        start: match.index,
-        end: match.index + match[0].length
-      });
+    for (const { word, start, end } of wordSpans(paragraph.text.normalize("NFC"), WORD_PATTERN2)) {
+      words.push({ word: word.toLowerCase().replace(/[’ʼ]/g, "'"), paragraph: index, start, end });
     }
   });
   return words;
@@ -6302,7 +10978,7 @@ function describe(document, from, length) {
   };
 }
 function count(value, noun) {
-  return `${formatNumber2(value)} ${value === 1 ? noun : `${noun}s`}`;
+  return `${formatNumber3(value)} ${value === 1 ? noun : `${noun}s`}`;
 }
 function place(location) {
   return location.from === location.to ? location.from : `${location.from} to ${location.to}`;
@@ -6372,7 +11048,7 @@ function formatSimilarity(report) {
     const passages = chapter.passages === 0 ? "no shared passages" : `${count(chapter.passages, "shared passage")}, ${count(chapter.sharedWords, "word")} (${percent(chapter.sharedWords, chapter.words)})`;
     lines.push(`- ${chapter.file}: ${passages}`);
   }
-  lines.push("", `Total: ${formatNumber2(report.sharedWords)} of ${count(report.words, "word")} shared (${percent(report.sharedWords, report.words)})`);
+  lines.push("", `Total: ${formatNumber3(report.sharedWords)} of ${count(report.words, "word")} shared (${percent(report.sharedWords, report.words)})`);
   lines.push("Shared text is a place to look, not proof of copying: check each passage in context.");
   return `${lines.join(`
 `)}
@@ -6578,6 +11254,130 @@ function applySeverity(result, overrides = NO_OVERRIDES) {
 import { Buffer as Buffer4 } from "node:buffer";
 import fs8 from "node:fs";
 import path12 from "node:path";
+
+// src/languages/style.js
+var STYLE_LISTS = {
+  "filter-words": { list: "filterWords" },
+  "said-bookisms": { list: "saidBookisms" },
+  "plain-tags": { list: "plainTags" },
+  "beat-pronouns": { list: "beatPronouns" },
+  "inversion-links": { list: "inversionLinks" },
+  "adverb-suffixes": { list: "adverbSuffixes" },
+  "adverb-exceptions": { list: "adverbExceptions" },
+  "adverb-blockers": { list: "adverbBlockers" },
+  "echo-stopwords": { list: "echoStopwords" },
+  "phrase-stopwords": { list: "phraseStopwords" },
+  "dialect-pairs": { list: "dialectPairs" },
+  "speech-verbs": { list: "speechVerbs" },
+  "speech-pronouns": { list: "speechPronouns" },
+  "contraction-suffixes": { list: "contractionSuffixes" },
+  "contracted-is": { list: "contractedIs" },
+  elisions: { list: "elisions" },
+  "voice-stopwords": { list: "voiceStopwords" },
+  "title-abbreviations": { list: "titleAbbreviations", cased: true, abbreviation: true },
+  "context-abbreviations": { list: "contextAbbreviations", cased: true, abbreviation: true },
+  "calendar-words": { list: "calendarWords", cased: true },
+  "chapter-words": { list: "chapterWords" },
+  "section-words": { list: "sectionWords" },
+  "part-words": { list: "partWords" },
+  "front-matter-words": { list: "frontMatterWords" },
+  "ordinal-words": { list: "ordinalWords" },
+  "number-words": { list: "numberWords", part: "words" },
+  "number-joiners": { list: "numberWords", part: "joiners" },
+  "candidate-stopwords": { list: "candidateStopwords", cased: true },
+  determiners: { list: "determiners" },
+  "relative-words": { list: "relativeWords" },
+  "noun-suffixes": { list: "nounSuffixes" },
+  "title-words": { list: "titleWords" }
+};
+var STYLE_LIST_FIELDS = ["replace-words", "add-words"];
+function styleListEntries(value) {
+  return Array.isArray(value) ? value.filter(isEntry2).flatMap((entry) => Object.entries(entry)) : [];
+}
+function isEntry2(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function styleWords(value) {
+  if (Array.isArray(value)) {
+    return value.every((word) => typeof word === "string") ? value.map((word) => word.trim()).filter((word) => word !== "") : null;
+  }
+  if (typeof value !== "string") {
+    return null;
+  }
+  const flow = /^\[(.*)\]$/s.exec(value.trim());
+  return (flow === null ? value : flow[1]).split(",").map((word) => word.trim().replace(/^(["'])(.*)\1$/s, "$2").trim()).filter((word) => word !== "");
+}
+function withStyleLists(pack, styleData) {
+  const changes = STYLE_LIST_FIELDS.flatMap((field) => styleListEntries(styleData?.[field]).filter(([key, value]) => Object.prototype.hasOwnProperty.call(STYLE_LISTS, key) && styleWords(value) !== null).map(([key, value]) => ({ replace: field === "replace-words", key, words: styleWords(value) })));
+  if (changes.length === 0) {
+    return pack;
+  }
+  const checks = { ...pack.checks };
+  const cleared = new Set;
+  for (const { replace, key, words } of changes) {
+    const { list, part, cased = false, abbreviation = false } = STYLE_LISTS[key];
+    const written = words.map((word) => {
+      const apostrophe = word.replace(/’/g, "'");
+      const straight = abbreviation ? apostrophe.replace(/\.$/, "") : apostrophe;
+      return cased ? straight : lowerCase(straight, pack);
+    }).filter((word) => word !== "");
+    const fresh = replace && !cleared.has(key);
+    cleared.add(key);
+    if (part !== undefined) {
+      const current = fresh && part === "words" ? { joiners: checks.numberWords?.joiners ?? [] } : { ...checks.numberWords };
+      checks.numberWords = { ...current, [part]: unique2([...fresh ? [] : current[part] ?? [], ...written]) };
+    } else if (list === "dialectPairs") {
+      const pairs = written.map((pair) => pair.split("/").map((word) => word.trim())).filter((pair) => pair.length === 2 && pair.every((word) => word !== ""));
+      checks.dialectPairs = [...fresh ? [] : checks.dialectPairs ?? [], ...pairs];
+    } else {
+      checks[list] = unique2([...fresh ? [] : checks[list] ?? [], ...written]);
+    }
+  }
+  return deepFreeze({ ...pack, checks });
+}
+function unique2(words) {
+  return [...new Set(words)];
+}
+
+// src/forms.js
+var STORY_FORMS = new Map([
+  ["flash", { min: 1, max: 1500, target: 1000 }],
+  ["short-story", { min: 1000, max: 7500, target: 5000 }],
+  ["novelette", { min: 7500, max: 17500, target: 12000 }],
+  ["novella", { min: 17500, max: 40000, target: 30000 }],
+  ["novel", { min: 40000, max: 200000, target: 80000 }],
+  ["serial", { min: null, max: null, target: null }],
+  ["picture-book", { min: 1, max: 1000, target: 500 }],
+  ["chapter-book", { min: 4000, max: 15000, target: 1e4 }]
+]);
+var COUNT_UNITS = new Map([
+  ["words", { name: "words", noun: "word", title: "Words", countField: "word-count", targetField: "target-words" }],
+  ["characters", { name: "characters", noun: "character", title: "Characters", countField: "character-count", targetField: "target-characters" }]
+]);
+function countUnit(storyData, pack) {
+  const value = storyData?.["count-unit"];
+  return COUNT_UNITS.get(COUNT_UNITS.has(value) ? value : pack?.countUnit) ?? COUNT_UNITS.get("words");
+}
+function formRanges(unit, pack) {
+  if (unit.name === "words") {
+    return STORY_FORMS;
+  }
+  const ranges = pack?.characterForms;
+  return ranges ? new Map(Object.entries(ranges)) : null;
+}
+function formRangeWarning(form, count, label, ranges = STORY_FORMS, unit = COUNT_UNITS.get("words")) {
+  const range = ranges?.get(form);
+  if (!range || range.min === null || !Number.isInteger(count) || count <= 0) {
+    return "";
+  }
+  if (range.max === null) {
+    return count < range.min ? `${label} ${count} is under the usual ${form} minimum of ${range.min} ${unit.name}` : "";
+  }
+  if (count < range.min || count > range.max) {
+    return `${label} ${count} is outside the usual ${form} range of ${range.min}-${range.max} ${unit.name}`;
+  }
+  return "";
+}
 
 // src/stdin.js
 import { Buffer as Buffer2 } from "node:buffer";
@@ -6951,7 +11751,7 @@ function formatTimeline(timeline, totalChapters) {
   }
   const shares = roundedShares(timeline.pov.map((entry) => entry.words));
   for (const [index, entry] of timeline.pov.entries()) {
-    lines.push(`- ${entry.pov}: ${plural3(entry.chapters, "chapter")}, ${formatNumber3(entry.words)} words (${shares[index]}%)`);
+    lines.push(`- ${entry.pov}: ${plural3(entry.chapters, "chapter")}, ${formatNumber4(entry.words)} words (${shares[index]}%)`);
   }
   lines.push("", "Character presence:");
   if (timeline.presence.length === 0) {
@@ -6991,7 +11791,7 @@ function describe2(entry) {
 function plural3(count, noun) {
   return `${count} ${noun}${count === 1 ? "" : "s"}`;
 }
-function formatNumber3(value) {
+function formatNumber4(value) {
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -7196,42 +11996,33 @@ function timelineText(text) {
   return String(text).replace(/:/g, "∶").replace(/\s+/g, " ").trim();
 }
 
-// src/forms.js
-var STORY_FORMS = new Map([
-  ["flash", { min: 1, max: 1500, target: 1000 }],
-  ["short-story", { min: 1000, max: 7500, target: 5000 }],
-  ["novelette", { min: 7500, max: 17500, target: 12000 }],
-  ["novella", { min: 17500, max: 40000, target: 30000 }],
-  ["novel", { min: 40000, max: 200000, target: 80000 }],
-  ["serial", { min: null, max: null, target: null }],
-  ["picture-book", { min: 1, max: 1000, target: 500 }],
-  ["chapter-book", { min: 4000, max: 15000, target: 1e4 }]
-]);
-function formRangeWarning(form, words, label) {
-  const range = STORY_FORMS.get(form);
-  if (!range || range.min === null || !Number.isInteger(words) || words <= 0) {
-    return "";
-  }
-  if (words < range.min || words > range.max) {
-    return `${label} ${words} is outside the usual ${form} range of ${range.min}-${range.max} words`;
-  }
-  return "";
-}
-
 // src/narration.js
 var NARRATION_WORDS_PER_MINUTE = 155;
+var NARRATION_CHARACTERS_PER_MINUTE = 300;
+function narrationUnit(manuscript) {
+  return manuscript?.unit === "characters" ? "characters" : "words";
+}
+function narrationRate(meta, unit = "words") {
+  const fallback = unit === "characters" ? NARRATION_CHARACTERS_PER_MINUTE : NARRATION_WORDS_PER_MINUTE;
+  return typeof meta?.narrationRate === "number" && (meta.countUnit ?? "words") === unit ? meta.narrationRate : fallback;
+}
 function narrationScript(manuscript, guide) {
-  const authors = manuscript.meta.authors.join(" and ");
+  const labels = manuscript.meta.labels;
+  const unit = narrationUnit(manuscript);
+  const rate = narrationRate(manuscript.meta, unit);
+  const count = unit === "characters" ? characterCount : wordCount;
+  const authors = joinNames(manuscript.meta.authors, labels);
+  const narrator = "[narrator]";
   const sections = [
     ...manuscript.front.filter((entry) => !entry.copyright).map((entry) => ({ title: entry.title, body: entry.body })),
     ...manuscript.chapters.map((chapter) => ({ title: chapter.heading, body: chapter.body })),
     ...manuscript.back.map((entry) => ({ title: entry.title, body: entry.body }))
-  ].map((section) => ({ ...section, words: wordCount(section.body) }));
+  ].map((section) => ({ ...section, words: count(section.body) }));
   const totalWords = sections.reduce((sum, section) => sum + section.words, 0);
   const lines = [
     `# ${manuscript.title}: Narration Script`,
     "",
-    `Estimated finished runtime: ${formatRuntime(totalWords)} at ${NARRATION_WORDS_PER_MINUTE} words per minute (${totalWords} words). Narration pace varies; time a sample chapter and rescale.`,
+    `Estimated finished runtime: ${formatRuntime(totalWords, rate)} at ${rate} ${unit} per minute (${totalWords} ${unit}). Narration pace varies; time a sample chapter and rescale.`,
     "",
     "## Pronunciation Guide",
     ""
@@ -7244,17 +12035,22 @@ function narrationScript(manuscript, guide) {
       lines.push(`| ${cell2(entry.name)} | ${cell2(entry.pronunciation)} | ${entry.kind} |`);
     }
   }
-  lines.push("", "## Opening Credits", "", `${manuscript.title}${/[.!?…]["”’')\]]*$/.test(manuscript.title) ? "" : "."}${authors === "" ? "" : ` Written by ${authors}.`} Narrated by [narrator].`);
+  const credit = (key) => fillLabel(labels, authors === "" ? `${key}-anonymous` : key, { title: manuscript.title, authors, narrator });
+  lines.push("", "## Opening Credits", "", withoutDoubledStop(credit("narration-opening"), manuscript.title));
   let wordsSoFar = 0;
   for (const section of sections) {
-    const before = Math.round(wordsSoFar / NARRATION_WORDS_PER_MINUTE);
+    const before = Math.round(wordsSoFar / rate);
     wordsSoFar += section.words;
-    const minutes = Math.round(wordsSoFar / NARRATION_WORDS_PER_MINUTE) - before;
+    const minutes = Math.round(wordsSoFar / rate) - before;
     lines.push("", `## ${section.title}`, "", `[${minutes < 1 ? "under 1 min" : `about ${minutes} min`}]`, "", narrationBody(section.body));
   }
-  lines.push("", "## Closing Credits", "", `The end. You have been listening to ${manuscript.title}${authors === "" ? "" : `, written by ${authors}`}, narrated by [narrator].`, "");
+  lines.push("", "## Closing Credits", "", credit("narration-closing"), "");
   return lines.join(`
 `);
+}
+function withoutDoubledStop(text, title) {
+  const ending = /[.!?…。！？]["”’')\]」』》]*$/u;
+  return text.startsWith(title) && ending.test(title) && /^[.。।]/u.test(text.slice(title.length)) ? `${title}${text.slice(title.length + 1)}` : text;
 }
 function pronunciationGuide(project) {
   const guide = [];
@@ -7269,7 +12065,8 @@ function pronunciationGuide(project) {
   project.factions.forEach((faction) => add("faction", faction.name, faction.pronunciation));
   project.artifacts.forEach((artifact) => add("artifact", artifact.name, artifact.pronunciation));
   project.glossaryTerms.forEach((term) => add("term", term.term, term.pronunciation));
-  return guide.sort((left, right) => left.name.localeCompare(right.name, "en") || left.kind.localeCompare(right.kind, "en"));
+  const compare = compareText(project.pack);
+  return guide.sort((left, right) => compare(left.name, right.name) || left.kind.localeCompare(right.kind, "en"));
 }
 function narrationBody(body) {
   return flattenHeadings(plainLinks(String(body).replace(/\r\n?/g, `
@@ -7278,8 +12075,8 @@ function narrationBody(body) {
 
 `);
 }
-function formatRuntime(words) {
-  const minutes = Math.round(words / NARRATION_WORDS_PER_MINUTE);
+function formatRuntime(words, rate = NARRATION_WORDS_PER_MINUTE) {
+  const minutes = Math.round(words / rate);
   return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, "0")}m`;
 }
 function cell2(value) {
@@ -7311,13 +12108,15 @@ var FORM_NOUNS = {
   "chapter-book": "book"
 };
 function fountainScript(input) {
+  const pack = input.pack ?? languagePack();
   const lines = [`Title: ${inline(input.title)}`];
-  const authors = input.authors.map(inline).filter(Boolean).join(" and ");
+  const authors = joinNames(input.authors.map(inline).filter(Boolean), input.labels);
+  const label = (key, values) => fillLabel(input.labels, key, values, escapeText).trim();
   if (authors !== "") {
-    lines.push("Credit: Written by", `Author: ${authors}`);
+    lines.push(`Credit: ${label("screenplay-credit")}`, `Author: ${authors}`);
   }
-  const noun = FORM_NOUNS[input.form] ?? "book";
-  lines.push(`Source: Based on the ${noun}${authors === "" ? "" : ` by ${authors}`}`, "");
+  const form = FORM_NOUNS[input.form] ?? "book";
+  lines.push(`Source: ${authors === "" ? label("screenplay-source-anonymous", { form }) : label("screenplay-source", { form, authors })}`, "");
   lines.push("[[Scene skeleton built by story build from the scene records. Notes and synopses are not printed. Draft the action and dialogue under each heading, and merge, cut, or reorder scenes as the adaptation needs.]]");
   for (const chapter of input.chapters) {
     lines.push("", `## ${sectionText(chapter.heading)}`);
@@ -7325,10 +12124,10 @@ function fountainScript(input) {
       lines.push("", `[[No scene records for ${inline(chapter.id)}: add them to outline this chapter.]]`);
     }
     for (const scene of chapter.scenes) {
-      lines.push("", sceneHeading(scene), "", `= ${inline(scene.title)}`, "");
+      lines.push("", sceneHeading(scene, pack), "", `= ${inline(scene.title)}`, "");
       const notes = [`Source: ${inline(scene.id)}`];
       if (scene.cast.length > 0) {
-        notes.push(`Characters: ${scene.cast.map((name) => inline(name).toUpperCase()).join(", ")}`);
+        notes.push(`Characters: ${scene.cast.map((name) => upperCase(inline(name), pack)).join(", ")}`);
       }
       const when = [scene.date, scene.time].map(inline).filter(Boolean).join(" ");
       if (when !== "") {
@@ -7351,9 +12150,9 @@ function fountainScript(input) {
 `)}
 `;
 }
-function sceneHeading(scene) {
-  const place = inline(scene.locationName).toUpperCase() || "LOCATION TBD";
-  const time = timeOfDay(scene.time);
+function sceneHeading(scene, pack = languagePack()) {
+  const place = upperCase(inline(scene.locationName), pack) || "LOCATION TBD";
+  const time = timeOfDay(scene.time, pack);
   const text = `${place}${time === "" ? "" : ` - ${time}`}`.replace(/[\s#]+$/, "") || "LOCATION TBD";
   const prefix = SCENE_SETTINGS.get(scene.setting);
   if (prefix !== undefined) {
@@ -7362,7 +12161,7 @@ function sceneHeading(scene) {
   const forced = text.replace(/^[^\p{L}\p{N}]+/u, "");
   return `.${forced === "" ? "LOCATION TBD" : forced}`;
 }
-function timeOfDay(value) {
+function timeOfDay(value, pack = languagePack()) {
   const text = inline(value);
   const named = NAMED_TIMES.get(text.toLowerCase());
   if (named !== undefined) {
@@ -7372,10 +12171,13 @@ function timeOfDay(value) {
   if (minutes !== undefined) {
     return minutes >= 6 * 60 && minutes < 18 * 60 ? "DAY" : "NIGHT";
   }
-  return text.toUpperCase();
+  return upperCase(text, pack);
 }
 function inline(value) {
-  return String(value ?? "").replace(/[\s\u0000-\u001f\u007f-\u009f]+/g, " ").trim().replace(/[\\*_]/g, "\\$&").replace(/\[(?=\[)/g, "[ ").replace(/\](?=\])/g, "] ");
+  return escapeText(String(value ?? "").replace(/[\s\u0000-\u001f\u007f-\u009f]+/g, " ").trim());
+}
+function escapeText(text) {
+  return String(text).replace(/[\s\u0000-\u001f\u007f-\u009f]+/g, " ").replace(/[\\*_]/g, "\\$&").replace(/\[(?=\[)/g, "[ ").replace(/\](?=\])/g, "] ");
 }
 function sectionText(value) {
   return inline(value).replace(/^#+\s*/, "") || "Untitled";
@@ -7499,20 +12301,23 @@ function epubModifiedTimestamp() {
 function writeEpub(outFile, storyId, manuscript, writeOptions = {}) {
   const meta = manuscript.meta ?? publishingMeta({});
   const lang = xmlEscape(meta.language);
-  const rtl = textDirection(meta.language) === "rtl";
+  const type = typesetting(meta.language, meta.writingMode);
+  const rtl = type.rtl;
   const root = `xml:lang="${lang}" lang="${lang}"${rtl ? ` dir="rtl"` : ""}`;
+  const stylesheet = epubStylesheet(type);
+  const head = stylesheet === "" ? "" : `<link rel="stylesheet" type="text/css" href="style.css"/>`;
   const documents = [];
   const pushMatter = (placement) => (entry) => documents.push({
     id: `${placement}-${entry.id}`,
     label: entry.title,
-    content: matterXhtml(entry, placement, root)
+    content: matterXhtml(entry, placement, root, head)
   });
   manuscript.front.forEach(pushMatter("front"));
   for (const chapter of manuscript.chapters) {
     documents.push({
       id: `chapter-${String(chapter.number).padStart(2, "0")}`,
       label: chapter.heading,
-      content: chapterXhtml(chapter, root),
+      content: chapterXhtml(chapter, root, head),
       bodymatter: true
     });
   }
@@ -7523,8 +12328,8 @@ function writeEpub(outFile, storyId, manuscript, writeOptions = {}) {
   const coverSpine = [];
   if (manuscript.cover) {
     const href = `images/cover.${manuscript.cover.extension}`;
-    const alt = meta.coverAlt === "" ? `Cover of ${manuscript.title}` : meta.coverAlt;
-    coverEntries.push({ name: `OEBPS/${href}`, content: fs6.readFileSync(manuscript.cover.filePath) }, { name: "OEBPS/cover.xhtml", content: `<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" ${root}><head><title>${xmlEscape(manuscript.title)}</title></head><body epub:type="cover"><img src="${href}" alt="${xmlEscape(alt)}"/></body></html>` });
+    const alt = meta.coverAlt === "" ? fillLabel(meta.labels, "cover-alt", { title: manuscript.title }) : meta.coverAlt;
+    coverEntries.push({ name: `OEBPS/${href}`, content: fs6.readFileSync(manuscript.cover.filePath) }, { name: "OEBPS/cover.xhtml", content: `<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" ${root}><head><title>${xmlEscape(manuscript.title)}</title>${head}</head><body epub:type="cover"><img src="${href}" alt="${xmlEscape(alt)}"/></body></html>` });
     coverItems.push(`<item id="cover-image" href="${href}" media-type="${manuscript.cover.mediaType}" properties="cover-image"/>`, `<item id="cover" href="cover.xhtml" media-type="application/xhtml+xml"/>`);
     coverMeta.push(`<meta name="cover" content="cover-image"/>`);
     coverSpine.push(`<itemref idref="cover"/>`);
@@ -7538,28 +12343,41 @@ function writeEpub(outFile, storyId, manuscript, writeOptions = {}) {
     ...meta.subjects.map((subject) => `<dc:subject>${xmlEscape(subject)}</dc:subject>`),
     meta.copyright === "" ? "" : `<dc:rights>${xmlEscape(meta.copyright)}</dc:rights>`
   ].join("");
-  const accessibility = epubAccessibilityMeta(Boolean(manuscript.cover));
+  const accessibility = epubAccessibilityMeta(Boolean(manuscript.cover), meta.labels);
   const items = documents.map((doc) => `<item id="${doc.id}" href="${doc.id}.xhtml" media-type="application/xhtml+xml"/>`);
   const spine = documents.map((doc) => `<itemref idref="${doc.id}"/>`);
   const modified = epubModifiedTimestamp();
   writeZip(outFile, [
     { name: "mimetype", content: "application/epub+zip", stored: true },
     { name: "META-INF/container.xml", content: `<?xml version="1.0" encoding="UTF-8"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>` },
-    { name: "OEBPS/content.opf", content: `<?xml version="1.0" encoding="UTF-8"?><package version="3.0" unique-identifier="book-id" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="book-id">${identifier}</dc:identifier><dc:title>${xmlEscape(manuscript.title)}</dc:title>${creator}<dc:language>${lang}</dc:language>${optional}<meta property="dcterms:modified">${modified}</meta>${accessibility}${coverMeta.join("")}</metadata><manifest><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>${coverItems.join("")}${items.join("")}</manifest><spine${rtl ? ` page-progression-direction="rtl"` : ""}>${coverSpine.join("")}${spine.join("")}</spine></package>` },
-    { name: "OEBPS/nav.xhtml", content: navXhtml(manuscript.title, documents, root, meta.contentsLabel) },
+    { name: "OEBPS/content.opf", content: `<?xml version="1.0" encoding="UTF-8"?><package version="3.0" unique-identifier="book-id" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="book-id">${identifier}</dc:identifier><dc:title>${xmlEscape(manuscript.title)}</dc:title>${creator}<dc:language>${lang}</dc:language>${optional}<meta property="dcterms:modified">${modified}</meta>${accessibility}${coverMeta.join("")}${type.vertical ? `<meta name="primary-writing-mode" content="vertical-rl"/>` : ""}</metadata><manifest><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>${stylesheet === "" ? "" : `<item id="style" href="style.css" media-type="text/css"/>`}${coverItems.join("")}${items.join("")}</manifest><spine${rtl || type.vertical ? ` page-progression-direction="rtl"` : ""}>${coverSpine.join("")}${spine.join("")}</spine></package>` },
+    { name: "OEBPS/nav.xhtml", content: navXhtml(manuscript.title, documents, root, meta.labels, head) },
+    ...stylesheet === "" ? [] : [{ name: "OEBPS/style.css", content: stylesheet }],
     ...coverEntries,
     ...documents.map((doc) => ({ name: `OEBPS/${doc.id}.xhtml`, content: doc.content }))
   ], writeOptions);
 }
-function navXhtml(title, documents, root, contentsLabel = "Contents") {
+function epubStylesheet(type) {
+  const rules = [];
+  if (type.vertical) {
+    rules.push("html { -epub-writing-mode: vertical-rl; -webkit-writing-mode: vertical-rl; writing-mode: vertical-rl; }");
+  }
+  if (!type.fonts.latin) {
+    rules.push(`body { font-family: ${type.fonts.body}; }`);
+  }
+  return rules.length === 0 ? "" : `${rules.join(`
+`)}
+`;
+}
+function navXhtml(title, documents, root, labels, head = "") {
   const links = documents.map((doc) => `<li><a href="${doc.id}.xhtml">${xmlEscape(doc.label)}</a></li>`);
   const start = documents.find((doc) => doc.bodymatter);
-  const landmarks = start ? `<nav epub:type="landmarks" hidden="hidden"><ol><li><a epub:type="bodymatter" href="${start.id}.xhtml">Start of Content</a></li></ol></nav>` : "";
-  return `<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" ${root}><head><title>${xmlEscape(title)}</title></head><body><nav epub:type="toc" id="toc"><h1>${xmlEscape(contentsLabel)}</h1><ol>${links.join("")}</ol></nav>${landmarks}</body></html>`;
+  const landmarks = start ? `<nav epub:type="landmarks" hidden="hidden"><ol><li><a epub:type="bodymatter" href="${start.id}.xhtml">${xmlEscape(fillLabel(labels, "start-of-content"))}</a></li></ol></nav>` : "";
+  return `<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" ${root}><head><title>${xmlEscape(title)}</title>${head}</head><body><nav epub:type="toc" id="toc"><h1>${xmlEscape(fillLabel(labels, "contents"))}</h1><ol>${links.join("")}</ol></nav>${landmarks}</body></html>`;
 }
-function epubAccessibilityMeta(hasCover) {
+function epubAccessibilityMeta(hasCover, labels) {
   const features = ["tableOfContents", "readingOrder", "structuralNavigation", ...hasCover ? ["alternativeText"] : []];
-  const summary = hasCover ? "Text book with a described cover image, a navigable table of contents, headings for each chapter, and a single logical reading order." : "Text-only book with a navigable table of contents, headings for each chapter, and a single logical reading order.";
+  const summary = xmlEscape(fillLabel(labels, hasCover ? "accessibility-summary-cover" : "accessibility-summary"));
   return [
     `<meta property="schema:accessMode">textual</meta>`,
     ...hasCover ? [`<meta property="schema:accessMode">visual</meta>`] : [],
@@ -7575,20 +12393,21 @@ function xhtmlParagraphs(body) {
     markup: paragraph.sceneBreak ? "<p>* * *</p>" : `<p>${inlineRuns(paragraph.text).map((run) => runMarkup(run, xmlEscape, "<br/>")).join("")}</p>`
   }))).join("");
 }
-function xhtmlDocument(title, root, bodyType, content) {
-  return `<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" ${root}><head><title>${xmlEscape(title)}</title></head><body epub:type="${bodyType}">${content}</body></html>`;
+function xhtmlDocument(title, root, head, bodyType, content) {
+  return `<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" ${root}><head><title>${xmlEscape(title)}</title>${head}</head><body epub:type="${bodyType}">${content}</body></html>`;
 }
-function chapterXhtml(chapter, root) {
+function chapterXhtml(chapter, root, head) {
   const heading = chapter.heading;
   const title = String(chapter.title ?? "").trim() || heading;
-  return xhtmlDocument(title, root, "bodymatter chapter", `<h1>${xmlEscape(heading)}</h1>${xhtmlParagraphs(chapter.body)}`);
+  return xhtmlDocument(title, root, head, "bodymatter chapter", `<h1>${xmlEscape(heading)}</h1>${xhtmlParagraphs(chapter.body)}`);
 }
-function matterXhtml(entry, placement, root) {
+function matterXhtml(entry, placement, root, head) {
   const heading = entry.heading ? `<h1>${xmlEscape(entry.title)}</h1>` : "";
   const bodyType = entry.copyright ? `${placement}matter copyright-page` : `${placement}matter`;
-  return xhtmlDocument(entry.title, root, bodyType, `${heading}${xhtmlParagraphs(entry.body)}`);
+  return xhtmlDocument(entry.title, root, head, bodyType, `${heading}${xhtmlParagraphs(entry.body)}`);
 }
 function htmlBook(manuscript) {
+  const characters = (body) => manuscript.unit === "characters" ? { characters: characterCount(body) } : {};
   const paragraphs = (body) => markdownParagraphs(body).map((paragraph) => {
     if (paragraph.sceneBreak) {
       return null;
@@ -7608,6 +12427,7 @@ function htmlBook(manuscript) {
     title: entry.title,
     heading: entry.heading,
     words: wordCount(entry.body),
+    ...characters(entry.body),
     paragraphs: paragraphs(entry.body)
   });
   const parts = [
@@ -7619,27 +12439,31 @@ function htmlBook(manuscript) {
       title: chapter.heading,
       heading: true,
       words: wordCount(chapter.body),
+      ...characters(chapter.body),
       paragraphs: paragraphs(chapter.body)
     })),
     ...manuscript.back.map(matter("back"))
   ];
   return {
     title: manuscript.title,
+    ...manuscript.unit === "characters" ? { unit: "characters" } : {},
     authors: manuscript.meta.authors,
     language: manuscript.meta.language,
-    contentsLabel: manuscript.meta.contentsLabel,
+    writingMode: manuscript.meta.writingMode,
+    labels: manuscript.meta.labels,
     words: manuscript.chapters.reduce((sum, chapter) => sum + wordCount(chapter.body), 0),
     parts
   };
 }
 function writeDocx(outFile, manuscript, writeOptions = {}) {
-  const bodyParts = [paragraphXml(manuscript.title, "Title")];
+  const script = docxScript(manuscript.meta);
+  const bodyParts = [paragraphXml(script, manuscript.title, "Title")];
   const pushSection = (heading, body) => {
     if (heading !== null) {
-      bodyParts.push(paragraphXml(heading, "Heading1"));
+      bodyParts.push(paragraphXml(script, heading, "Heading1"));
     }
     for (const paragraph of markdownParagraphs(body)) {
-      bodyParts.push(paragraph.sceneBreak ? paragraphXml("* * *", "SceneBreak") : paragraphXml(paragraph.text, paragraph.quote ? "Quote" : "", inlineRuns(paragraph.text)));
+      bodyParts.push(paragraph.sceneBreak ? paragraphXml(script, "* * *", "SceneBreak") : paragraphXml(script, paragraph.text, paragraph.quote ? "Quote" : "", inlineRuns(paragraph.text)));
     }
   };
   const pushMatter = (entry) => pushSection(entry.heading ? entry.title : null, entry.body);
@@ -7648,78 +12472,103 @@ function writeDocx(outFile, manuscript, writeOptions = {}) {
     pushSection(chapter.heading, chapter.body);
   }
   manuscript.back.forEach(pushMatter);
-  writeZip(outFile, docxPackageEntries(bodyParts.join("")), writeOptions);
+  writeZip(outFile, docxPackageEntries(script, bodyParts.join("")), writeOptions);
 }
-function docxPackageEntries(body) {
+function docxScript(meta) {
+  const language = meta?.language ?? "en";
+  const type = typesetting(language, meta?.writingMode);
+  const { eastAsia, cs, eastAsian, complex } = type.docx;
+  const written = writtenTag(language);
+  const tag = xmlEscape(written);
+  const font = (name) => `"${name ?? "Times New Roman"}"`;
+  return {
+    lang: written === "en" || written === "und" ? "" : `<w:lang w:val="${tag}"${eastAsian ? ` w:eastAsia="${tag}"` : ""}${complex ? ` w:bidi="${tag}"` : ""}/>`,
+    bidi: type.rtl ? "<w:bidi/>" : "",
+    rtl: type.rtl ? "<w:rtl/>" : "",
+    bold: complex ? "<w:b/><w:bCs/>" : "<w:b/>",
+    italic: complex ? "<w:i/><w:iCs/>" : "<w:i/>",
+    sizeCs: complex,
+    fonts: `<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia=${font(eastAsia)} w:cs=${font(cs)}${eastAsian ? ` w:hint="eastAsia"` : ""}/>`,
+    section: type.vertical ? `<w:sectPr><w:textDirection w:val="tbRl"/></w:sectPr>` : type.rtl ? `<w:sectPr><w:bidi/></w:sectPr>` : "<w:sectPr/>"
+  };
+}
+function docxPackageEntries(script, body) {
   return [
     { name: "[Content_Types].xml", content: `<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>` },
     { name: "_rels/.rels", content: `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>` },
     { name: "word/_rels/document.xml.rels", content: `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
-    { name: "word/styles.xml", content: DOCX_STYLES },
-    { name: "word/document.xml", content: `<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr/></w:body></w:document>` }
+    { name: "word/styles.xml", content: docxStyles(script) },
+    { name: "word/document.xml", content: `<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}${script.section}</w:body></w:document>` }
   ];
 }
-var DOCX_STYLES = `<?xml version="1.0" encoding="UTF-8"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">` + `<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="360" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>` + `<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/><w:pPr><w:ind w:firstLine="720"/></w:pPr></w:style>` + `<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:spacing w:after="240"/><w:ind w:firstLine="0"/><w:jc w:val="center"/></w:pPr><w:rPr><w:b/><w:sz w:val="56"/></w:rPr></w:style>` + `<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="480" w:after="240"/><w:ind w:firstLine="0"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:sz w:val="32"/></w:rPr></w:style>` + `<w:style w:type="paragraph" w:styleId="Quote"><w:name w:val="Quote"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:spacing w:before="120" w:after="120"/><w:ind w:left="720" w:right="720" w:firstLine="0"/></w:pPr></w:style>` + `<w:style w:type="paragraph" w:customStyle="1" w:styleId="SceneBreak"><w:name w:val="Scene Break"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:spacing w:before="240" w:after="240"/><w:ind w:firstLine="0"/><w:jc w:val="center"/></w:pPr></w:style>` + `</w:styles>`;
-var SHUNN_RUN_FONTS = `<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New"/><w:sz w:val="24"/>`;
+function docxStyles(script) {
+  return `<?xml version="1.0" encoding="UTF-8"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">` + `<w:docDefaults><w:rPrDefault><w:rPr>${script.fonts}<w:sz w:val="24"/><w:szCs w:val="24"/>${script.lang}</w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="360" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>` + `<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/><w:pPr><w:ind w:firstLine="720"/></w:pPr></w:style>` + `<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:spacing w:after="240"/><w:ind w:firstLine="0"/><w:jc w:val="center"/></w:pPr><w:rPr>${script.bold}<w:sz w:val="56"/>${script.sizeCs ? `<w:szCs w:val="56"/>` : ""}</w:rPr></w:style>` + `<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="480" w:after="240"/><w:ind w:firstLine="0"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr>${script.bold}<w:sz w:val="32"/>${script.sizeCs ? `<w:szCs w:val="32"/>` : ""}</w:rPr></w:style>` + `<w:style w:type="paragraph" w:styleId="Quote"><w:name w:val="Quote"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:spacing w:before="120" w:after="120"/><w:ind w:left="720" w:right="720" w:firstLine="0"/></w:pPr></w:style>` + `<w:style w:type="paragraph" w:customStyle="1" w:styleId="SceneBreak"><w:name w:val="Scene Break"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:spacing w:before="240" w:after="240"/><w:ind w:firstLine="0"/><w:jc w:val="center"/></w:pPr></w:style>` + `</w:styles>`;
+}
+var SHUNN_FONT = `<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New"/>`;
+var SHUNN_SIZE = `<w:sz w:val="24"/>`;
 var SHUNN_PARAGRAPH_SPACING = `<w:spacing w:line="480" w:lineRule="auto"/>`;
-function shunnRunXml(text, decoration) {
-  return `<w:r><w:rPr>${SHUNN_RUN_FONTS}${decoration}</w:rPr>${docxTextXml(text)}</w:r>`;
+function shunnRunXml(script, text, { strong = false, em = false } = {}) {
+  return `<w:r><w:rPr>${SHUNN_FONT}${strong ? script.bold : ""}${em ? script.italic : ""}${SHUNN_SIZE}${script.rtl}</w:rPr>${docxTextXml(text)}</w:r>`;
 }
-function shunnTextRunXml(run) {
-  return shunnRunXml(run.text, `${run.strong ? "<w:b/>" : ""}${run.em ? "<w:i/>" : ""}`);
-}
-function shunnParagraphXml(runXml, centered, quote = false) {
+function shunnParagraphXml(script, runXml, centered, quote = false) {
   const layout = centered ? `<w:ind w:firstLine="0"/><w:jc w:val="center"/>` : quote ? `<w:ind w:left="720" w:right="720" w:firstLine="0"/>` : `<w:ind w:firstLine="720"/>`;
-  return `<w:p><w:pPr>${SHUNN_PARAGRAPH_SPACING}${layout}</w:pPr>${runXml}</w:p>`;
+  return `<w:p><w:pPr>${script.bidi}${SHUNN_PARAGRAPH_SPACING}${layout}</w:pPr>${runXml}</w:p>`;
 }
-function shunnChapterHeadingXml(text) {
-  return `<w:p><w:pPr>${SHUNN_PARAGRAPH_SPACING}<w:ind w:firstLine="0"/><w:jc w:val="center"/></w:pPr><w:r><w:br w:type="page"/></w:r>${shunnRunXml(text, "<w:b/>")}</w:p>`;
+function shunnChapterHeadingXml(script, text) {
+  return `<w:p><w:pPr>${script.bidi}${SHUNN_PARAGRAPH_SPACING}<w:ind w:firstLine="0"/><w:jc w:val="center"/></w:pPr><w:r>${script.rtl === "" ? "" : `<w:rPr>${script.rtl}</w:rPr>`}<w:br w:type="page"/></w:r>${shunnRunXml(script, text, { strong: true })}</w:p>`;
 }
-function shunnWordCount(words) {
+function shunnWordCount(words, pack = languagePack()) {
   const step = words < 1000 ? 1 : words < 40000 ? 100 : 1000;
   const rounded = Math.round(words / step) * step;
-  return String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return formatNumber(rounded, pack);
 }
-function shunnTitlePageXml(meta) {
-  const lines = [shunnParagraphXml(shunnRunXml(meta.title, "<w:b/>"), true)];
-  if (meta.author) {
-    lines.push(shunnParagraphXml(shunnRunXml("by", ""), true), shunnParagraphXml(shunnRunXml(meta.author, ""), true));
+function shunnLength(meta) {
+  return meta.characters === undefined ? fillLabel(meta.labels, "approximate-words", { words: shunnWordCount(meta.words, meta.pack) }) : fillLabel(meta.labels, "approximate-characters", { characters: shunnWordCount(meta.characters, meta.pack) });
+}
+function shunnByline(meta) {
+  if (!meta.author) {
+    return [];
   }
-  lines.push(shunnParagraphXml(shunnRunXml(`Approximately ${shunnWordCount(meta.words)} words`, ""), true));
+  const by = fillLabel(meta.labels, "by");
+  return by === "" ? [meta.author] : [by, meta.author];
+}
+function shunnTitlePageXml(script, meta) {
+  const line = (text, decoration) => shunnParagraphXml(script, shunnRunXml(script, text, decoration), true);
+  const lines = [line(meta.title, { strong: true })];
+  lines.push(...shunnByline(meta).map((text) => line(text)));
+  lines.push(line(shunnLength(meta)));
   for (const contactLine of meta.contact) {
-    lines.push(shunnParagraphXml(shunnRunXml(String(contactLine), ""), true));
+    lines.push(line(String(contactLine)));
   }
   return lines;
 }
 function writeShunnDocx(outFile, manuscript, meta, writeOptions = {}) {
-  const paragraphs = [...shunnTitlePageXml(meta)];
+  const script = docxScript(manuscript.meta);
+  const paragraphs = [...shunnTitlePageXml(script, meta)];
   const sceneBreak = meta.shortForm ? "#" : "* * *";
-  const hash = shunnParagraphXml(shunnRunXml("#", ""), true);
+  const hash = shunnParagraphXml(script, shunnRunXml(script, "#"), true);
   if (meta.shortForm) {
-    paragraphs.push(shunnParagraphXml("", true));
+    paragraphs.push(shunnParagraphXml(script, "", true));
   }
   let sections = 0;
   for (const chapter of manuscript.chapters) {
     const body = markdownParagraphs(chapter.body);
     if (!meta.shortForm) {
-      paragraphs.push(shunnChapterHeadingXml(chapter.heading));
+      paragraphs.push(shunnChapterHeadingXml(script, chapter.heading));
     } else if (body.length === 0) {
       continue;
     } else if (sections++ > 0) {
       paragraphs.push(hash);
     }
     for (const paragraph of body) {
-      paragraphs.push(paragraph.sceneBreak ? shunnParagraphXml(shunnRunXml(sceneBreak, ""), true) : shunnParagraphXml(inlineRuns(paragraph.text).map(shunnTextRunXml).join(""), false, paragraph.quote));
+      paragraphs.push(paragraph.sceneBreak ? shunnParagraphXml(script, shunnRunXml(script, sceneBreak), true) : shunnParagraphXml(script, inlineRuns(paragraph.text).map((run) => shunnRunXml(script, run.text, run)).join(""), false, paragraph.quote));
     }
   }
-  writeZip(outFile, docxPackageEntries(paragraphs.join("")), writeOptions);
+  writeZip(outFile, docxPackageEntries(script, paragraphs.join("")), writeOptions);
 }
 function writeShunnMarkdown(outFile, manuscript, meta, writeOptions = {}) {
   const lines = [meta.title];
-  if (meta.author) {
-    lines.push("by", meta.author);
-  }
-  lines.push("", `Approximately ${shunnWordCount(meta.words)} words`, "");
+  lines.push(...shunnByline(meta), "", shunnLength(meta), "");
   for (const contactLine of meta.contact) {
     lines.push(String(contactLine));
   }
@@ -7754,10 +12603,11 @@ ${prefix}`)}`, "");
 function docxTextXml(text) {
   return String(text).split(LINE_BREAK).map((part) => `<w:t xml:space="preserve">${xmlEscape(part)}</w:t>`).join("<w:br/>");
 }
-function paragraphXml(text, style = "", runs = [{ text }]) {
-  const styleXml = style ? `<w:pPr><w:pStyle w:val="${style}"/></w:pPr>` : "";
+function paragraphXml(script, text, style = "", runs = [{ text }]) {
+  const properties = `${style ? `<w:pStyle w:val="${style}"/>` : ""}${script.bidi}`;
+  const styleXml = properties === "" ? "" : `<w:pPr>${properties}</w:pPr>`;
   const runXml = runs.map((run) => {
-    const decoration = `${run.strong ? "<w:b/>" : ""}${run.em ? "<w:i/>" : ""}`;
+    const decoration = `${run.strong ? script.bold : ""}${run.em ? script.italic : ""}${script.rtl}`;
     const runStyle = decoration === "" ? "" : `<w:rPr>${decoration}</w:rPr>`;
     return `<w:r>${runStyle}${docxTextXml(run.text)}</w:r>`;
   });
@@ -8175,6 +13025,9 @@ var EASY_WIN_RUN = 3;
 var NO_SEQUEL_RUN = 4;
 var RESOLUTION_RUN = 3;
 function buildPacing(project) {
+  const characterBook = project.unit?.name === "characters";
+  const inUnit = (row) => characterBook ? row.characterCount : row.words;
+  const noun = characterBook ? "characters" : "words";
   const chapters = [...project.chapters].sort((left, right) => left.number - right.number || left.id.localeCompare(right.id, "en"));
   const files = new Map(chapters.map((chapter) => [chapter.id, project.root === undefined ? null : path10.relative(project.root, chapter.file)]));
   const warnings = [];
@@ -8193,6 +13046,7 @@ function buildPacing(project) {
       id: chapter.id,
       number: chapter.number,
       words: chapter.wordCount,
+      characterCount: characterBook ? chapter.count : null,
       scenes: scenes.filter((scene) => !scene.sequel).length,
       sequels: scenes.filter((scene) => scene.sequel).length,
       outcomes,
@@ -8231,21 +13085,23 @@ function buildPacing(project) {
     }
   }
   flushRun(resolutions, RESOLUTION_RUN, warnings, (run) => warn("pacing-resolution-run", `${run.length} chapters in a row end on resolution (${span(run)}): readers can put the book down`));
-  const written = rows.filter((row) => row.words > 0);
-  const median = medianOf(written.map((row) => row.words));
+  const written = rows.filter((row) => inUnit(row) > 0);
+  const median = medianOf(written.map(inUnit));
   if (written.length >= 3) {
     for (const row of written) {
-      if (row.words > median * 2) {
-        warnings.push(warn("pacing-long-chapter", `${row.id} runs ${row.words} words, over twice the median chapter (${formatMedian(median)}): consider splitting it`, files.get(row.id)));
-      } else if (row.words < median / 2) {
-        warnings.push(warn("pacing-short-chapter", `${row.id} runs ${row.words} words, under half the median chapter (${formatMedian(median)}): check it earns its place`, files.get(row.id)));
+      if (inUnit(row) > median * 2) {
+        warnings.push(warn("pacing-long-chapter", `${row.id} runs ${inUnit(row)} ${noun}, over twice the median chapter (${formatMedian(median)}): consider splitting it`, files.get(row.id)));
+      } else if (inUnit(row) < median / 2) {
+        warnings.push(warn("pacing-short-chapter", `${row.id} runs ${inUnit(row)} ${noun}, under half the median chapter (${formatMedian(median)}): check it earns its place`, files.get(row.id)));
       }
     }
   }
   const recorded = units.filter((unit) => !unit.sequel && SCENE_OUTCOMES.has(unit.outcome));
   return {
+    unit: characterBook ? "characters" : "words",
     rows,
-    medianWords: formatMedian(median),
+    medianWords: characterBook ? formatMedian(medianOf(rows.filter((row) => row.words > 0).map((row) => row.words))) : formatMedian(median),
+    medianCharacterCount: characterBook ? formatMedian(median) : null,
     totals: {
       scenes: units.filter((unit) => !unit.sequel).length,
       sequels: units.filter((unit) => unit.sequel).length,
@@ -8279,11 +13135,12 @@ function medianOf(values) {
 }
 function formatPacing(pacing) {
   const { totals } = pacing;
+  const characterBook = pacing.unit === "characters";
   const setbackShare = totals.outcomesRecorded === 0 ? "no outcomes recorded" : `${Math.round(totals.setbacks * 100 / totals.outcomesRecorded)}% of recorded outcomes are setbacks or complications`;
   const lines = [
     `Pacing: ${plural(totals.scenes, "scene")}, ${plural(totals.sequels, "sequel")}, ${totals.hooks} of ${plural(pacing.rows.length, "chapter")} with hooks`,
     `Outcomes: ${setbackShare}`,
-    `Median chapter: ${pacing.medianWords} words`,
+    characterBook ? `Median chapter: ${pacing.medianCharacterCount} characters` : `Median chapter: ${pacing.medianWords} words`,
     ""
   ];
   if (pacing.rows.length === 0) {
@@ -8295,7 +13152,7 @@ function formatPacing(pacing) {
   const outcomesOf = (row) => `${row.outcomes.yes}/${row.outcomes.no}/${row.outcomes["yes-but"]}/${row.outcomes["no-and"]}`;
   const columns = [
     { title: "Ch", value: (row) => String(row.number) },
-    { title: "Words", value: (row) => String(row.words) },
+    characterBook ? { title: "Characters", value: (row) => String(row.characterCount) } : { title: "Words", value: (row) => String(row.words) },
     { title: "Scenes", value: (row) => String(row.scenes) },
     { title: "Sequels", value: (row) => String(row.sequels) },
     { title: "Outcomes (yes/no/yes-but/no-and)", value: outcomesOf, left: true }
@@ -8426,17 +13283,28 @@ var SYMMETRIC_RELATIONSHIPS = new Set([
   "confidant",
   "love-interest"
 ]);
+function newProjectRoot({ title, cwd = process.cwd(), dir }) {
+  const text = String(title ?? "").trim();
+  const titleId = kebabCase(text, { transliterate: false }) || kebabCase(text);
+  return !titleId && dir === undefined ? null : path11.resolve(cwd, dir ?? titleId);
+}
+function existingStoryLanguage(root) {
+  const data = existingStoryData(root);
+  return data === null ? null : projectLanguage(data);
+}
 function createStoryProject(options) {
   const title = String(options.title ?? "").trim();
   if (!title) {
     throw usageError("A story title is required");
   }
   const cwd = options.cwd ?? process.cwd();
-  const titleId = kebabCase(title);
-  if (!titleId && options.dir === undefined) {
+  const root = newProjectRoot({ title, cwd, dir: options.dir });
+  if (root === null) {
     throw usageError('Cannot derive a story id from title "' + title + '": pass --dir with an ASCII folder name, or use a title containing ASCII letters or digits');
   }
-  const root = path11.resolve(cwd, options.dir ?? titleId);
+  if (options.language !== undefined && !isLanguageTag(options.language)) {
+    throw usageError(`--language ${options.language} must be a BCP 47 tag such as en, en-GB, or fr`);
+  }
   const existingStory = existingStoryData(root);
   const storyId = deriveStoryId(existingStory ? existingStory.title : title, root);
   assertPortableId(storyId, "story");
@@ -8474,6 +13342,9 @@ function createStoryProject(options) {
   for (const directory of PROJECT_DIRECTORIES) {
     makeDirectories(path11.join(root, directory));
   }
+  const storyInherited = { ...inheritedStoryFields(inherited), ...options.language === undefined ? {} : { language: options.language.trim() } };
+  const pack = languagePack(projectLanguage(storyInherited));
+  const unit = countUnit(storyInherited, pack);
   const storyWritten = writeStarterFile(path11.join(root, "story.md"), storyBible({
     title,
     storyId,
@@ -8488,14 +13359,16 @@ function createStoryProject(options) {
     pov: options.pov ?? inherited.pov ?? "third-person-limited",
     tense: options.tense ?? inherited.tense ?? "past",
     form: options.form,
-    inherited: inheritedStoryFields(inherited),
+    unit,
+    pack,
+    inherited: storyInherited,
     synopsis: options.synopsis ?? options.defaultSynopsis ?? "Add a 2-3 sentence synopsis here."
   }), { root });
   writeStarterFile(path11.join(root, "characters", "_index.md"), characterIndex(storyId, [], "", ""), { root });
   writeStarterFile(path11.join(root, "worldbuilding", "_index.md"), worldIndex(storyId, [], [], [], [], ""), { root });
   writeStarterFile(path11.join(root, "plot", "_index.md"), plotIndex(storyId, "three-act", [], "", ""), { root });
   writeStarterFile(path11.join(root, "plot", "timeline.md"), timeline(storyId), { root });
-  writeStarterFile(path11.join(root, "chapters", "_index.md"), chapterIndex(storyId, []), { root });
+  writeStarterFile(path11.join(root, "chapters", "_index.md"), chapterIndex(storyId, [], unit), { root });
   writeStarterFile(path11.join(root, "scenes", "_index.md"), sceneIndex(storyId, []), { root });
   writeStarterFile(path11.join(root, "continuity", "state.md"), continuityState(storyId), { root });
   writeStarterFile(path11.join(root, "continuity", "questions", "_index.md"), questionIndex(storyId, []), { root });
@@ -8579,7 +13452,17 @@ function inheritedStoryFields(data) {
   if (text(data.language)) {
     fields.language = data.language;
   }
+  if (COUNT_UNITS.has(data["count-unit"])) {
+    fields["count-unit"] = data["count-unit"];
+  }
   return fields;
+}
+function existingStyleData(root) {
+  try {
+    return readStyleSheet(root, [])?.data ?? null;
+  } catch {
+    return null;
+  }
 }
 function existingStoryData(root) {
   if (!lstatIfExists(path11.join(root, "story.md"))) {
@@ -8616,6 +13499,9 @@ function unappliedStoryOptions(existing, title, options) {
     if (value !== undefined && !(Array.isArray(value) && value.length === 0)) {
       ignored.push(flag);
     }
+  }
+  if (options.language !== undefined && options.language.trim() !== projectLanguage(existing)) {
+    ignored.push("--language");
   }
   return ignored;
 }
@@ -8750,10 +13636,23 @@ function enclosingStoryProject(root) {
   return null;
 }
 function deriveStoryId(title, root) {
-  return kebabCase(String(title ?? "")) || kebabCase(path11.basename(root));
+  return kebabCase(String(title ?? ""), { transliterate: false }) || kebabCase(path11.basename(root), { transliterate: false });
 }
 function storyIdMismatch(label, project) {
   return err("story-id-mismatch", `${label} story must be ${project.storyId} (run story reindex after changing the story.md title)`, label);
+}
+function chapterLength(unit, data, markdown) {
+  const prose = chapterProse(markdown.body);
+  const words = wordCount(prose);
+  const declared = data[unit.countField];
+  const target = data[unit.targetField];
+  return {
+    wordCount: words,
+    count: unit.name === "characters" ? characterCount(prose) : words,
+    declaredCount: declared === undefined ? 0 : Number.isInteger(declared) ? declared : null,
+    countMissing: declared === undefined,
+    targetCount: Number.isInteger(target) && target > 0 ? target : 0
+  };
 }
 function scanProject(root) {
   const projectRoot = path11.resolve(root);
@@ -8778,11 +13677,17 @@ function scanProject(root) {
       continuity = null;
     }
   }
+  const language = projectLanguage(story.data);
+  const pack = languagePack(language);
+  const unit = countUnit(story.data, pack);
   const project = {
     root: projectRoot,
     story,
     storyId,
     title: titleText || path11.basename(projectRoot),
+    language,
+    pack,
+    unit,
     fileErrors: scanErrors,
     characters: readEntityFiles(projectRoot, "characters", (id, file, data) => ({
       id,
@@ -8862,7 +13767,7 @@ function scanProject(root) {
       declaredWordCount: data["word-count"] === undefined ? 0 : Number.isInteger(data["word-count"]) ? data["word-count"] : null,
       wordCountMissing: data["word-count"] === undefined,
       targetWords: Number.isInteger(data["target-words"]) && data["target-words"] > 0 ? data["target-words"] : 0,
-      wordCount: wordCount(chapterProse(markdown.body)),
+      ...chapterLength(unit, data, markdown),
       unclosedComment: hasUnclosedComment(chapterProse(markdown.body)),
       todoMarkers: countTodoMarkers(chapterProse(markdown.body)),
       date: String(data.date ?? ""),
@@ -8960,6 +13865,7 @@ function scanProject(root) {
     progressLog: readOptionalRootFile(projectRoot, PROGRESS_FILE, scanErrors),
     continuity
   };
+  project.pack = withStyleLists(project.pack, project.styleSheet?.data);
   sortScenesByChapter(project);
   return project;
 }
@@ -9014,7 +13920,11 @@ function validateProjectOf(project) {
   validateMatter(project, errors, warnings);
   validateResearch(project, errors, warnings);
   validateProgressLog(project, errors);
+  warnings.push(...sessionsWithoutCharacters(project));
   validateFormRange(project, warnings);
+  if (!project.story.unreadable) {
+    unusedTargetWarnings(project, "story.md", project.story.data, warnings);
+  }
   validatePublishing(project.story.data, errors, warnings);
   validatePronunciations(project, errors);
   validateTextFields(project, errors);
@@ -9057,6 +13967,9 @@ function validateProjectOf(project) {
     const file = path11.relative(projectRoot, chapter.file);
     if (chapter.declaredWordCount !== null && chapter.declaredWordCount !== chapter.wordCount) {
       warnings.push(warn("stale-word-count", chapter.wordCountMissing ? `${file} has no word-count (contains ${chapter.wordCount})` : `${file} declares ${plural(chapter.declaredWordCount, "word")} but contains ${chapter.wordCount}`, file));
+    }
+    if (project.unit.name === "characters" && chapter.declaredCount !== null && chapter.declaredCount !== chapter.count) {
+      warnings.push(warn("stale-word-count", chapter.countMissing ? `${file} has no ${project.unit.countField} (contains ${chapter.count})` : `${file} declares ${plural(chapter.declaredCount, project.unit.noun)} but contains ${chapter.count}`, file));
     }
     if (chapter.todoMarkers > 0) {
       warnings.push(warn("todo-markers", `${file} has ${plural(chapter.todoMarkers, "[TODO marker")} in its prose, which every build prints: resolve ${chapter.todoMarkers === 1 ? "it" : "them"} or move ${chapter.todoMarkers === 1 ? "it" : "them"} into an HTML comment`, file));
@@ -9532,6 +14445,8 @@ function projectReport(root, options = {}) {
   const project = scanProject(root);
   const { validation, links, continuity } = projectChecks(project, options.overrides);
   const totalWords = project.chapters.reduce((sum, chapter) => sum + chapter.wordCount, 0);
+  const characters = project.unit.name === "characters";
+  const targetCharacters = project.story.data["target-characters"];
   return {
     root: project.root,
     title: project.title,
@@ -9545,7 +14460,9 @@ function projectReport(root, options = {}) {
     status: project.story.data.status,
     pov: project.story.data.pov,
     tense: project.story.data.tense,
+    unit: project.unit.name,
     targetWords: Number.isInteger(project.story.data["target-words"]) ? project.story.data["target-words"] : null,
+    targetCharacters: characters && Number.isInteger(targetCharacters) ? targetCharacters : null,
     counts: {
       characters: project.characters.length,
       locations: project.locations.length,
@@ -9560,14 +14477,16 @@ function projectReport(root, options = {}) {
       clues: project.clues.length,
       glossaryTerms: project.glossaryTerms.length,
       research: project.research.length,
-      words: totalWords
+      words: totalWords,
+      characterCount: characters ? project.chapters.reduce((sum, chapter) => sum + chapter.count, 0) : null
     },
     chapters: project.chapters.map((chapter) => ({
       number: chapter.number,
       title: chapter.title,
       status: chapter.status,
       pov: chapter.pov,
-      wordCount: chapter.wordCount
+      wordCount: chapter.wordCount,
+      characterCount: characters ? chapter.count : null
     })),
     arcs: project.arcs.map((arc) => ({
       name: arc.name,
@@ -9580,6 +14499,13 @@ function projectReport(root, options = {}) {
     continuity,
     actions: buildProjectActions(project, validation, links, continuity, options.displayPath)
   };
+}
+function reportLengthLines(report) {
+  const [name, total, target] = report.unit === "characters" ? ["characters", report.counts.characterCount, report.targetCharacters] : ["words", report.counts.words, report.targetWords];
+  return [
+    `- Total ${name}: ${total}`,
+    ...target > 0 ? [`- Target ${name}: ${target} (${formatPercent(total * 100 / target, 0)}%)`] : []
+  ];
 }
 function formatProjectReport(report, options = {}) {
   const lines = [
@@ -9607,8 +14533,7 @@ function formatProjectReport(report, options = {}) {
     `- Clues: ${report.counts.clues}`,
     `- Glossary terms: ${report.counts.glossaryTerms}`,
     ...report.counts.research === 0 ? [] : [`- Research notes: ${report.counts.research}`],
-    `- Total words: ${report.counts.words}`,
-    ...report.targetWords > 0 ? [`- Target words: ${report.targetWords} (${formatPercent(report.counts.words * 100 / report.targetWords, 0)}%)`] : [],
+    ...reportLengthLines(report),
     "",
     "Chapters:"
   ];
@@ -9616,7 +14541,8 @@ function formatProjectReport(report, options = {}) {
     lines.push("- None");
   } else {
     for (const chapter of report.chapters) {
-      lines.push(`- ${chapter.number}. ${chapter.title} (${chapter.status}, ${chapter.wordCount} words, POV: ${chapter.pov || "unspecified"})`);
+      const length = report.unit === "characters" ? `${chapter.characterCount} characters` : `${chapter.wordCount} words`;
+      lines.push(`- ${chapter.number}. ${chapter.title} (${chapter.status}, ${length}, POV: ${chapter.pov || "unspecified"})`);
     }
   }
   lines.push("", "Arcs:");
@@ -9696,7 +14622,7 @@ function reindexProjectUnlocked(root) {
   writeRegistry(at("characters", "_index.md"), (existing) => characterIndex(project.storyId, project.characters, extractSection(existing, "Relationship Map"), extractSection(existing, "Family Trees")), changed, project.root);
   writeRegistry(at("worldbuilding", "_index.md"), (existing) => worldIndex(project.storyId, project.locations, project.systems, project.factions, project.artifacts, extractSection(existing, "World Overview")), changed, project.root);
   writeRegistry(at("plot", "_index.md"), (existing) => plotIndex(project.storyId, plotStructure, project.arcs, extractSection(existing, "Story Structure"), extractSection(existing, "Theme Tracking")), changed, project.root);
-  writeRegistry(at("chapters", "_index.md"), () => chapterIndex(project.storyId, project.chapters), changed, project.root);
+  writeRegistry(at("chapters", "_index.md"), () => chapterIndex(project.storyId, project.chapters, project.unit), changed, project.root);
   writeRegistry(at("scenes", "_index.md"), () => sceneIndex(project.storyId, project.scenes), changed, project.root);
   writeRegistry(at("continuity", "questions", "_index.md"), () => questionIndex(project.storyId, project.questions), changed, project.root);
   writeRegistry(at("continuity", "promises", "_index.md"), () => promiseIndex(project.storyId, project.promises), changed, project.root);
@@ -9753,6 +14679,7 @@ function keepRegistryFrontmatter(existing, contents) {
   }
   return replaceFrontmatter(existing, { ...current, ...next.data }, next.body);
 }
+var VALUE_HEADING_ALIASES = [["Total Word Count", "Total Character Count"]];
 function customSections(existing, generated) {
   const valuePattern = /:\s*\d[\d,]*$/;
   const valueHeadings = new Set;
@@ -9762,6 +14689,7 @@ function customSections(existing, generated) {
     const key = hasValue ? heading.text.replace(valuePattern, "") : heading.text;
     if (hasValue) {
       valueHeadings.add(key);
+      VALUE_HEADING_ALIASES.filter((aliases) => aliases.includes(key)).flat().forEach((alias) => valueHeadings.add(alias));
     }
     unclaimed.set(key, (unclaimed.get(key) ?? 0) + 1);
   }
@@ -9832,19 +14760,23 @@ function computeWordCounts(root, options = {}) {
 function computeWordCountsUnlocked(root, options = {}) {
   const project = scanProject(root);
   assertProjectParses(project, "count words");
+  const characters = project.unit.name === "characters";
   const chapters = [];
   for (const chapter of project.chapters) {
     chapters.push({
       number: chapter.number,
       title: chapter.title,
       file: path11.relative(project.root, chapter.file),
-      wordCount: chapter.wordCount
+      wordCount: chapter.wordCount,
+      ...characters ? { characterCount: chapter.count } : {}
     });
-    if (options.write && chapter.declaredWordCount !== chapter.wordCount) {
+    if (options.write && (chapter.declaredWordCount !== chapter.wordCount || chapter.declaredCount !== chapter.count)) {
       const markdown = readMarkdown(chapter.file, project.root);
+      const prose = chapterProse(markdown.body);
       writeFile(chapter.file, replaceFrontmatter(markdown.rawMarkdown, {
         ...markdown.data,
-        "word-count": wordCount(chapterProse(markdown.body))
+        "word-count": wordCount(prose),
+        ...characters ? { "character-count": characterCount(prose) } : {}
       }), { root: project.root, unchangedFrom: markdown.rawMarkdown });
     }
   }
@@ -9852,8 +14784,9 @@ function computeWordCountsUnlocked(root, options = {}) {
     reindexProject(project.root);
   }
   return {
+    ...characters ? { unit: "characters" } : {},
     chapters,
-    total: chapters.reduce((sum, chapter) => sum + chapter.wordCount, 0)
+    total: chapters.reduce((sum, chapter) => sum + (characters ? chapter.characterCount : chapter.wordCount), 0)
   };
 }
 function compareProject(root, options = {}) {
@@ -10153,6 +15086,9 @@ function projectProgress(root, options = {}) {
   }
   let project = scanProject(root);
   const words = project.chapters.reduce((sum, chapter) => sum + chapter.wordCount, 0);
+  const unit = project.unit;
+  const characters = unit.name === "characters";
+  const counts = characters ? { words, characters: project.chapters.reduce((sum, chapter) => sum + chapter.count, 0) } : { words };
   let logged = null;
   if (options.log) {
     assertProjectParses(project, "log progress");
@@ -10166,37 +15102,52 @@ function projectProgress(root, options = {}) {
     }
     const filePath = path11.join(project.root, PROGRESS_FILE);
     const existing = project.progressLog;
-    const sessions = withSession(asArray(existing?.data.sessions), today, words);
-    const contents = existing === null ? progressLogFile(sessions) : replaceFrontmatter(existing.rawMarkdown, { ...existing.data, sessions });
+    const sessions = withSession(asArray(existing?.data.sessions), today, counts);
+    const contents = existing === null ? progressLogFile(sessions, unit) : replaceFrontmatter(existing.rawMarkdown, { ...existing.data, sessions });
     writeFile(filePath, contents, { root: project.root });
-    logged = { file: filePath, date: today, words };
+    logged = { file: filePath, date: today, words, characterCount: counts.characters ?? null };
     project = scanProject(root);
   }
   const data = project.story.data;
   const errors = [...project.fileErrors];
-  if (data["target-words"] !== undefined) {
-    requireInteger(data, "target-words", "story.md", errors, 1);
+  if (data[unit.targetField] !== undefined) {
+    requireInteger(data, unit.targetField, "story.md", errors, 1);
   }
   validateDeadline(data, errors);
+  const target = data[unit.targetField];
   return {
     ok: errors.length === 0,
     errors,
-    warnings: [],
+    warnings: sessionsWithoutCharacters(project),
     logged,
     ...computeProgress({
+      unit: unit.name,
       words,
-      target: Number.isInteger(data["target-words"]) && data["target-words"] > 0 ? data["target-words"] : null,
+      characters: counts.characters ?? null,
+      target: Number.isInteger(target) && target > 0 ? target : null,
       deadline: typeof data.deadline === "string" ? data.deadline : null,
       today,
-      chapters: project.chapters.map((chapter) => ({ id: chapter.id, words: chapter.wordCount, target: chapter.targetWords })),
+      chapters: project.chapters.map((chapter) => ({ id: chapter.id, words: chapter.wordCount, characters: chapter.count, target: chapter.targetCount })),
       sessions: cleanSessions(project.progressLog?.data.sessions)
     })
   };
 }
-function progressLogFile(sessions) {
+function sessionsWithoutCharacters(project) {
+  if (project.unit.name !== "characters" || project.progressLog === null) {
+    return [];
+  }
+  const unlogged = new Set(asArray(project.progressLog.data.sessions).filter((entry) => entry && typeof entry === "object" && entry.characters === undefined).map((entry) => String(entry.date ?? "").trim()));
+  const dates = cleanSessions(project.progressLog.data.sessions).filter((session) => unlogged.has(session.date)).map((session) => session.date);
+  if (dates.length === 0) {
+    return [];
+  }
+  return [warn("session-without-characters", `${PROGRESS_FILE} ${dates.length === 1 ? "session" : "sessions"} ${dates.join(", ")} ${dates.length === 1 ? "has" : "have"} no characters, so story progress leaves ${dates.length === 1 ? "it" : "them"} out of the pace: this book counts characters, so add characters by hand or remove ${dates.length === 1 ? "it" : "them"}`, PROGRESS_FILE)];
+}
+function progressLogFile(sessions, unit) {
+  const counts = unit.name === "characters" ? "word and character counts" : "word count";
   return `${stringifyFrontmatter({ type: "progress-log", sessions })}# Progress Log
 
-\`story progress --log\` records the manuscript word count for the day in the frontmatter above. Set \`target-words\` and \`deadline\` in \`story.md\`, and \`target-words\` on chapters, to measure against them.
+\`story progress --log\` records the manuscript ${counts} for the day in the frontmatter above. Set \`${unit.targetField}\` and \`deadline\` in \`story.md\`, and \`${unit.targetField}\` on chapters, to measure against them.
 `;
 }
 function storyTimeline(root) {
@@ -10257,7 +15208,7 @@ function namesReport(root, candidates) {
     throw usageError("Usage: story names <name...> [--path <project>]");
   }
   const project = scanProject(root);
-  const result = checkNames(list, existingNames(project));
+  const result = checkNames(list, existingNames(project), project.pack);
   const errors = [...project.fileErrors, ...result.errors];
   return { ok: errors.length === 0, errors, warnings: result.warnings, results: result.results };
 }
@@ -10291,7 +15242,7 @@ function proseReport(root, options = {}) {
   const errors = [...project.fileErrors];
   const warnings = [];
   const names = [...project.characters.map((character) => character.name), ...existingNames(project).map((entry) => entry.name)];
-  const rules = proseRules(project.styleSheet?.data, names);
+  const rules = proseRules(project.styleSheet?.data, names, project.pack);
   const profile = proseBaseline(project, rules, options, warnings);
   const chapters = [];
   for (const chapter of project.chapters) {
@@ -10299,8 +15250,8 @@ function proseReport(root, options = {}) {
     const prose = chapterProse(readMarkdown(chapter.file, project.root).body, " ");
     chapters.push(lintProse(label, chapter.title, prose, rules, thresholds, profile, warnings));
   }
-  const phrases = repeatedPhrases(chapters.map((chapter) => chapter.analysis));
-  const similar = similarNames(project.characters);
+  const phrases = repeatedPhrases(chapters.map((chapter) => chapter.analysis), PROSE_THRESHOLDS, project.pack);
+  const similar = similarNames(project.characters, project.pack);
   for (const [left, right] of similar) {
     warnings.push(warn("prose-similar-names", `characters ${left.id} and ${right.id} have similar first names (${left.name} / ${right.name})`));
   }
@@ -10314,18 +15265,20 @@ function proseReport(root, options = {}) {
     phrases,
     similarNames: similar,
     thresholds: thresholdSummary(thresholds),
-    baseline: profile
+    baseline: profile,
+    language: rules.pack.tag,
+    skipped: proseSkipped(rules, profile)
   };
 }
 function lintProse(label, title, prose, rules, thresholds, profile, warnings) {
   const analysis = analyzeChapter(prose, rules);
   const compared = profile !== null && profile.usable;
-  warnings.push(...chapterFindings(label, analysis, thresholds, { baseline: compared }));
+  warnings.push(...chapterFindings(label, analysis, thresholds, { baseline: compared, pack: rules.pack }));
   if (profile === null) {
     return { file: label, title, analysis };
   }
   const figures = baselineFigures(analysis, profile, contentWords(prose, rules));
-  warnings.push(...baselineFindings(label, analysis, figures, profile));
+  warnings.push(...baselineFindings(label, analysis, figures, profile, undefined, rules.pack));
   return { file: label, title, analysis, baseline: figures };
 }
 function proseBaseline(project, rules, options, warnings) {
@@ -10364,12 +15317,14 @@ function proseBaseline(project, rules, options, warnings) {
       const prose = document.paragraphs.map((paragraph) => paragraph.text).join(`
 
 `);
-      samples.push({ file: document.file, analysis: analyzeChapter(prose, rules), sentenceLengths: sentenceLengths(prose), contentWords: contentWords(prose, rules) });
+      samples.push({ file: document.file, analysis: analyzeChapter(prose, rules), sentenceLengths: sentenceLengths(prose, rules.pack), contentWords: contentWords(prose, rules) });
     }
   }
-  const profile = baselineProfile(samples);
+  const profile = baselineProfile(samples, rules.pack);
   if (!profile.usable) {
-    warnings.push(warn("prose-baseline-small", `${STYLE_SHEET_FILE} samples hold ${profile.narrationWords} narration words, too few to compare with (at least 2000): the fixed filter-word and adverb limits apply instead`, STYLE_SHEET_FILE));
+    const limits = [rules.filterWords === null ? null : "filter-word", rules.adverbSuffixes === null ? null : "adverb"].filter(Boolean);
+    const fallback = limits.length === 0 ? "" : `: the fixed ${limits.join(" and ")} ${limits.length === 1 ? "limit applies" : "limits apply"} instead`;
+    warnings.push(warn("prose-baseline-small", `${STYLE_SHEET_FILE} samples hold ${profile.narrationWords} narration words, too few to compare with (at least 2000)${fallback}`, STYLE_SHEET_FILE));
   }
   return profile;
 }
@@ -10386,6 +15341,9 @@ function sampleProblem(project, sample) {
   }
   return null;
 }
+function proseSkipped(rules, profile) {
+  return profile === null ? rules.skipped : [...rules.skipped, ...skippedChecks(rules.pack, BASELINE_CHECKS)];
+}
 function thresholdSummary(thresholds) {
   return { maxFilterWords: thresholds.filterPerThousand, maxAdverbs: thresholds.adverbsPerThousand, maxBookisms: thresholds.maxBookisms };
 }
@@ -10393,7 +15351,7 @@ function prosePassageReport(root, passage, thresholds, options = {}) {
   const project = root === null ? null : scanProject(root);
   const errors = project === null ? [] : passageErrors(project);
   const names = project === null ? [] : [...project.characters.map((character) => character.name), ...existingNames(project).map((entry) => entry.name)];
-  const rules = proseRules(project?.styleSheet?.data, names);
+  const rules = proseRules(project?.styleSheet?.data, names, project?.pack);
   const warnings = [];
   const profile = project === null ? null : proseBaseline(project, rules, options, warnings);
   const chapter = lintProse(PASSAGE_LABEL, "passage", passageProse(passage), rules, thresholds, profile, warnings);
@@ -10405,10 +15363,12 @@ function prosePassageReport(root, passage, thresholds, options = {}) {
     styleSheet: Boolean(project?.styleSheet),
     words: chapter.analysis.words,
     chapters: [chapter],
-    phrases: repeatedPhrases([chapter.analysis]),
+    phrases: repeatedPhrases([chapter.analysis], PROSE_THRESHOLDS, rules.pack),
     similarNames: [],
     thresholds: thresholdSummary(thresholds),
-    baseline: profile
+    baseline: profile,
+    language: rules.pack.tag,
+    skipped: proseSkipped(rules, profile)
   };
 }
 function exportManuscript(root, options = {}) {
@@ -10484,6 +15444,7 @@ function buildBook(root, options = {}) {
       data: project.story.data,
       meta: manuscript.meta,
       words,
+      ...manuscript.unit === "characters" ? { characters: manuscript.chapters.reduce((sum, chapter) => sum + characterCount(chapter.body), 0) } : {},
       pages: { "5.5x8.5": estimateBookPages(book, "5.5x8.5"), "6x9": estimateBookPages(book, "6x9") },
       hasCopyrightPage: manuscript.front.concat(manuscript.back).some((entry) => entry.copyright),
       coverReady: coverIsReady(project),
@@ -10601,7 +15562,9 @@ function screenplayOutline(project, book) {
   return {
     title: project.title,
     authors: book.meta.authors,
+    labels: book.meta.labels,
     form: typeof project.story.data.form === "string" ? project.story.data.form : "",
+    pack: project.pack,
     chapters,
     warnings
   };
@@ -10645,41 +15608,41 @@ var SCAFFOLD_SENTENCES = new Set([
   "What changes because of this arc."
 ]);
 function synopsisPremise(project) {
-  const sentences = synopsisSentences(extractSection(project.story.body, "Synopsis")).filter((sentence) => !/^Imported from .+\.$/.test(sentence));
+  const sentences = synopsisSentences(extractSection(project.story.body, "Synopsis"), project.pack).filter((sentence) => !/^Imported from .+\.$/.test(sentence));
   return sentences.length > 0 ? sentences[0] : "No logline recorded.";
 }
-function synopsisSentences(section) {
+function synopsisSentences(section, pack) {
   const text = scanComments(String(section), " ").text.split(/\r?\n/).map((line) => {
     const item = /^\s*(?:[-*+]|\d+[.)])\s+(.*)$/.exec(line);
     if (!item) {
       return line;
     }
     const content = item[1].trim();
-    return /[.!?]$/.test(content) ? content : `${content}.`;
+    return endsSentence(content, pack) ? content : `${content}.`;
   }).join(`
 `);
-  return splitSentences(text, { capitalStart: false }).filter((sentence) => !SCAFFOLD_SENTENCES.has(sentence));
+  return splitSentences(text, { capitalStart: false, pack }).filter((sentence) => !SCAFFOLD_SENTENCES.has(sentence));
 }
-function takeSentences(text, count) {
-  return synopsisSentences(text).slice(0, count);
+function takeSentences(text, count, pack) {
+  return synopsisSentences(text, pack).slice(0, count);
 }
 function renderSynopsis(title, premise, project, level, detail) {
   const lines = [`# Synopsis: ${title}`, "", `Logline: ${premise}`, ""];
   for (const arc of project.arcs) {
     const markdown = readMarkdown(arc.file, project.root);
     lines.push(`## ${arc.name}`, "");
-    const setup = takeSentences(extractSection(markdown.body, "Setup"), detail.setup);
+    const setup = takeSentences(extractSection(markdown.body, "Setup"), detail.setup, project.pack);
     if (setup.length > 0) {
       lines.push(setup.join(" "), "");
     }
     if (level === 0) {
-      const rising = takeSentences(extractSection(markdown.body, "Rising Action"), detail.rising);
+      const rising = takeSentences(extractSection(markdown.body, "Rising Action"), detail.rising, project.pack);
       if (rising.length > 0) {
         lines.push(rising.join(" "), "");
       }
     }
-    const climax = takeSentences(extractSection(markdown.body, "Climax"), detail.climax);
-    const resolution = level < 2 ? takeSentences(extractSection(markdown.body, "Resolution"), detail.resolution) : [];
+    const climax = takeSentences(extractSection(markdown.body, "Climax"), detail.climax, project.pack);
+    const resolution = level < 2 ? takeSentences(extractSection(markdown.body, "Resolution"), detail.resolution, project.pack) : [];
     const chain = climax.concat(resolution);
     if (chain.length > 0) {
       lines.push(`Because ${lowercaseCommonStart(chain.join(" "))}`, "");
@@ -10739,6 +15702,20 @@ function lowercaseCommonStart(text) {
   const first = /^[A-Za-z]+(?=\s)/.exec(text)?.[0] ?? "";
   return COMMON_OPENERS.has(first.toLowerCase()) ? `${text[0].toLowerCase()}${text.slice(1)}` : text;
 }
+function longestFittingPrefix(token, room) {
+  const ends = wordSpans(token, /(?!)/gu).map((word) => word.end);
+  let low = 0;
+  let high = ends.length;
+  while (low < high) {
+    const middle = Math.ceil((low + high) / 2);
+    if (wordCount(token.slice(0, ends[middle - 1])) <= room) {
+      low = middle;
+    } else {
+      high = middle - 1;
+    }
+  }
+  return low === 0 ? "" : token.slice(0, ends[low - 1]);
+}
 function truncateWords(text, budget) {
   const kept = [];
   let used = 0;
@@ -10754,6 +15731,10 @@ function truncateWords(text, budget) {
     for (const token of line.split(/\s+/).filter((part) => part !== "")) {
       const tokenWords = wordCount(token);
       if (used + tokenWords > budget) {
+        const cut = longestFittingPrefix(token, budget - used);
+        if (cut !== "") {
+          tokens.push(cut);
+        }
         break;
       }
       tokens.push(token);
@@ -10770,11 +15751,15 @@ function truncateWords(text, budget) {
 }
 function shunnMeta(project) {
   const data = project.story.data;
+  const meta = publishingMeta(data);
   return {
     title: project.title,
-    author: publishingMeta(data).authors.join(" and "),
+    author: joinNames(meta.authors, meta.labels),
+    labels: meta.labels,
     contact: asArray(data.contact),
     words: project.chapters.reduce((sum, chapter) => sum + chapter.wordCount, 0),
+    pack: project.pack,
+    ...project.unit.name === "characters" ? { characters: project.chapters.reduce((sum, chapter) => sum + chapter.count, 0) } : {},
     shortForm: data.form === "short-story" || data.form === "flash"
   };
 }
@@ -11494,16 +16479,16 @@ function storyBible(options) {
     pov: options.pov,
     tense: options.tense
   });
-  for (const field of ["author", "authors", "language"]) {
+  for (const field of ["author", "authors", "language", "count-unit"]) {
     if (options.inherited?.[field] !== undefined) {
       data[field] = options.inherited[field];
     }
   }
   if (options.form !== undefined) {
     data.form = options.form;
-    const target = STORY_FORMS.get(options.form).target;
+    const target = formRanges(options.unit, options.pack)?.get(options.form)?.target ?? null;
     if (target !== null) {
-      data["target-words"] = target;
+      data[options.unit.targetField] = target;
     }
   }
   for (const field of ["follows", "precedes"]) {
@@ -11610,19 +16595,20 @@ ${themeTracking || `| Theme | Arcs | Chapters |
 | *No themes tracked yet* | | |`}
 `;
 }
-function chapterIndex(storyId, chapters) {
-  const rows = chapters.length === 0 ? ["| *No chapters yet* | | | | | |"] : chapters.map((chapter) => `| ${cell3(chapter.number)} | ${cell3(chapter.title)} | ${cell3(chapter.pov)} | ${cell3(chapter.status)} | ${cell3(chapter.wordCount)} | [${chapter.id}](${path11.basename(chapter.file)}) |`);
-  const total = chapters.reduce((sum, chapter) => sum + chapter.wordCount, 0);
+function chapterIndex(storyId, chapters, unit = COUNT_UNITS.get("words")) {
+  const rows = chapters.length === 0 ? ["| *No chapters yet* | | | | | |"] : chapters.map((chapter) => `| ${cell3(chapter.number)} | ${cell3(chapter.title)} | ${cell3(chapter.pov)} | ${cell3(chapter.status)} | ${cell3(chapter.count)} | [${chapter.id}](${path11.basename(chapter.file)}) |`);
+  const total = chapters.reduce((sum, chapter) => sum + chapter.count, 0);
+  const heading = `${unit.noun[0].toUpperCase()}${unit.noun.slice(1)} Count`;
   return `${stringifyFrontmatter({ type: "chapter-registry", story: storyId })}# Chapters
 
 ## Registry
 
-| # | Title | POV | Status | Word Count | File |
-|---|-------|-----|--------|------------|------|
+| # | Title | POV | Status | ${heading} | File |
+|---|-------|-----|--------|${"-".repeat(heading.length + 2)}|------|
 ${rows.join(`
 `)}
 
-## Total Word Count: ${total}
+## Total ${heading}: ${total}
 `;
 }
 function timeline(storyId) {
@@ -11822,7 +16808,7 @@ function buildProjectActions(project, validation, links, continuity, displayPath
   let nextNumber = 1;
   for (const chapter of project.chapters) {
     const file = relative2(project, chapter.file);
-    if (chapter.declaredWordCount !== chapter.wordCount && !wordCountOverridden.has(file)) {
+    if ((chapter.declaredWordCount !== chapter.wordCount || chapter.declaredCount !== chapter.count) && !wordCountOverridden.has(file)) {
       staleChapters.push(chapter);
     }
     let hasScene = false;
@@ -11938,7 +16924,7 @@ function buildEntity(project, kind, name, options) {
   if (kind === "chapter") {
     const number = options.number === undefined ? project.chapters.reduce((max, chapter) => Math.max(max, chapter.number), 0) + 1 : requirePositiveInteger(options.number, "chapter number");
     const id = `chapter-${String(number).padStart(2, "0")}`;
-    return entityResult(project, kind, id, chapterFile(name, number, options));
+    return entityResult(project, kind, id, chapterFile(name, number, options, project.unit));
   }
   if (kind === "scene") {
     if (options.chapter === undefined && project.chapters.length === 0) {
@@ -12319,7 +17305,7 @@ What changes because of this arc.
 | | | | | planned |
 `;
 }
-function chapterFile(title, number, options) {
+function chapterFile(title, number, options, unit) {
   const dateError = storyDateError(options.date);
   if (dateError) {
     throw usageError(dateError);
@@ -12341,7 +17327,8 @@ function chapterFile(title, number, options) {
     date: options.date ?? "",
     time: options.time ?? "",
     ...options.hook === undefined ? {} : { hook: options.hook },
-    "word-count": 0
+    "word-count": 0,
+    ...unit.name === "characters" ? { "character-count": 0 } : {}
   })}# ${chapterHeading(number, title)}
 
 ## Outline
@@ -12963,7 +17950,7 @@ function bookChapters(project, action = "build") {
       title,
       numbered,
       displayNumber,
-      heading: numbered ? chapterHeading(displayNumber, title, meta.chapterLabel) : title,
+      heading: numbered ? chapterHeading(displayNumber, title, meta.labels, meta.chapterNumerals) : title,
       body: chapterProse(markdown.body).replace(/\r\n?/g, `
 `).trim()
     };
@@ -12993,12 +17980,13 @@ function manuscriptParts(project, action = "build") {
   const back = matter("back");
   const hasCopyrightPage = [...front, ...back].some((entry) => entry.copyright);
   if (meta.copyright !== "" && !hasCopyrightPage) {
-    front.unshift({ id: "copyright", title: "Copyright", heading: false, copyright: true, body: copyrightPage(meta) });
+    front.unshift({ id: "copyright", title: fillLabel(meta.labels, "copyright"), heading: false, copyright: true, body: copyrightPage(meta) });
   }
   return {
     title: project.title,
-    author: meta.authors.join(" and "),
+    author: joinNames(meta.authors, meta.labels),
     meta,
+    unit: project.unit.name,
     front,
     chapters,
     back,
@@ -13087,7 +18075,7 @@ function chapterKey(chapter, keys) {
   if (chapter.numbered) {
     return `ch${String(chapter.displayNumber).padStart(2, "0")}`;
   }
-  let key = kebabCase(chapter.title);
+  let key = kebabCase(chapter.title, { transliterate: false });
   if (key === "" || keys.has(key) || /^(?:ch\d+$|front-|back-|matter-|unnumbered-)/.test(key)) {
     key = `unnumbered-${String(chapter.number).padStart(2, "0")}`;
   }
@@ -13517,7 +18505,7 @@ function normalizeBuildFormat(value) {
   throw usageError(`Unsupported build format: ${value === "" ? "(empty)" : value}. Supported formats: ${Object.keys(BUILD_EXTENSIONS).join(", ")}`);
 }
 function storyIdIsFallback(project) {
-  return Boolean(project.story.unreadable) || kebabCase(String(project.story.data.title ?? "")) === "";
+  return Boolean(project.story.unreadable) || kebabCase(String(project.story.data.title ?? ""), { transliterate: false }) === "";
 }
 var TEXT_FIELDS = {
   characters: ["pronunciation", "name", "died-in", "revived-in", "arc", "lie", "truth", "ghost-wound"],
@@ -13588,10 +18576,24 @@ function validateStoryFrontmatter(project, errors) {
   if (data["target-words"] !== undefined) {
     requireInteger(data, "target-words", "story.md", errors, 1);
   }
+  if (data["target-characters"] !== undefined) {
+    requireInteger(data, "target-characters", "story.md", errors, 1);
+  }
+  validateEnum(data, "count-unit", COUNT_UNITS, "story.md", errors);
   validateEnum(data, "form", STORY_FORMS, "story.md", errors);
   if (data["draft-mode"] !== undefined) {
     requireScalar(data, "draft-mode", "story.md", errors);
     validateEnum(data, "draft-mode", DRAFT_MODES, "story.md", errors);
+  }
+  if (data["writing-mode"] !== undefined) {
+    requireScalar(data, "writing-mode", "story.md", errors);
+    validateEnum(data, "writing-mode", WRITING_MODES, "story.md", errors);
+    validateWritingMode(data, errors);
+  }
+  if (data["chapter-numerals"] !== undefined) {
+    requireScalar(data, "chapter-numerals", "story.md", errors);
+    validateEnum(data, "chapter-numerals", CHAPTER_NUMERALS, "story.md", errors);
+    validateChapterNumerals(data, errors);
   }
   validateCover(project, errors);
   validatePasses(data, "story.md", errors);
@@ -13631,16 +18633,26 @@ function validatePronunciations(project, errors) {
 }
 function validateFormRange(project, warnings) {
   const data = project.story.data;
-  const targetWarning = formRangeWarning(data.form, data["target-words"], "story.md target-words");
+  const { unit } = project;
+  const ranges = formRanges(unit, project.pack);
+  const targetWarning = formRangeWarning(data.form, data[unit.targetField], `story.md ${unit.targetField}`, ranges, unit);
   if (targetWarning !== "") {
     warnings.push(warn("form-length-range", targetWarning, "story.md"));
   }
   if (data.status === "complete") {
-    const words = project.chapters.reduce((sum, chapter) => sum + chapter.wordCount, 0);
-    const wordsWarning = formRangeWarning(data.form, words, "Manuscript length");
-    if (wordsWarning !== "") {
-      warnings.push(warn("form-length-range", wordsWarning));
+    const length = project.chapters.reduce((sum, chapter) => sum + chapter.count, 0);
+    const lengthWarning = formRangeWarning(data.form, length, "Manuscript length", ranges, unit);
+    if (lengthWarning !== "") {
+      warnings.push(warn("form-length-range", lengthWarning));
     }
+  }
+}
+function unusedTargetWarnings(project, label, data, warnings) {
+  const { unit } = project;
+  const other = [...COUNT_UNITS.values()].find((entry) => entry !== unit);
+  if (data[other.targetField] !== undefined && data[unit.targetField] === undefined) {
+    const why = project.story.data["count-unit"] === undefined ? `language ${project.language}` : "count-unit";
+    warnings.push(warn("unused-target", `${label} ${other.targetField} is not measured: this book counts ${unit.name} (${why}), so set ${unit.targetField}`, label));
   }
 }
 function validateIndexFrontmatter(project, errors) {
@@ -13864,9 +18876,16 @@ function validateChapters(project, errors, warnings) {
     if (data["word-count"] !== undefined) {
       requireInteger(data, "word-count", label, errors, 0);
     }
+    if (data["character-count"] !== undefined) {
+      requireInteger(data, "character-count", label, errors, 0);
+    }
     if (data["target-words"] !== undefined) {
       requireInteger(data, "target-words", label, errors, 1);
     }
+    if (data["target-characters"] !== undefined) {
+      requireInteger(data, "target-characters", label, errors, 1);
+    }
+    unusedTargetWarnings(project, label, data, warnings);
     if (data.date !== undefined) {
       requireScalar(data, "date", label, errors);
     }
@@ -14159,12 +19178,15 @@ function validateStyleSheet(project, errors, warnings) {
         errors.push(err("missing-field", `${entryLabel} requires a non-empty ${field}`, label));
       }
     }
-    if (typeof entry.use === "string" && typeof entry.avoid === "string" && entry.use.trim().toLowerCase() === entry.avoid.trim().toLowerCase()) {
+    if (typeof entry.use === "string" && typeof entry.avoid === "string" && lowerCase(entry.use.trim(), project.pack) === lowerCase(entry.avoid.trim(), project.pack)) {
       errors.push(err("style-use-equals-avoid", `${entryLabel} use and avoid must differ`, label));
     }
   });
   validateStringArray(data, "watch-words", label, errors);
   validateStringArray(data, "allow-words", label, errors);
+  for (const field of STYLE_LIST_FIELDS) {
+    validateStyleLists(data, field, label, errors, warnings);
+  }
   validateStringArray(data, "samples", label, errors);
   for (const entry of asArray(data.samples)) {
     if (typeof entry !== "string" || entry.trim() === "") {
@@ -14178,6 +19200,23 @@ function validateStyleSheet(project, errors, warnings) {
       if (problem !== null) {
         warnings.push(problem);
       }
+    }
+  }
+}
+function validateStyleLists(data, field, label, errors, warnings) {
+  const value = data[field];
+  if (value === undefined) {
+    return;
+  }
+  if (!Array.isArray(value) || !value.every((entry) => entry !== null && typeof entry === "object" && !Array.isArray(entry))) {
+    errors.push(err("field-not-list", `${label} frontmatter field ${field} must be a list of list: words entries, such as - filter-words: sintió, vio`, label));
+    return;
+  }
+  for (const [key, words] of styleListEntries(value)) {
+    if (!Object.prototype.hasOwnProperty.call(STYLE_LISTS, key)) {
+      warnings.push(warn("unknown-word-list", `${label} ${field} entry ${key} is not a word list; the checks ignore it (see docs/project-format.md#word-lists)`, label));
+    } else if (styleWords(words) === null) {
+      errors.push(err("field-not-text", `${label} ${field} entry ${key} must be text: words separated by commas, or [] for none`, label));
     }
   }
 }
@@ -14214,6 +19253,9 @@ function validateProgressLog(project, errors) {
     }
     if (!Number.isInteger(entry.words) || entry.words < 0) {
       errors.push(err("field-not-integer", `${label} words must be a non-negative integer`, PROGRESS_FILE));
+    }
+    if (entry.characters !== undefined && (!Number.isInteger(entry.characters) || entry.characters < 0)) {
+      errors.push(err("field-not-integer", `${label} characters must be a non-negative integer`, PROGRESS_FILE));
     }
   });
 }
@@ -14484,80 +19526,65 @@ function relative2(project, file) {
 
 // src/import.js
 var ROMAN_NUMERAL = "(?!i\\s+\\S)(?=[ivxlc])c{0,3}(?:xc|xl|l?x{0,3})(?:ix|iv|v?i{0,3})";
-var UNIT_WORDS = "one|two|three|four|five|six|seven|eight|nine";
-var TENS_WORDS = "twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety";
-var BELOW_HUNDRED = `(?:(?:${TENS_WORDS})(?:[-\\s](?:${UNIT_WORDS}))?|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|${UNIT_WORDS})`;
-var WORD_NUMERAL = `(?:(?:${UNIT_WORDS})[-\\s]hundred(?:(?:[-\\s]and)?[-\\s]${BELOW_HUNDRED})?|${BELOW_HUNDRED})`;
-var CHAPTER_NUMBER = `(?:\\d+(?:\\.\\d+)?|${WORD_NUMERAL}|${ROMAN_NUMERAL})(?=[\\s:.\\-–—]|$)`;
-var CHAPTER_HEADING_PATTERN = new RegExp(`^chapter(?![A-Za-z])\\s*(?:${CHAPTER_NUMBER})?\\s*[:.\\-–—]*\\s*(.*)$`, "i");
-var PLAIN_CHAPTER_PATTERN = new RegExp(`^chapter\\s+${CHAPTER_NUMBER}\\s*(?:[:.\\-–—]+\\s*(.*))?$`, "i");
-var SECTION_HEADING_PATTERN = /^(?:prologue|epilogue|interlude|afterword)(?![A-Za-z])/i;
-var PLAIN_SECTION_PATTERN = /^(?:prologue|epilogue|interlude|afterword)\s*(?:[:.\-–—]+.*)?$/i;
 var PLAIN_LINE_MAX_LENGTH = 80;
-var PART_HEADING = /^part(?![A-Za-z])/i;
 var GENERATED_MARKER = /<!--\s*Generated by story (?:export|build)\.\s*-->/g;
-var FRONT_MATTER_NAMES = /^(?:prologue|preface|foreword|introduction|prelude)\b/i;
 var CANDIDATE_THRESHOLD = 3;
 var CANDIDATE_LIMIT = 25;
-var CANDIDATE_STOPWORDS = new Set([
-  "A",
-  "An",
-  "And",
-  "At",
-  "But",
-  "By",
-  "Dr",
-  "For",
-  "He",
-  "Her",
-  "His",
-  "I",
-  "If",
-  "In",
-  "It",
-  "Its",
-  "Mr",
-  "Mrs",
-  "Ms",
-  "No",
-  "Not",
-  "Of",
-  "On",
-  "Or",
-  "She",
-  "That",
-  "The",
-  "Then",
-  "They",
-  "Their",
-  "This",
-  "To",
-  "We",
-  "When",
-  "While",
-  "With",
-  "Yes",
-  "You",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-]);
+var NEVER3 = "(?!)";
+var RULES3 = new WeakMap;
+function importRules(pack) {
+  if (!RULES3.has(pack)) {
+    RULES3.set(pack, buildImportRules(pack));
+  }
+  return RULES3.get(pack);
+}
+function buildImportRules(pack) {
+  const either = (name) => (checkList(pack, name) ?? []).map(listWord2).join("|") || NEVER3;
+  const chapter = either("chapterWords");
+  const section = either("sectionWords");
+  const chapterNumber = `(?:\\d+(?:\\.\\d+)?|${wordNumeral(checkList(pack, "numberWords"))}${ROMAN_NUMERAL})(?=[\\s:.\\-–—]|$)`;
+  const ordinal = checkList(pack, "ordinalWords") === null ? null : `(?:\\d+\\.|(?:${either("ordinalWords")})(?![A-Za-z]))\\s+`;
+  const ordinalFirst = (words, rest) => ordinal === null ? "" : `|^${ordinal}(?:${words})(?![A-Za-z])${rest}`;
+  return {
+    chapterHeading: new RegExp(`^(?:${chapter})(?![A-Za-z])\\s*(?:${chapterNumber})?\\s*[:.\\-–—]*\\s*(.*)$${ordinalFirst(chapter, "\\s*[:.\\-–—]*\\s*(.*)$")}`, "i"),
+    plainChapter: new RegExp(`^(?:${chapter})\\s+${chapterNumber}\\s*(?:[:.\\-–—]+\\s*(.*))?$${ordinalFirst(chapter, "\\s*(?:[:.\\-–—]+\\s*(.*))?$")}`, "i"),
+    sectionHeading: new RegExp(`^(?:${section})(?![A-Za-z])`, "i"),
+    plainSection: new RegExp(`^(?:${section})\\s*(?:[:.\\-–—]+.*)?$`, "i"),
+    partHeading: new RegExp(`^${ordinal === null ? "" : `(?:${ordinal})?`}(?:${either("partWords")})(?![A-Za-z])`, "i"),
+    frontMatter: new RegExp(`^(?:${either("frontMatterWords")})\\b`, "i"),
+    candidateStopwords: new Set([...checkList(pack, "candidateStopwords") ?? [], ...checkList(pack, "calendarWords") ?? []]),
+    determiners: checkSet(pack, "determiners"),
+    relativeWords: checkSet(pack, "relativeWords") ?? new Set,
+    nounSuffixes: checkList(pack, "nounSuffixes") ?? [],
+    titleWords: checkSet(pack, "titleWords") ?? new Set,
+    speechBefore: speechPattern(pack, (verbs) => `(?<![\\p{L}\\p{N}])(?:${verbs})\\s+$`),
+    speechAfter: speechPattern(pack, (verbs) => `^\\s+(?:${verbs})(?![\\p{L}\\p{N}])`)
+  };
+}
+function speechPattern(pack, shape) {
+  const verbs = checkList(pack, "speechVerbs");
+  return verbs === null || verbs.length === 0 ? null : new RegExp(shape(verbs.map(listWord2).join("|")), "iu");
+}
+function listWord2(word) {
+  return escapeRegExp(word).replace(/'/g, "['’]");
+}
+function wordNumeral(words) {
+  if (words === null) {
+    return "";
+  }
+  return `${words.units === undefined ? "" : unitNumeral(words)}${words.words === undefined ? "" : compoundNumeral(words)}`;
+}
+function compoundNumeral({ words, joiners = [] }) {
+  const longestFirst = (list) => [...list].sort((left, right) => right.length - left.length || (left < right ? -1 : 1)).map(escapeRegExp).join("|");
+  const word = `(?:${longestFirst(words) || NEVER3})`;
+  const joiner = joiners.length === 0 ? "" : `(?:(?:${longestFirst(joiners)})[-\\s]?)?`;
+  return `${word}(?:[-\\s]?${joiner}${word})*|`;
+}
+function unitNumeral(words) {
+  const units = words.units.join("|");
+  const belowHundred = `(?:(?:${words.tens.join("|")})(?:[-\\s](?:${units}))?|${words.teens.join("|")}|${units})`;
+  return `(?:(?:${units})[-\\s]${words.hundred}(?:(?:[-\\s]${words.and})?[-\\s]${belowHundred})?|${belowHundred})|`;
+}
 var MAX_IMPORT_FILE_BYTES = 5 * 1024 * 1024;
 var MAX_IMPORT_FILES = 500;
 function rejectSymlinkedSource(filePath) {
@@ -14585,20 +19612,32 @@ function importManuscript(options) {
   if (!fromStdin && fs8.statSync(source).isDirectory() && fs8.existsSync(path12.join(source, "story.md"))) {
     throw usageError(`${rawSource} is already a story project (it has story.md); import reads manuscript files, so point it at the draft instead`);
   }
+  if (options.language !== undefined && !isLanguageTag(options.language)) {
+    throw usageError(`--language ${options.language} must be a BCP 47 tag such as en, en-GB, or fr`);
+  }
+  const target = newProjectRoot({ title: options.title, cwd, dir: options.dir });
+  const pack = withStyleLists(languagePack(options.language ?? (target === null ? null : existingStoryLanguage(target))), target === null ? null : existingStyleData(target));
+  const rules = importRules(pack);
   const warnings = [];
-  const documents = fromStdin ? [{ name: "stdin", text: options.readStdin(), untitled: true }] : readImportSource(source);
-  const chapters = splitChapters(documents, warnings);
+  const documents = fromStdin ? [{ name: "stdin", text: options.readStdin(), untitled: true }] : readImportSource(source, rules);
+  const chapters = splitChapters(documents, warnings, rules);
   if (chapters.length === 0) {
     throw usageError("No chapter content found in import source");
   }
+  const existing = target === null ? null : existingStoryData(target);
+  const characters = (existing === null ? countUnit(null, pack) : countUnit(existing, languagePack(projectLanguage(existing)))).name === "characters";
   let totalWords = 0;
+  let totalCharacters = 0;
   const chapterFiles = chapters.map((chapter, index) => {
     const number = index + 1;
-    const words = wordCount(scanComments(chapter.prose).text);
+    const prose = scanComments(chapter.prose).text;
+    const words = wordCount(prose);
+    const counts = characters ? { "word-count": words, "character-count": characterCount(prose) } : { "word-count": words };
     totalWords += words;
+    totalCharacters += counts["character-count"] ?? 0;
     const title = chapter.title || `Chapter ${number}`;
     const name = `chapter-${String(number).padStart(2, "0")}.md`;
-    const text = chapterMarkdown(title, number, words, chapter.prose, chapter.unnumbered);
+    const text = chapterMarkdown(title, number, counts, chapter.prose, chapter.unnumbered);
     const bytes = Buffer4.byteLength(text, "utf8");
     if (bytes > MAX_READ_BYTES) {
       throw usageError(`Cannot import: ${name} would be ${bytes} bytes, over the ${MAX_READ_BYTES} byte limit story reads. Split the manuscript with chapter headings first`);
@@ -14616,6 +19655,7 @@ function importManuscript(options) {
     pov: options.pov,
     tense: options.tense,
     synopsis: options.synopsis,
+    language: options.language,
     defaultSynopsis: `Imported from ${fromStdin ? "stdin" : path12.basename(source)}. Replace with a 2-3 sentence synopsis.`,
     force: options.force,
     beforeWrite(root, hasStory) {
@@ -14649,11 +19689,12 @@ function importManuscript(options) {
     ignoredOptions: created.ignoredOptions,
     chapters: chapters.length,
     words: totalWords,
+    ...characters ? { characters: totalCharacters } : {},
     warnings,
     gitignore: created.gitignore,
     candidates: extractNameCandidates(chapters.map((chapter) => chapter.prose).join(`
 
-`))
+`), pack)
   };
 }
 var NAME_WORD = "(?:(?:Ma?c|[OD]['’])(?=\\p{Lu}))?\\p{Lu}\\p{Ll}+(?:['’]\\p{Ll}+)?(?:-\\p{Lu}\\p{Ll}+)*";
@@ -14661,27 +19702,80 @@ var NAME_RUN_PATTERN = new RegExp(`(?<![\\p{L}\\p{N}'’-])${NAME_WORD}(?:\\s+${
 var NAME_SINGLE_PATTERN = new RegExp(`(?<![\\p{L}\\p{N}'’-])(?<!${NAME_WORD}\\s+)${NAME_WORD}(?![\\p{L}\\p{N}])(?!\\s+${NAME_WORD})`, "gu");
 var MID_SENTENCE = /\p{Ll}[,;:]?\s$/u;
 var DISTINCTIVE_NAME = /^\p{Lu}.*\p{Lu}/u;
-function extractNameCandidates(prose) {
+var DETERMINED_SHARE = 1 / 3;
+function extractNameCandidates(prose, pack = languagePack()) {
+  const rules = importRules(pack);
+  const stopwords = rules.candidateStopwords;
   const counts = new Map;
+  const determined = new Map;
+  const named = new Set;
+  const nounRule = rules.determiners !== null;
+  const speaks = (index, end) => rules.speechBefore !== null && rules.speechBefore.test(prose.slice(Math.max(0, index - 40), index)) || rules.speechAfter !== null && rules.speechAfter.test(prose.slice(end, end + 40));
   for (const match of prose.matchAll(NAME_RUN_PATTERN)) {
     const words = match[0].replace(/\s+/g, " ").split(" ");
-    while (words.length > 0 && CANDIDATE_STOPWORDS.has(words[0])) {
+    let article = false;
+    let titled = false;
+    while (words.length > 0 && (stopwords.has(straight(words[0])) || nounRule && rules.determiners.has(lowerCase(words[0], pack)))) {
+      const word = lowerCase(words[0], pack);
+      const determiner = nounRule && rules.determiners.has(word);
+      article ||= determiner;
+      titled ||= !determiner && rules.titleWords.has(word.replace(/\.$/, ""));
       words.shift();
     }
     if (words.length > 0) {
-      addCandidate(counts, withoutPossessive(words.join(" ")));
+      const name = withoutPossessive(words.join(" "));
+      addCandidate(counts, name);
+      if (nounRule && words.length === 1) {
+        if (titled || speaks(match.index, match.index + match[0].length)) {
+          named.add(name);
+        } else if (article || afterDeterminer(prose, match.index, rules, pack)) {
+          addCandidate(determined, name);
+        }
+      }
     }
   }
   for (const match of prose.matchAll(NAME_SINGLE_PATTERN)) {
     const name = withoutPossessive(match[0]);
-    if (CANDIDATE_STOPWORDS.has(name)) {
+    if (stopwords.has(straight(name))) {
       continue;
+    }
+    if (nounRule && speaks(match.index, match.index + match[0].length)) {
+      named.add(name);
     }
     if (DISTINCTIVE_NAME.test(name) || MID_SENTENCE.test(prose.slice(Math.max(0, match.index - 3), match.index))) {
       addCandidate(counts, name);
+      if (nounRule && afterDeterminer(prose, match.index, rules, pack)) {
+        addCandidate(determined, name);
+      }
     }
   }
-  return [...counts.entries()].filter(([, count]) => count >= CANDIDATE_THRESHOLD).sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], "en")).slice(0, CANDIDATE_LIMIT).map(([name, count]) => ({ name, count }));
+  const commonNoun = (name, count) => {
+    const articles = determined.get(name) ?? 0;
+    return nounRule && !name.includes(" ") && !named.has(name) && (articles >= count * DETERMINED_SHARE || articles > 0 && rules.nounSuffixes.some((suffix) => lowerCase(name, pack).endsWith(suffix)));
+  };
+  return [...counts.entries()].filter(([name, count]) => count >= CANDIDATE_THRESHOLD && !commonNoun(name, count)).sort((left, right) => right[1] - left[1] || compareText(pack)(left[0], right[0])).slice(0, CANDIDATE_LIMIT).map(([name, count]) => ({ name, count }));
+}
+var PHRASE_BEFORE = /(?<![\p{L}\p{M}'’-])(?:[\p{L}\p{M}'’-]+\s+){1,3}$/u;
+function afterDeterminer(prose, index, rules, pack) {
+  const before = prose.slice(Math.max(0, index - 80), index);
+  const phrase = PHRASE_BEFORE.exec(before);
+  if (phrase === null) {
+    return false;
+  }
+  const words = phrase[0].trim().split(/\s+/);
+  for (let position = words.length - 1;position >= 0; position -= 1) {
+    const word = lowerCase(words[position], pack);
+    if (rules.determiners.has(word)) {
+      return !(position === 0 && rules.relativeWords.has(word) && /,\s*$/.test(before.slice(0, phrase.index)));
+    }
+    if (!/^\p{Ll}/u.test(words[position])) {
+      return false;
+    }
+  }
+  return false;
+}
+function straight(word) {
+  return word.replace(/’/g, "'");
 }
 function withoutPossessive(name) {
   return name.replace(/['’]s$/, "");
@@ -14692,14 +19786,14 @@ function addCandidate(counts, name) {
 function readSourceText(filePath) {
   return decodeUtf82(fs8.readFileSync(filePath), `Cannot import ${filePath}`, "Save it as UTF-8 plain text or markdown first");
 }
-function readImportSource(source) {
+function readImportSource(source, rules) {
   try {
-    return readSourceDocuments(source);
+    return readSourceDocuments(source, rules);
   } catch (error) {
     throw withDefaultExitCode(error, EXIT_CODES.usage);
   }
 }
-function readSourceDocuments(source) {
+function readSourceDocuments(source, rules) {
   rejectSymlinkedSource(source);
   if (fs8.statSync(source).isFile()) {
     assertImportFileSize(source);
@@ -14724,7 +19818,7 @@ function readSourceDocuments(source) {
       names.push(entry.name);
     }
   }
-  names.sort(compareImportNames);
+  names.sort((left, right) => compareImportNames(left, right, rules));
   if (names.length > MAX_IMPORT_FILES) {
     throw usageError("Too many import files in " + source + ": " + names.length + " exceeds the " + MAX_IMPORT_FILES + " file limit");
   }
@@ -14738,16 +19832,16 @@ function readSourceDocuments(source) {
   }
   return documents;
 }
-function importNameRank(name, nums) {
+function importNameRank(name, nums, rules) {
   if (nums.length > 0) {
     return 1;
   }
-  return FRONT_MATTER_NAMES.test(name) ? 0 : 2;
+  return rules.frontMatter.test(name) ? 0 : 2;
 }
-function compareImportNames(left, right) {
+function compareImportNames(left, right, rules = importRules(languagePack())) {
   const leftNums = [...left.matchAll(/\d+/g)].map((match) => Number(match[0]));
   const rightNums = [...right.matchAll(/\d+/g)].map((match) => Number(match[0]));
-  const rankDiff = importNameRank(left, leftNums) - importNameRank(right, rightNums);
+  const rankDiff = importNameRank(left, leftNums, rules) - importNameRank(right, rightNums, rules);
   if (rankDiff !== 0) {
     return rankDiff;
   }
@@ -14770,7 +19864,7 @@ function compareImportNames(left, right) {
   }
   return left < right ? -1 : 1;
 }
-function splitChapters(documents, warnings = []) {
+function splitChapters(documents, warnings, rules) {
   const chapters = [];
   for (const document of documents) {
     const source = document.text.replace(/\r\n?/g, `
@@ -14784,7 +19878,7 @@ function splitChapters(documents, warnings = []) {
     const offset = source.slice(0, source.length - body.length).split(`
 `).length - 1;
     const text = normalizeSource(body, document.name);
-    const { sections, unused, markdown } = splitByChapterHeadings(text);
+    const { sections, unused, markdown } = splitByChapterHeadings(text, rules);
     if (unused.length > 0) {
       const count = unused.length === 1 ? "1 plain-text chapter line was" : `${unused.length} plain-text chapter lines were`;
       const why = markdown ? "the file has markdown chapter headings, which take precedence, so make these headings too (## Chapter 1)" : "a chapter line splits only when it stands alone between blank lines, so add a blank line after each";
@@ -14862,7 +19956,7 @@ function protectComments(text, change) {
   }
   return result;
 }
-function splitByChapterHeadings(text) {
+function splitByChapterHeadings(text, rules) {
   const lines = text.split(`
 `);
   const hidden = hiddenLineIndexes(lines);
@@ -14873,26 +19967,26 @@ function splitByChapterHeadings(text) {
     }
     const setext = setextHeadingText(lines, index, hidden);
     const heading = setext ?? atxHeadingText(line);
-    const title = heading === null ? null : chapterTitle(heading, CHAPTER_HEADING_PATTERN);
+    const title = heading === null ? null : chapterTitle(heading, rules.chapterHeading, rules.sectionHeading);
     if (title !== null && setext !== null) {
       underlines.add(index + 1);
     }
     return title;
   });
   const markdown = markdownTitles.some((title) => title !== null);
-  const titles = markdown ? markdownTitles : lines.map((line, index) => hidden.has(index) ? null : plainChapterTitle(lines, index));
-  const unused = unusedChapterLines(lines, hidden, titles, underlines);
+  const titles = markdown ? markdownTitles : lines.map((line, index) => hidden.has(index) ? null : plainChapterTitle(lines, index, rules));
+  const unused = unusedChapterLines(lines, hidden, titles, underlines, rules);
   const sections = [];
   let current = null;
   const preamble = [];
   for (const [index, line] of lines.entries()) {
     const title = titles[index];
     if (title !== null) {
-      const part = takePartHeading(current ? current.lines : preamble);
+      const part = takePartHeading(current ? current.lines : preamble, rules);
       if (current) {
         sections.push(finishChapter(current));
       }
-      current = { title, lines: part, unnumbered: unnumberedHeading(lines, index, hidden, markdown) };
+      current = { title, lines: part, unnumbered: unnumberedHeading(lines, index, hidden, markdown, rules) };
     } else if (markdown && underlines.has(index)) {
       continue;
     } else if (current) {
@@ -14906,7 +20000,7 @@ function splitByChapterHeadings(text) {
   }
   sections.push(finishChapter(current));
   const opening = stripTitleHeading(preamble.join(`
-`)).trim();
+`), rules).trim();
   const plainTitleOnly = markdown ? false : !opening.includes(`
 `) && opening.length <= PLAIN_LINE_MAX_LENGTH;
   if (opening !== "" && scanComments(opening).text.trim() === "") {
@@ -14921,26 +20015,26 @@ ${sections[0].prose}`.trim();
   }
   return { sections, unused, markdown };
 }
-function unusedChapterLines(lines, hidden, titles, underlines) {
+function unusedChapterLines(lines, hidden, titles, underlines, rules) {
   const unused = [];
   for (const [index, line] of lines.entries()) {
     const text = line.trim();
     if (titles[index] !== null || hidden.has(index) || underlines.has(index) || text.length > PLAIN_LINE_MAX_LENGTH) {
       continue;
     }
-    if (PLAIN_CHAPTER_PATTERN.test(text)) {
+    if (rules.plainChapter.test(text)) {
       unused.push({ index, text });
     }
   }
   return unused;
 }
-function takePartHeading(lines) {
+function takePartHeading(lines, rules) {
   let end = lines.length;
   while (end > 0 && lines[end - 1].trim() === "") {
     end -= 1;
   }
   const heading = end > 0 ? atxHeadingText(lines[end - 1]) : null;
-  if (heading === null || !PART_HEADING.test(heading)) {
+  if (heading === null || !rules.partHeading.test(heading)) {
     return [];
   }
   return lines.splice(end - 1).slice(0, 1);
@@ -14989,32 +20083,32 @@ function setextHeadingText(lines, index, hidden, underline = /^ {0,3}(?:=+|-+)[ 
 function cleanHeadingText(text) {
   return text.replace(/\s*\{[#.-][^{}]*\}\s*$/, "").replace(/(?:^|[ \t]+)#+[ \t]*$/, "").replace(/\s*\{[#.-][^{}]*\}\s*$/, "").trim();
 }
-function plainChapterTitle(lines, index) {
+function plainChapterTitle(lines, index, rules) {
   const text = lines[index].trim();
   const alone = (lines[index - 1] ?? "").trim() === "" && (lines[index + 1] ?? "").trim() === "";
   if (!alone || text === "" || text.length > PLAIN_LINE_MAX_LENGTH) {
     return null;
   }
-  return chapterTitle(text, PLAIN_CHAPTER_PATTERN, PLAIN_SECTION_PATTERN);
+  return chapterTitle(text, rules.plainChapter, rules.plainSection);
 }
-function chapterTitle(text, pattern, sectionPattern = SECTION_HEADING_PATTERN) {
+function chapterTitle(text, pattern, sectionPattern) {
   if (sectionPattern.test(text)) {
     return text.replace(/[\s:.\-–—]+$/, "");
   }
   const match = pattern.exec(text);
-  return match ? (match[1] ?? "").trim() : null;
+  return match ? (match[1] ?? match[2] ?? "").trim() : null;
 }
 function finishChapter(section) {
   return { title: section.title, prose: section.lines.join(`
 `).trim(), unnumbered: Boolean(section.unnumbered) };
 }
-function unnumberedHeading(lines, index, hidden, markdown) {
+function unnumberedHeading(lines, index, hidden, markdown, rules) {
   const line = lines[index];
   if (markdown && /\{[^{}]*(?:\.unnumbered|(?:^|[{\s])-(?=[\s}]))[^{}]*\}[\s#]*$/.test(line)) {
     return true;
   }
   const text = markdown ? setextHeadingText(lines, index, hidden) ?? atxHeadingText(line) : line.trim();
-  return SECTION_HEADING_PATTERN.test(text ?? "");
+  return rules.sectionHeading.test(text ?? "");
 }
 function singleChapter(text, document) {
   const lines = text.split(`
@@ -15038,7 +20132,7 @@ function singleChapter(text, document) {
     prose: text.trim()
   };
 }
-function stripTitleHeading(text) {
+function stripTitleHeading(text, rules) {
   const lines = text.split(`
 `);
   const first = lines.findIndex((line) => line.trim() !== "");
@@ -15047,7 +20141,7 @@ function stripTitleHeading(text) {
   }
   const atx = atxHeadingText(lines[first].trimStart());
   if (atx !== null && /^\s*#[ \t]/.test(lines[first])) {
-    return PART_HEADING.test(atx) ? text : lines.slice(first + 1).join(`
+    return rules.partHeading.test(atx) ? text : lines.slice(first + 1).join(`
 `);
   }
   if (setextHeadingText(lines, first, new Set, /^ {0,3}=+[ \t]*$/) !== null) {
@@ -15056,7 +20150,7 @@ function stripTitleHeading(text) {
   }
   return text;
 }
-function chapterMarkdown(title, number, words, prose, unnumbered = false) {
+function chapterMarkdown(title, number, counts, prose, unnumbered = false) {
   return `${stringifyFrontmatter({
     title,
     number,
@@ -15066,7 +20160,7 @@ function chapterMarkdown(title, number, words, prose, unnumbered = false) {
     characters: [],
     "arcs-advanced": [],
     status: "draft",
-    "word-count": words
+    ...counts
   })}# ${unnumbered ? title : chapterHeading(number, title)}
 
 ## Chapter Text
@@ -15218,7 +20312,7 @@ var COMMANDS = [
     summary: ["Split an existing manuscript into a new story project;", "- reads the manuscript from stdin"],
     project: "none",
     args: 1,
-    options: ["title", "dir", "genre", "sub-genre", "setting-era", "theme", "themes", "pov", "tense", "synopsis", "force"],
+    options: ["title", "dir", "genre", "sub-genre", "setting-era", "theme", "themes", "pov", "tense", "synopsis", "language", "force"],
     run({ parsed, io, cwd }) {
       const result = importManuscript({
         source: parsed.positionals[1],
@@ -15233,9 +20327,11 @@ var COMMANDS = [
         pov: parsed.options.pov,
         tense: parsed.options.tense,
         synopsis: parsed.options.synopsis,
+        language: parsed.options.language,
         force: isTruthy(parsed.options.force)
       });
-      io.stdout.write(`Imported ${result.chapters} ${result.chapters === 1 ? "chapter" : "chapters"} (${result.words} ${result.words === 1 ? "word" : "words"}) into ${result.root}
+      const [length, noun] = result.characters === undefined ? [result.words, "word"] : [result.characters, "character"];
+      io.stdout.write(`Imported ${result.chapters} ${result.chapters === 1 ? "chapter" : "chapters"} (${length} ${length === 1 ? noun : `${noun}s`}) into ${result.root}
 `);
       reportKeptStory(io, result, "--title");
       reportGitignore(io, result);
@@ -15287,11 +20383,12 @@ var COMMANDS = [
     options: ["write"],
     run({ parsed, io, root }) {
       const result = computeWordCounts(root(), { write: isTruthy(parsed.options.write) });
+      const characters = result.unit === "characters";
       for (const chapter of result.chapters) {
-        io.stdout.write(`${chapter.file}: ${chapter.wordCount}
+        io.stdout.write(`${chapter.file}: ${characters ? chapter.characterCount : chapter.wordCount}
 `);
       }
-      io.stdout.write(`Total: ${result.total}
+      io.stdout.write(`Total: ${result.total}${characters ? " characters" : ""}
 `);
       return 0;
     }
@@ -15431,7 +20528,8 @@ var COMMANDS = [
         return reportJson(io, "progress", progress, { writes: progress.logged ? [progress.logged.file] : [] });
       }
       if (progress.logged) {
-        io.stdout.write(`Logged ${progress.logged.words} words for ${progress.logged.date} in ${progress.logged.file}
+        const { characterCount, words } = progress.logged;
+        io.stdout.write(`Logged ${characterCount === null ? `${words} words` : `${characterCount} characters`} for ${progress.logged.date} in ${progress.logged.file}
 `);
       }
       io.stdout.write(formatProgress(progress));

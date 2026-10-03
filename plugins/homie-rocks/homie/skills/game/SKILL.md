@@ -80,6 +80,17 @@ Make it the game the person asked for, in small steps:
   // positioning: weight the hot spot's targets by (1.5 - s.positioning): 0 leaves it to people, 1 fights for it
   ```
   Never let a bot's name pass for a person's: an AI's name already ends in " · AI".
+- **Write the guide vocabulary** (AI guides that talk, NETPLAY.md section 18), when the game has a beginner
+  server or the person wants guides: `games/<id>/agents.json` is the only words a guide has. Write it WITH the
+  person, in the game's own voice: a `persona` (two short sentences), 3 `names`, 4 to 6 `goals` the bot code can
+  actually carry out (`follow` a `"player"`, a `quest` from `"view.quests"`, `lead` to a list of places, `guard`,
+  `back`), 6 to 10 short `lines` (120 characters, kind, never sarcastic, never about a person), and 2 or 3 `asks`
+  a player taps (one with `"leave": true`: "No thanks"), each with the `goal` and `say` that answer it. A goal is
+  something done WITH players, never to one (the build refuses one that reads as acting against a player). Then
+  `useAgents(room.net, vocab, { view, decide })` from `@homie-rocks/studio/agents`: `view(slot)` is game state
+  only (seats, never names; under 2 KB), `decide(view)` is the scripted floor, the hands read
+  `agents.goalOf(slot)` and call `agents.done(slot)`, and lines are bubbles from `agents.on('say')`. Ember Vale
+  (`--from ember-vale`) is the worked example. The brain itself is the owner's switch (the `servers` skill).
 - Update `game.json` `name` and `blurb`, and the `<title>`.
 
 ## Progress that lasts: cloud saves
@@ -97,6 +108,9 @@ forgets everything 60 s after its last player leaves.
   key. Lifetime numbers: `saves.stats.add({ kills: 1 })`. Hardcore: `saves.fall({ character, summary, wipe: true })`.
 - The host decides what happened and tells the player's own browser (a netplay event to its seat); only that
   browser changes and saves the player's progress.
+- A character's name is the save's, not the room's: the room knows a person by their account's name or a two-word
+  handle. Draw the character's name over its body and in the ranking (the browser tells the host, the host keeps
+  every seat's in keyed state), except on a kids server, where the others stay handles. Ember Vale does it.
 - Show who is playing (`saves.player.name`, guest or signed in) and a small "Keep my progress" button that calls
   `saves.signIn()`; the play page shows its passkey sheet. Pressing Play never needs an account.
 - Prove it: build, `npm run dev`, open `http://localhost:8787/<id>/play` (passkeys need `localhost`, not
@@ -170,6 +184,12 @@ Then make it good, not just working:
 - **Playtest**: the `playtest` skill plays it on a computer and a phone held both ways, measures the
   first ten seconds, the look, the UI, the real sound and a round, runs the owner tests, and hands a
   blind review to a fresh reviewer. Fix what it ranks first; run it again.
+- **Speed**: when it stutters, loads slowly or a phone struggles, the `perf` skill measures it (frame
+  times, CPU per frame for the host and a replica, time to playable, downloads, memory, netplay) and
+  keeps a change only when it is faster beyond the noise and two browsers still finish a round.
+- **Feel**: when a move feels floaty, stiff, weak or unclear ("the jump", "the hit", "the drift"), the `lab` skill
+  builds a Game Lab for it: one take in the new build beside the last commit, frame by frame, with named phases,
+  graphs and sliders that write kept values into the game's `tunables.json`.
 
 Then give it its landing (below), `npm run deploy` and `studio_publish` (see `publish`), and
 check again on the live site.

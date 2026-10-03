@@ -1,6 +1,6 @@
 {
 	"name": "codex-multi-auth",
-	"version": "2.18.0",
+	"version": "2.19.0",
 	"description": "Codex CLI multi-account OAuth manager with account switching, health checks, runtime rotation, diagnostics, and recovery tools for @openai/codex",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -177,7 +177,7 @@
 		"@codex-ai/plugin": "file:vendor/codex-ai-plugin",
 		"@codex-ai/sdk": "file:vendor/codex-ai-sdk",
 		"hono": "4.13.9",
-		"undici": "6.28.0",
+		"undici": "6.29.0",
 		"ws": "8.21.3",
 		"zod": "4.4.3"
 	},

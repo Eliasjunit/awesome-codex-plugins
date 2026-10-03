@@ -103,6 +103,8 @@ Non-negotiable, every port:
    `BotBrain` `skill: () => room.skillOf(body)` (reaction, aim and commitment follow
    the party's vote) and use `jitter`, `engages` and `standoff` for the rest of a
    bot's choices. `createRoom` keeps a hybrid server's AI seats and labels them AI.
+   For guides that talk (a beginner server), give the game a vocabulary and `useAgents`
+   (the game skill's "Write the guide vocabulary"; NETPLAY.md section 18).
 4. **Host handoff.** Everything the rules need is in the checkpoint; a promoted
    browser continues the SAME round (clock, scores, world).
 5. **Controls mean the same thing every second.** Input is read on the camera's
@@ -116,6 +118,11 @@ Non-negotiable, every port:
    The world fills a phone held upright: a fixed arena letterboxed into a strip
    of a portrait screen looks broken. Follow your own body with a camera (your
    body about 14% of the screen's height) or lay the arena out for portrait.
+   For a flat (top-down) world the kit's `fitView` does it: the whole world where
+   it reads, else the world fills the screen and follows your body, never past
+   its edge but for the HUD's margins. Names drawn over bodies pile up when they
+   crowd: place them with `createLabels` (yours first, never covered; the rest
+   move or fade). Both starters show the pattern.
    Your own body is unmistakable at a glance (a ring or highlight plus "You").
 7. **The big screen** (`/<id>/tv`) is a spectator: no body, no personal prompts,
    an overview or director camera, readable from across a room. **A watcher**

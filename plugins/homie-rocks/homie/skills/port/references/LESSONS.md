@@ -64,7 +64,16 @@ measured. Read it before porting; come back when a check fails.
 - **Small pushes must move you**: a thumb past the dead zone starts at ~35–60%.
 - **A landscape arena on an upright phone** shrinks into a strip with two thirds of
   the screen empty; people read it as broken. Follow the player (a camera centred
-  on your body) or lay the world out for portrait.
+  on your body) or lay the world out for portrait. Ember Vale's starter did it until
+  0.18.1 (its 1600x1000 vale was 390x244 on a 390x844 phone, bodies 11 px across).
+- **Arrivals spawned inside each other**: until 0.18.2 `createRoom` gave every body
+  that arrived mid-round (a joiner with no bot to take over) spawn index 0, so three
+  heroes stood in one spot in Ember Vale. Now a mid-round arrival gets the lowest
+  index no body holds; spread `spawn(slot, i)` round the map with it, the first few
+  far apart (Ember Vale: 0°, 180°, 90°, 270°…).
+- **Names pile up where bodies crowd** (a party round its guides, a spawn point):
+  four labels drawn at their bodies became one unreadable smear. Place them on the
+  screen, yours first, the rest moved a row or faded (`createLabels`).
 - **The UI owns at most ~12% of a phone's screen** and nothing opaque sits in the
   middle third during play; panels are small chips that open on demand. "The
   controls took over the screen" was an owner's verdict on a game with great visuals.

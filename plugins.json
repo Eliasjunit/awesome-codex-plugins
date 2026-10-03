@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
-  "last_updated": "2026-10-02",
-  "total": 250,
+  "last_updated": "2026-10-03",
+  "total": 251,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -2158,6 +2158,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/plori-ai/codex-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "PriceWin",
+      "url": "https://github.com/PriceDotWin/pricewin-agent-plugin",
+      "owner": "PriceDotWin",
+      "repo": "pricewin-agent-plugin",
+      "description": "Live hotel and flight prices compared across Booking.com, Agoda, Trip.com and Traveloka, in USD, through the hosted PriceWin MCP server with a search skill.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/PriceDotWin/pricewin-agent-plugin/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "prompt-to-asset",

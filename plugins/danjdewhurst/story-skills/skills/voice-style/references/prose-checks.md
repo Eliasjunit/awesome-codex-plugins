@@ -19,6 +19,38 @@ outline divider.
 | Repeated phrases | 4-word sequences inside one sentence, across the whole manuscript, that are not all function words | Never; the top 10 with 3+ uses are listed |
 | Similar names | Character first names that match, share their first three letters, or are one or two edits apart | Any pair |
 
+## Other languages
+
+Read `language` in `story.md` (missing means `en`). The word lists come
+from a language pack: English (`en`), Spanish (`es`), French (`fr`), and
+German (`de`) have them, and a regional tag (`es-MX`, `fr-CA`, `de-CH`)
+uses its language's. Spanish counts *-mente* adverbs and French *-ment*
+adverbs; German has no adverb ending, so its adverb check is skipped.
+French inverted tags count as their verb (*dit-il* is *dit*). The dialect
+pairs are English only. Any other language has no lists. For a book not in
+English:
+
+- If the report says a check was skipped for the book's language, do that
+  pass by reading, looking for the same effect in that language (verbs of
+  perceiving that announce instead of show, adverbs propping up weak
+  verbs, tags that tell the reader how to hear a line).
+- If the author wants a skipped check run, or a pack's list changed (a
+  verb the book uses as a plain tag, a regional said-bookism), ask which
+  words, then add them to `style-sheet.md` under `add-words` or
+  `replace-words` as `- list-name: word, word` entries (see
+  `docs/project-format.md`, Word lists, for the list names), and run
+  `story validate`. Never fill a list from a translation of the English
+  one: ask for the language's own words.
+- If a check ran with English word lists on a non-English book (the book
+  has no `language` set), set `language` and rerun rather than reading the
+  counts: they measure English words the book rarely contains.
+- Never use `watch-words` to stand in for a missing check. Use
+  `watch-words` for this book's own tics.
+- Avoided spellings, watch words, sentence rhythm, and similar names do
+  not depend on the word lists.
+
+## Limits
+
 The filter-word, adverb, and said-bookism limits are defaults. `story prose
 --max-filter-words <n>`, `--max-adverbs <n>`, and `--max-bookisms <n>`
 change them for one run; to change them for the book, record them under

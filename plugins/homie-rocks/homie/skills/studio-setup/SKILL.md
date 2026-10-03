@@ -85,7 +85,9 @@ your reply offering it: "Want the build's progress as a line under the prompt? S
 on." On a yes: `npx --no-install homie-studio statusline --install` (`--remove` takes it away). Claude Code
 reads the setting from the folder it was started in: if that is the folder above the studio (you made the
 studio as a subfolder), add `--project <that folder>`. It never replaces a status line they already have;
-if it says so, leave theirs. Never turn it on unasked.
+if it says so, leave theirs. Never turn it on unasked. In Claude Code 2.1.287 or later the Homie mod (part
+of this plugin) already draws the studio's band above the prompt and the Studio pane (`/studio`), so offer
+the status line only to someone who wants the line under the prompt as well.
 
 ## 1. The studio
 
@@ -169,13 +171,16 @@ npx --no-install homie-studio progress stage plan done --note "<the plan in one 
 
 `build`, `check` and `deploy` report into it. The codex page's **Build status** tab shows it (a
 percentage, each step and check going green, how to try it, what was spent) and redraws itself; the
-status line shows one line of it in Claude Code. In the Claude app, add `--share` and call
+status line shows one line of it in Claude Code, and the Homie mod's Studio pane (Claude Code 2.1.287 or
+later) shows all of it with the latest check frame and opens by itself. In the Claude app, add `--share` and call
 `build_progress` with the build id it prints: the card follows the build. Codex CLI has no command
 status line, so there the codex page is the progress view (`npx --no-install homie-studio codex <id> --open`).
 
 ## 6. Playtest it, then put it online
 
-**Playtest** with the `playtest` skill; fix what it ranks first.
+**Playtest** with the `playtest` skill; fix what it ranks first. If it is slow on a phone, the `perf` skill
+measures why and keeps only the changes that make it faster beyond the noise. If a move feels weak (the jump, the
+hit), the `lab` skill tunes it with the person, New beside Today.
 
 **The site** is made from the studio (`node_modules/@homie-rocks/studio/site/SITE.md`): Home, Games,
 Music, Videos, Rooms and Posts, each once the studio has something in it, in the studio's own look, with
@@ -225,13 +230,32 @@ Add: Homie for studios is in beta; bugs, port requests and questions go to
 https://github.com/homie-rocks/homie/issues/new/choose. Commit the studio (`git add -A && git commit -m
 "..."` inside the studio folder: it is the studio's own repository).
 
+## An existing studio that is behind: what's new
+
+A studio pins one `@homie-rocks/studio` version in its `package.json`. When you open a studio, or the person asks
+"what's new" or to update or upgrade it, compare that pin with the newest (`npm view @homie-rocks/studio version`; in
+Claude Desktop the studio card says so itself). When the studio is behind:
+
+1. Tell the person, in a few plain lines, what's new since their version: run
+   `npx -y @homie-rocks/studio@latest upgrade` in the studio (it changes nothing). It starts with "What's new since
+   <their version>", one line per version from the new version's own CHANGELOG.md, then the upgrade notes: anything
+   they have to do themselves. Pass those on in your own words, the upgrade notes first; never paste the whole list.
+   (In Claude Desktop: `studio_run` with `["upgrade"]`.)
+2. Say what the upgrade would change in the studio (the plan under "The changes"), and that nothing they wrote
+   themselves is touched.
+3. Only with their yes: the `--apply` command the plan names, then `npm install` (`studio_install`), `npm run build`,
+   a look at the site, and one commit for the upgrade on its own.
+
+Every version's notes are also at https://github.com/homie-rocks/homie/blob/main/CHANGELOG.md.
+
 ## Storage, later and only when asked
 
 Songs, videos and other large media go to the studio's storage (an R2 bucket), not git. A studio that
 makes games never needs it. When the person wants it: `npx --no-install homie-studio storage add`.
 Cloudflare asks for a payment method on the account before R2 works (its first 10 GB a month are free),
 so say that first and let the person decide; if R2 is not turned on, the command gives the dashboard
-link and creates nothing. Then `npm run deploy` binds it and `homie-studio media put <file>` uploads.
+link and creates nothing. Then every `npm run deploy` binds it and moves the big songs and videos
+there (checked by SHA-256, at the same addresses); `homie-studio media move --dry-run` says which.
 
 ## Never
 

@@ -3181,6 +3181,21 @@
       "description": "Create and drive plori AI agents in persistent cloud environments over remote MCP, with OAuth auto-discovery and a bundled Agent Skill."
     },
     {
+      "name": "pricewin",
+      "displayName": "PriceWin",
+      "source": {
+        "source": "local",
+        "path": "./plugins/PriceDotWin/pricewin-agent-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Live hotel and flight prices compared across Booking.com, Agoda, Trip.com and Traveloka, in USD, through the hosted PriceWin MCP server with a search skill.",
+      "icon": "./plugins/PriceDotWin/pricewin-agent-plugin/assets/pricewin-logo-400.png"
+    },
+    {
       "name": "prompt-to-asset",
       "displayName": "prompt-to-asset",
       "source": {
