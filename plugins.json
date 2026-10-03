@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-03",
-  "total": 258,
+  "total": 259,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -2338,6 +2338,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/avalonreset/seo-dungeon/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Sendpaper",
+      "url": "https://github.com/ryan-tish/sendpaper-plugin",
+      "owner": "ryan-tish",
+      "repo": "sendpaper-plugin",
+      "description": "Send real postcards and letters to US addresses from Codex, with an exact print preview, payment only with your approval, and USPS First-Class mailing via a hosted MCP server.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/ryan-tish/sendpaper-plugin/HEAD/plugins/sendpaper/.codex-plugin/plugin.json"
     },
     {
       "name": "Sendsets",

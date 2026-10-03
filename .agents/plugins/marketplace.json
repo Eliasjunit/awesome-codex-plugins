@@ -3446,6 +3446,21 @@
       "description": "Gamified local SEO audits that turn website issues into 16-bit dungeon battles for Codex, Claude, and Gemini CLI workflows."
     },
     {
+      "name": "sendpaper",
+      "displayName": "Sendpaper",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ryan-tish/sendpaper-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Send real postcards and letters to US addresses from Codex, with an exact print preview, payment only with your approval, and USPS First-Class mailing via a hosted MCP server.",
+      "icon": "./plugins/ryan-tish/sendpaper-plugin/assets/logo.svg"
+    },
+    {
       "name": "sendsets",
       "displayName": "Sendsets",
       "source": {
