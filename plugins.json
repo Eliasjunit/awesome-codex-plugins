@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-03",
-  "total": 253,
+  "total": 256,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -1070,6 +1070,16 @@
       "install_url": "https://raw.githubusercontent.com/DitriXNew/rekall/HEAD/.codex-plugin/plugin.json"
     },
     {
+      "name": "RepoPilot",
+      "url": "https://github.com/MykytaStel/repopilot",
+      "owner": "MykytaStel",
+      "repo": "repopilot",
+      "description": "Snapshots each Codex session and stops the agent when it weakened tests, suppressions, or CI gates, once per signal; local and deterministic.",
+      "category": "Development & Workflow",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/MykytaStel/repopilot/HEAD/integrations/claude-code/repopilot/.codex-plugin/plugin.json"
+    },
+    {
       "name": "Reviewable HTML Workbench",
       "url": "https://github.com/u-ichi/reviewable-html-workbench",
       "owner": "u-ichi",
@@ -1538,6 +1548,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/aient-ai/aient-codex-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Anime Reaction GIF",
+      "url": "https://github.com/LIghtJUNction/anime-reaction-gif",
+      "owner": "LIghtJUNction",
+      "repo": "anime-reaction-gif",
+      "description": "Create original anime reaction stickers with image-generated pose sheets, expressive timing, and looping GIF and MP4 exports.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/LIghtJUNction/anime-reaction-gif/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Antigravity 2.0",
@@ -2158,6 +2178,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/papersflow-ai/papersflow-codex-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "PlaceCall",
+      "url": "https://github.com/voygr-tech/placecall",
+      "owner": "voygr-tech",
+      "repo": "placecall",
+      "description": "Places real outbound phone calls to US businesses (bookings, inquiries, quotes) through the PlaceCall API and returns the outcome and transcript.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/voygr-tech/placecall/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "plori",

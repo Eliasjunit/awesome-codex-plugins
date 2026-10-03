@@ -1574,6 +1574,21 @@
       "icon": "./plugins/DitriXNew/rekall/assets/icon.svg"
     },
     {
+      "name": "repopilot",
+      "displayName": "RepoPilot",
+      "source": {
+        "source": "local",
+        "path": "./plugins/MykytaStel/repopilot"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development & Workflow",
+      "description": "Snapshots each Codex session and stops the agent when it weakened tests, suppressions, or CI gates, once per signal; local and deterministic.",
+      "icon": "./plugins/MykytaStel/repopilot/.claude-plugin/icon.png"
+    },
+    {
       "name": "reviewable-html-workbench",
       "displayName": "Reviewable HTML Workbench",
       "source": {
@@ -2265,6 +2280,21 @@
       "category": "Tools & Integrations",
       "description": "AI operations plugin for Codex that connects production telemetry, problem lifecycle context, and remediation workflows through Aient's MCP server.",
       "icon": "./plugins/aient-ai/aient-codex-plugin/assets/aient-icon-beveled-light.png"
+    },
+    {
+      "name": "anime-reaction-gif",
+      "displayName": "Anime Reaction GIF",
+      "source": {
+        "source": "local",
+        "path": "./plugins/LIghtJUNction/anime-reaction-gif"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Create original anime reaction stickers with image-generated pose sheets, expressive timing, and looping GIF and MP4 exports.",
+      "icon": "./plugins/LIghtJUNction/anime-reaction-gif/assets/icon.svg"
     },
     {
       "name": "antigravity-2",
@@ -3180,6 +3210,21 @@
       "category": "Tools & Integrations",
       "description": "Paper discovery, citation verification, graph exploration, and DeepScan analysis.",
       "icon": "./plugins/papersflow-ai/papersflow-codex-plugin/assets/plugin-icon.png"
+    },
+    {
+      "name": "placecall",
+      "displayName": "PlaceCall",
+      "source": {
+        "source": "local",
+        "path": "./plugins/voygr-tech/placecall"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Places real outbound phone calls to US businesses (bookings, inquiries, quotes) through the PlaceCall API and returns the outcome and transcript.",
+      "icon": "./plugins/voygr-tech/placecall/assets/icon.png"
     },
     {
       "name": "plori",
