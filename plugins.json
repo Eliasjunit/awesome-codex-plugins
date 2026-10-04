@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
-  "last_updated": "2026-10-03",
-  "total": 260,
+  "last_updated": "2026-10-04",
+  "total": 263,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -378,6 +378,16 @@
       "category": "Development & Workflow",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/yimwoo/codex-agenteam/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Codex Agents Workflow",
+      "url": "https://github.com/TohmaN233/codex-agents-workflow",
+      "owner": "TohmaN233",
+      "repo": "codex-agents-workflow",
+      "description": "Build and run reusable agent workflows in a local Codex workbench with configurable Roles, Providers, and recoverable Runs.",
+      "category": "Development & Workflow",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/TohmaN233/codex-agents-workflow/HEAD/plugins/codex-agents-workflow/.codex-plugin/plugin.json"
     },
     {
       "name": "Codex Attachment Manager",
@@ -1780,6 +1790,16 @@
       "install_url": "https://raw.githubusercontent.com/douglasmonsky/codex-usage-tracker/HEAD/.codex-plugin/plugin.json"
     },
     {
+      "name": "Cohesivity",
+      "url": "https://github.com/cohesivity-org/cohesivity-plugin",
+      "owner": "cohesivity-org",
+      "repo": "cohesivity-plugin",
+      "description": "Offers agent-native backend services for Codex and other coding agents, covering hosting, Postgres, email, storage, containers, LLMs, voice, and third-party APIs, with no-signup setup through MCP or API, free tiers, $5/month in AI and Search credits, and x402 top-ups.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/cohesivity-org/cohesivity-plugin/HEAD/packages/codex/plugins/cohesivity/.codex-plugin/plugin.json"
+    },
+    {
       "name": "Command Code Usage",
       "url": "https://github.com/Jovan1666/commandcode-usage",
       "owner": "Jovan1666",
@@ -2458,6 +2478,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/6Delta9/task-scheduler-codex-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Teaching Skills",
+      "url": "https://github.com/YujxZJCN/teaching-skills-codex",
+      "owner": "YujxZJCN",
+      "repo": "teaching-skills-codex",
+      "description": "Supports university teaching through 15 workflows for course design, lesson planning, assessment, student mentoring, and teaching reflection.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/YujxZJCN/teaching-skills-codex/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Thermal-Fluid Research Workflow",

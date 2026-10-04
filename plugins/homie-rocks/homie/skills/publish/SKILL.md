@@ -105,6 +105,11 @@ landing page" makes one epic). Every page ends with "Made with Homie"; restyle i
   hand-made landing at `site/pages/<id>/index.html`), a piece of every page in `site/partials/` (`footer`,
   `header`, `home`, `game`, `game-<id>`, `post`, `head`), files in `site/public/`. `site/README.md` in the
   studio lists them.
+- **Search engines and AI agents**: every page carries schema.org JSON-LD (a full VideoGame on each landing,
+  the studio's Organization on Home), and the site makes `/robots.txt`, `/sitemap.xml`, `/llms.txt` and
+  `/llms-full.txt` from what is public (SITE.md, "Search engines and AI agents"). The studio's links elsewhere
+  go in studio.json `"site": { "schema": { "sameAs": [...] } }`; a hand-made page takes `<!-- homie:schema -->`
+  in its `<head>`. Ratings, reviews and prices are never added by hand.
 - **The play page** shares its room: the room is in the address, and a small button at the edge gives
   Invite, Big screen and the room code. Nothing to set up.
 - Before and after a deploy, look: `npx --no-install homie-studio look --url <site>` (the local dev address,
@@ -166,8 +171,18 @@ sign-in link reaches the owner's address. You cannot approve it and must never t
 (no tool can; the approval page needs the owner's own browser session). Check with
 `studio_grant_status`, then `studio_publish` again once approved.
 
+## Tell Homie
+
+After a studio's first publish (its games are listed and playable), or when a deploy or a listing failed in a way
+you could not fix, you may offer, once in the session, to send the people who make Homie a short note about it:
+`homie_feedback` with `offered: true` and the step (`step: "publish"`). A draft sends nothing; show it exactly as it
+would go and send it only after the person says yes (in Claude Code, Claude Code itself asks them with the exact
+note). A no is final for the session. No keys, logs, files, code, site addresses that name the account, or anyone's
+name in it.
+
 ## Beta
 
 Homie for studios is in beta. When something breaks, tell the person it can go to
 https://github.com/homie-rocks/homie/issues/new/choose (bug, port request or question),
-without keys, tokens or private addresses in it.
+without keys, tokens or private addresses in it. Or, with their yes, send a short note
+from here (`homie_feedback`, above).

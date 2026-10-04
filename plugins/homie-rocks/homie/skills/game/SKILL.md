@@ -44,7 +44,10 @@ The game is `games/<id>/`: `game.json` (name, blurb, players, round length),
 `index.html`, `src/main.ts`. The starter (Gem Rush) is a complete netplay game in one
 readable file: rules, bots, snapshots, rendering on a canvas, keys and touch.
 
-Make it the game the person asked for, in small steps:
+Make it the game the person asked for, one milestone at a time. Within a milestone, work in few, large
+edits: read a file once, decide every change it needs, and make them together (one edit that carries several
+replacements, or one write of a new or short file), never a tool call per change. Twenty single edits to one
+file use up a turn before the game is built and checked, and the person has to say "keep going". As you go:
 
 - Keep `createNetplay` from `@homie-rocks/studio/netplay` and its shape (host runs the rules
   and bots; replicas move their own body and render snapshots; checkpoint everything a
@@ -297,6 +300,9 @@ page epic" means all of this, in this order:
    white or cream (a light arena) takes `"scheme": "light"`: its landing is drawn light, where the studio's
    dark tint would turn the picture grey. `hero/wide.jpg` is also the game's picture on every card and in
    the directory, and the play page's arrival card while the game loads, so pick a frame that reads small.
+   game.json `"genre"` (a word, or up to three: `["Racing", "Party"]`) and pictures of real play in
+   `games/<id>/screenshots/` (at most eight) go on the landing and into its structured data for search
+   engines; say what the game is, never invent a rating or a review.
 3. **Credits**: `landing.credits` names who made what (`[{ "role": "Music", "name": "..." }]`). A port
    keeps its `credits.json` (the original, its author and licence, every part inside); a remix keeps
    game.json `remixOf`; never drop either.

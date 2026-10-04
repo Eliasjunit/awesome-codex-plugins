@@ -554,6 +554,21 @@
       "icon": "./plugins/yimwoo/codex-agenteam/assets/agenteam-icon.png"
     },
     {
+      "name": "codex-agents-workflow",
+      "displayName": "Codex Agents Workflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/TohmaN233/codex-agents-workflow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development & Workflow",
+      "description": "Build and run reusable agent workflows in a local Codex workbench with configurable Roles, Providers, and recoverable Runs.",
+      "icon": "./plugins/TohmaN233/codex-agents-workflow/assets/icon.svg"
+    },
+    {
       "name": "codex-attachment-manager",
       "displayName": "Codex Attachment Manager",
       "source": {
@@ -2621,6 +2636,21 @@
       "description": "Track aggregate Codex token usage from local session logs with MCP tools for summaries, session detail, CSV export, and dashboard generation."
     },
     {
+      "name": "cohesivity",
+      "displayName": "Cohesivity",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cohesivity-org/cohesivity-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Offers agent-native backend services for Codex and other coding agents, covering hosting, Postgres, email, storage, containers, LLMs, voice, and third-party APIs, with no-signup setup through MCP or API, free tiers, $5/month in AI and Search credits, and x402 top-ups.",
+      "icon": "./plugins/cohesivity-org/cohesivity-plugin/assets/icon.svg"
+    },
+    {
       "name": "commandcode-usage",
       "displayName": "Command Code Usage",
       "source": {
@@ -3473,7 +3503,7 @@
       },
       "category": "Tools & Integrations",
       "description": "Send real postcards and letters to US addresses from Codex, with an exact print preview, payment only with your approval, and USPS First-Class mailing via a hosted MCP server.",
-      "icon": "./plugins/ryan-tish/sendpaper-plugin/assets/logo.svg"
+      "icon": "./plugins/ryan-tish/sendpaper-plugin/assets/icon.png"
     },
     {
       "name": "sendsets",
@@ -3622,6 +3652,21 @@
       "category": "Tools & Integrations",
       "description": "OpenAI Codex plugin and local MCP server for turning task lists into realistic schedules with blocked dates, capacity overrides, overflow tracking, and markdown planning output.",
       "icon": "./plugins/6Delta9/task-scheduler-codex-plugin/assets/icon.png"
+    },
+    {
+      "name": "teaching-skills",
+      "displayName": "Teaching Skills",
+      "source": {
+        "source": "local",
+        "path": "./plugins/YujxZJCN/teaching-skills-codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Supports university teaching through 15 workflows for course design, lesson planning, assessment, student mentoring, and teaching reflection.",
+      "icon": "./plugins/YujxZJCN/teaching-skills-codex/assets/icon.svg"
     },
     {
       "name": "thermal-fluid-research-workflow",

@@ -54,9 +54,9 @@ the panel.
    and which personas to run (default: all five). Take genre, form, POV,
    and tense from the `story context` output in step 2 (its Story
    essentials section), not from `story.md`, whose Synopsis may describe
-   the ending. The genre reader needs the genre. Also read `language` from
-   `story.md` frontmatter only (a missing field means `en`): it is no
-   spoiler, and every persona reads the book as a reader of that
+   the ending. The genre reader needs the genre. Take `language` from the
+   same section (or from `story.md` frontmatter only, where a missing
+   field means `en`): it is no spoiler, and every persona reads the book as a reader of that
    language would.
 2. Pick the round number: the next free `N` under `feedback/`. A panel
    gets its own round. Never add simulated reads to a round of human
@@ -83,8 +83,8 @@ promised so far), run `story context` on the last chapter in range:
 story context chapter-{NN} --path . --budget 4000
 ```
 
-It includes nothing from later chapters and leaves out the synopsis. Do not
-read `story.md` beyond its `language` field, `plot/`, arc files, promise payoffs, or chapters after the
+It leaves out later chapters and the synopsis. Its `What <name> knows that the reader has not seen (do not reveal)` subsection holds facts from chapters the reader has not reached: delete that whole subsection, heading included, before any persona sees the output. Do not
+read `story.md` (the context already gives its `language`), `plot/`, arc files, promise payoffs, or chapters after the
 range: a persona
 that knows the ending cannot tell whether the setup works. When the
 genre reader needs the genre's promises, take them from the chapters and

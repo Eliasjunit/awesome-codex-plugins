@@ -265,7 +265,7 @@ If Phase 1 identified this as a review-fix plan and the review report was succes
    Review-Fix Cycle Status: Iteration {review_iteration} | Findings {addressed}/{total_in_scope} | Criteria {met}/{total_criteria} | COMPLETE
    ```
 
-<!-- SYNC: This verification parses the report format defined in skills/review/SKILL.md, section `### Synthesized report structure`. If the report structure changes, update the parsing logic here. New sections (What's Working Well, Recommended Fix Order, Senior Assessment) are additive and do not affect this parsing. -->
+<!-- SYNC: This verification parses the report format defined in skills/review/SKILL.md, section `### Synthesized report structure`. If the report structure changes, update the parsing logic here. It reads each finding's severity, file path, title, and text, and nothing else: the What's Working Well, Recommended Fix Order and Senior Assessment sections, each finding's `Disposition:` line, the `Dispositions:` line in Review Context, the `**Deferred:**` line, and the `Fix corrected:`, `Fix flagged:` and `No verified fix` notes are invisible to it. A Critical marked Not addressed blocks in item 5 whatever its disposition. -->
 
 #### 4d -- Optional: Agent-assisted review
 
@@ -332,6 +332,7 @@ Summarize:
 - Link to the PR (if one was created)
 - Any follow-up work needed or remaining tasks, including every task accepted after three failed attempts and every discovered edit the group announcements printed (file and reason), so a change outside the plan's file lists is visible before the PR
 - The test-first tally, one line: `TDD: <n> red-verified, <m> skipped (<distinct reasons>)`. The sequential path counts the lines Phase 3 printed; the orchestration path counts the `TDD` lines the group-completion announcements printed. Include this line whenever the run implemented anything.
+- The Phase 2.5 lines, verbatim: `Strategy:`, `Reason:`, and `Verification:` as resolved. They are the only record of which path ran and whether the test command came from the rule or a guess, and a prose restatement ("no test script") drops the source. Include them whenever the run reached Phase 2.5.
 
 This summary ends `/work`. It does not end the turn when another skill loaded `/work` through the Skill tool -- `/ship` does, and continues into its verification here -- because that skill's instructions are still in this conversation and its next step runs now. Before ending the turn on this summary, check whether a skill invoked `/work` and follow its continuation step.
 

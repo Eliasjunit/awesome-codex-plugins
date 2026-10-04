@@ -113,6 +113,32 @@ They answer in their own message, `proceed <code>` (that exact call goes through
 command or a file: only the person's own message counts. `node <this plugin's folder>/hooks/codex.mjs check
 -- <command>` (the folder above `skills/`) says what Homie would do with a command, and runs nothing.
 
+**Homie's holds in Grok.** In Grok Build, Homie's hooks (`hooks/grok.json`) ask the same module as the mod and
+the Codex hooks (`hooks/lib/holds.mjs`), so the three cannot drift. They hold the same calls and refuse the same
+calls, and they take secrets out of what you read. A held call comes back denied with a code: say in a sentence
+what it would do and ask. The person answers in their own message, `proceed <code>` (that exact call goes through
+once) or `cancel <code>`; then run exactly the same call again, or not at all. Never write that answer yourself.
+`node <this plugin's folder>/hooks/grok.mjs check -- <command>` says what Homie would do, and runs nothing. Grok
+chat (the connector, without the plugin's hooks) has no such hold: before a production deploy, a Cloudflare change
+outside that deploy, or a paid call, say what it would do in one sentence and wait for a yes.
+
+## Grok and Grok Bot
+
+Grok chat already has the Homie connector (`https://homie.rocks/mcp`). Use it. Do not send the person to
+Claude's GitHub app, to claude.ai/code, or to a button that only says "Connect to Claude". The studio's
+first-run band says **Connect this chat**.
+
+- **Cloudflare** stays one tap on Cloudflare's own page. Grok has no Cloudflare connector and must never
+  ask for a token. On a phone, the setup card's "Make the studio on Cloudflare" is that tap. On a computer,
+  `npx wrangler login` opens the same approval.
+- **This computer** is a Grok Bot, or Grok Build with a folder. Run the checklist here. When the chat has a
+  setup id `hs_…`, check in once from the studio's own repository:
+  `npx --no-install homie-studio setup attach <hs_…> --client grok`. That tells the directory Grok works in
+  this repository. It does not need Claude's GitHub app. GitHub, when this chat already has it, is enough
+  to push the branch and open the pull request.
+- **A build** the chat opened (`hb_…`): `npx --no-install homie-studio handoff <hb_…> --client grok`. The
+  session fetches the brief itself. There is no Claude Code window to open, and no second session to start.
+
 ## 1. The studio
 
 Ask for a name if there is none ("What should the studio be called? It's the name on your site.").
@@ -237,6 +263,17 @@ Music, Videos, Rooms and Posts, each once the studio has something in it, in the
    once, on the link it gives). `setup status` remembers which.
 4. `npx --no-install homie-studio check <id> --url <the live site>`: the same two-browser proof, live.
 
+**Tell Homie, once.** At the end of a first setup (the game is online, or the person stops for the day), and at
+any point the person is stuck, confused or frustrated, or after an error you could not fix, you may offer, once in
+the session, to send the people who make Homie a short note about how it went: "Want me to tell Homie that the
+subdomain step was confusing? This is what I'd send:". Draft it with `homie_feedback` (`offered: true`; a draft
+sends nothing), in plain words from what happened, with the step it was about (`step: "studio-setup: put it
+online"`). Show it exactly as it would go (in the Claude app its card has Send, Edit and Don't send) and send it
+only after they say yes; in Claude Code, Claude Code itself asks them with the exact note. A no is final for the
+session: say nothing was sent and carry on. Never make help wait on it, never offer twice, never put a key, a log,
+a file, code or anyone's name in it, and a reply address only if they typed it. When they ask to tell Homie
+something themselves, draft it with `offered: false`.
+
 ### Another way: Cloudflare (and ElevenLabs) through Stripe Projects
 
 `npx wrangler login` stays the way. Offer this only when the person has **no Cloudflare account** (and wants songs but
@@ -318,3 +355,5 @@ there (checked by SHA-256, at the same addresses); `homie-studio media move --dr
   `--confirm-paid-service`, no `stripe projects billing`, no `upgrade`).
 - Never use `~/.homie`; the studio needs no Homie box.
 - Never ask the person to type a command.
+- Never send a note to Homie (`homie_feedback`) the person has not seen word for word and said yes to, and never
+  offer one more than once in a session.
