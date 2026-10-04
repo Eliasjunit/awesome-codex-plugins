@@ -61,7 +61,9 @@ delete, rename or redeploy anything the studio did not create. When it answers w
 `needs` step (a new account verifies its email address; an account with no workers.dev
 address picks one), say that step to the person and wait. The deploy itself is held for the
 person's Proceed, with where it goes and what changed since the last one: by the Homie mod in
-Claude Code, and by Homie's hooks in Codex (`studio-setup` says how a hold is answered there).
+Claude Code, and by Homie's hooks in Codex (`studio-setup` says how a hold is answered there). Where nothing
+holds it (Codex before its hooks are trusted, and Grok Build, which runs no plugin's hooks yet: the setup
+status says "Homie's holds: off"), say what the deploy would do in a sentence and wait for the person's yes.
 
 Storage for songs and videos (`npx --no-install homie-studio storage add`, an R2 bucket) is
 separate and optional: Cloudflare asks for a payment method before R2 works, so only
@@ -116,6 +118,9 @@ landing page" makes one epic). Every page ends with "Made with Homie"; restyle i
   then the live one) shoots every page on a computer and a phone and names what is wrong.
 
 ## List in the directory
+
+Going online never lists a studio. Listing is this separate step, public, and the person's to ask for: do it when
+they asked to be listed or said yes to your offer, never as part of a deploy.
 
 Licences first: `publish` refuses to list a studio while a public game ships an asset with no licence record, a
 licence that forbids a web game, or a credit it owes but does not show (`npx --no-install homie-studio assets check
@@ -177,7 +182,7 @@ After a studio's first publish (its games are listed and playable), or when a de
 you could not fix, you may offer, once in the session, to send the people who make Homie a short note about it:
 `homie_feedback` with `offered: true` and the step (`step: "publish"`). A draft sends nothing; show it exactly as it
 would go and send it only after the person says yes (in Claude Code, Claude Code itself asks them with the exact
-note). A no is final for the session. No keys, logs, files, code, site addresses that name the account, or anyone's
+note; in Codex, Homie's hooks hold the send for their `proceed <code>`). A no is final for the session. No keys, logs, files, code, site addresses that name the account, or anyone's
 name in it.
 
 ## Beta

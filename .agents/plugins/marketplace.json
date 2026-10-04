@@ -2548,6 +2548,21 @@
       "icon": "./plugins/yaffalhakim1/codex-discord-bridge/assets/composer-icon.svg"
     },
     {
+      "name": "codex-image-plugin",
+      "displayName": "Codex Image Plugin",
+      "source": {
+        "source": "local",
+        "path": "./plugins/zlsbksdxl/codex-image-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Generate and edit raster images through any OpenAI-compatible image API, with model discovery, reference-image editing, masks, and provider configuration support.",
+      "icon": "./plugins/zlsbksdxl/codex-image-plugin/assets/icon.svg"
+    },
+    {
       "name": "codex-mem",
       "displayName": "Codex Mem",
       "source": {
