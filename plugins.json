@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-04",
-  "total": 264,
+  "total": 265,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -2088,6 +2088,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/BlockchainHB/launchfast_codex_plugin/HEAD/plugins/launchfast/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "LienDeadline",
+      "url": "https://github.com/LienDeadline/skills",
+      "owner": "LienDeadline",
+      "repo": "skills",
+      "description": "US mechanics lien and preliminary notice deadlines for construction material suppliers, with statute citations, plus lien guides for all 50 states and DC; read-only.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/LienDeadline/skills/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "LinkedIn Skills",
