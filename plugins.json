@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-04",
-  "total": 265,
+  "total": 266,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -2588,6 +2588,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/CarrotGamesStudios/vidseeds-mcp/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "VoiceMoat Skills",
+      "url": "https://github.com/prateeks367/voicemoat-skills",
+      "owner": "prateeks367",
+      "repo": "voicemoat-skills",
+      "description": "Skills-only Codex plugin with 26 skills for LinkedIn and Twitter/X posts: draft in your own voice, audit before you publish, fix weak openings, draft comments and replies, read your numbers and plan the week, with no account or API key needed.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/prateeks367/voicemoat-skills/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "WakeWire",

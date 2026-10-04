@@ -3817,6 +3817,21 @@
       "icon": "./plugins/CarrotGamesStudios/vidseeds-mcp/assets/icon.png"
     },
     {
+      "name": "voicemoat-skills",
+      "displayName": "VoiceMoat Skills",
+      "source": {
+        "source": "local",
+        "path": "./plugins/prateeks367/voicemoat-skills"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Skills-only Codex plugin with 26 skills for LinkedIn and Twitter/X posts: draft in your own voice, audit before you publish, fix weak openings, draft comments and replies, read your numbers and plan the week, with no account or API key needed.",
+      "icon": "./plugins/prateeks367/voicemoat-skills/assets/icon.png"
+    },
+    {
       "name": "wakewire",
       "displayName": "WakeWire",
       "source": {
