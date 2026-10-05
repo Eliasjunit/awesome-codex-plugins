@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-05",
-  "total": 265,
+  "total": 267,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -1810,6 +1810,16 @@
       "install_url": "https://raw.githubusercontent.com/cohesivity-org/cohesivity-plugin/HEAD/packages/codex/plugins/cohesivity/.codex-plugin/plugin.json"
     },
     {
+      "name": "Command Code Usage",
+      "url": "https://github.com/Jovan1666/commandcode-usage",
+      "owner": "Jovan1666",
+      "repo": "commandcode-usage",
+      "description": "Show your Command Code plan usage inside Codex: a per-turn quota line, plus a /quota command for the full panel.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/Jovan1666/commandcode-usage/HEAD/plugins/codex/.codex-plugin/plugin.json"
+    },
+    {
       "name": "Computer Usage Summary",
       "url": "https://github.com/liuyewang/computer-usage-summary-skill",
       "owner": "liuyewang",
@@ -1958,6 +1968,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/ninihen1/power-automate-mcp-skills/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "FXMacroData",
+      "url": "https://github.com/fxmacrodata/claude-plugin-fxmacrodata",
+      "owner": "fxmacrodata",
+      "repo": "claude-plugin-fxmacrodata",
+      "description": "Official-source macro releases, central-bank rates, release calendars and FX rates for 22 currencies through the hosted FXMacroData MCP server.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/fxmacrodata/claude-plugin-fxmacrodata/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "GH Project",
