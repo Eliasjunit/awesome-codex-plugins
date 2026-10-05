@@ -2666,21 +2666,6 @@
       "icon": "./plugins/cohesivity-org/cohesivity-plugin/assets/icon.svg"
     },
     {
-      "name": "commandcode-usage",
-      "displayName": "Command Code Usage",
-      "source": {
-        "source": "local",
-        "path": "./plugins/Jovan1666/commandcode-usage"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Tools & Integrations",
-      "description": "Show your Command Code plan usage inside Codex: a per-turn quota line, plus a /quota command for the full panel.",
-      "icon": "./plugins/Jovan1666/commandcode-usage/assets/composer-icon.svg"
-    },
-    {
       "name": "computer-usage-summary-skill",
       "displayName": "Computer Usage Summary",
       "source": {
@@ -3521,21 +3506,6 @@
       "description": "Gamified local SEO audits that turn website issues into 16-bit dungeon battles for Codex, Claude, and Gemini CLI workflows."
     },
     {
-      "name": "sendpaper",
-      "displayName": "Sendpaper",
-      "source": {
-        "source": "local",
-        "path": "./plugins/ryan-tish/sendpaper-plugin"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Tools & Integrations",
-      "description": "Send real postcards and letters to US addresses from Codex, with an exact print preview, payment only with your approval, and USPS First-Class mailing via a hosted MCP server.",
-      "icon": "./plugins/ryan-tish/sendpaper-plugin/assets/icon.png"
-    },
-    {
       "name": "sendsets",
       "displayName": "Sendsets",
       "source": {
@@ -3639,6 +3609,21 @@
       "category": "Tools & Integrations",
       "description": "Linux sysadmin co-pilot as an MCP server for Codex: plain-language requests become typed, risk-classified actions that a privileged daemon runs only after out-of-band terminal approval, with an Ed25519-signed audit chain and automatic rollback.",
       "icon": "./plugins/lacs-project/sysknife/assets/raster/sysknife-256.png"
+    },
+    {
+      "name": "tablejourney",
+      "displayName": "TableJourney",
+      "source": {
+        "source": "local",
+        "path": "./plugins/lewismvaughan/tablejourney-codex-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Food travel answers from TableJourney's hosted read-only MCP server: hand-checked places to eat in 200+ cities, food festivals with dates, signature dishes, itineraries and bookable food tours.",
+      "icon": "./plugins/lewismvaughan/tablejourney-codex-plugin/assets/icon.svg"
     },
     {
       "name": "taisly-agent-kit",

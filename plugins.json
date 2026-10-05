@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
-  "last_updated": "2026-10-04",
-  "total": 266,
+  "last_updated": "2026-10-05",
+  "total": 265,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -1810,16 +1810,6 @@
       "install_url": "https://raw.githubusercontent.com/cohesivity-org/cohesivity-plugin/HEAD/packages/codex/plugins/cohesivity/.codex-plugin/plugin.json"
     },
     {
-      "name": "Command Code Usage",
-      "url": "https://github.com/Jovan1666/commandcode-usage",
-      "owner": "Jovan1666",
-      "repo": "commandcode-usage",
-      "description": "Show your Command Code plan usage inside Codex: a per-turn quota line, plus a /quota command for the full panel.",
-      "category": "Tools & Integrations",
-      "source": "awesome-codex-plugins",
-      "install_url": "https://raw.githubusercontent.com/Jovan1666/commandcode-usage/HEAD/plugins/codex/.codex-plugin/plugin.json"
-    },
-    {
       "name": "Computer Usage Summary",
       "url": "https://github.com/liuyewang/computer-usage-summary-skill",
       "owner": "liuyewang",
@@ -2390,16 +2380,6 @@
       "install_url": "https://raw.githubusercontent.com/avalonreset/seo-dungeon/HEAD/.codex-plugin/plugin.json"
     },
     {
-      "name": "Sendpaper",
-      "url": "https://github.com/ryan-tish/sendpaper-plugin",
-      "owner": "ryan-tish",
-      "repo": "sendpaper-plugin",
-      "description": "Send real postcards and letters to US addresses from Codex, with an exact print preview, payment only with your approval, and USPS First-Class mailing via a hosted MCP server.",
-      "category": "Tools & Integrations",
-      "source": "awesome-codex-plugins",
-      "install_url": "https://raw.githubusercontent.com/ryan-tish/sendpaper-plugin/HEAD/plugins/sendpaper/.codex-plugin/plugin.json"
-    },
-    {
       "name": "Sendsets",
       "url": "https://github.com/AddisonHoff/sendsets",
       "owner": "AddisonHoff",
@@ -2468,6 +2448,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/lacs-project/sysknife/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "TableJourney",
+      "url": "https://github.com/lewismvaughan/tablejourney-codex-plugin",
+      "owner": "lewismvaughan",
+      "repo": "tablejourney-codex-plugin",
+      "description": "Food travel answers from TableJourney's hosted read-only MCP server: hand-checked places to eat in 200+ cities, food festivals with dates, signature dishes, itineraries and bookable food tours.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/lewismvaughan/tablejourney-codex-plugin/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Taisly Agent Kit",
