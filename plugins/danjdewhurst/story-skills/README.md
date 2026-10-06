@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1><img src="assets/banner.svg" alt="Story Skills" width="508"></h1>
+<h1><img src="https://raw.githubusercontent.com/danjdewhurst/story-skills/main/assets/banner.svg" alt="Story Skills" width="508"></h1>
 
 **Agent Skills for planning, tracking, and drafting fiction in markdown.**
 
@@ -8,12 +8,13 @@ Story Skills gives agents a shared project format for fiction: a story bible, ch
 
 The companion `story` CLI treats the story bible as a checkable contract. Its **continuity engine** catches dead characters walking, payoffs that land before their setup, unfired Chekhov guns, and stale story state, deterministically, before a reader finds them.
 
-<img src="assets/demo.gif" alt="story continuity flags a character who died in chapter 2 but appears in chapter 4, a payoff that lands before its setup, and a question resolved before it is asked" width="900">
+<img src="https://raw.githubusercontent.com/danjdewhurst/story-skills/main/assets/demo.gif" alt="story continuity flags a character who died in chapter 2 but appears in chapter 4, a payoff that lands before its setup, and a question resolved before it is asked" width="900">
 
 Why it works this way: [*Story Skills: a continuity compiler for AI-written fiction*](https://ddewhurst.com/blog/story-skills-continuity-compiler-for-ai-fiction/)
 
 [![npm](https://img.shields.io/npm/v/story-skills)](https://www.npmjs.com/package/story-skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/danjdewhurst/story-skills/badge)](https://scorecard.dev/viewer/?uri=github.com/danjdewhurst/story-skills)
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-SKILL.md-blue)](https://agentskills.io)
 [![Codex](https://img.shields.io/badge/Codex-plugin-10A37F)](https://developers.openai.com/codex)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
@@ -23,6 +24,8 @@ Why it works this way: [*Story Skills: a continuity compiler for AI-written fict
 ---
 
 ## Quick start
+
+**Writing in claude.ai, with no terminal?** [Writers: start here](docs/writers-start-here.md) shows how to download a skill as a zip and upload it to Claude, with nothing to install.
 
 Install the plugin in **Codex** or **Claude Code**:
 
@@ -98,13 +101,14 @@ Every finding is exact, file-addressed, and reproducible, and CI asserts this ou
 | **worldbuilding** | Builds locations and systems: magic, politics, technology, religion, and more | *"Design a magic system"* |
 | **plot-structure** | Plans arcs with structures like three-act, hero's journey, Save the Cat, and kishotenketsu | *"Create a plot arc"* |
 | **theme-craft** | Builds the controlling idea (value + cause premise), the moral argument, lie/truth arc types, antagonist design, and motif/symbolism audits | *"What's my story really about?"* |
-| **genre-craft** | Genre packs with checkable conventions: mystery fair-play, romance beats, thriller, horror, MG/YA, sci-fi, and serial/episodic structure | *"Plan a fair-play mystery"* |
+| **genre-craft** | Genre packs with checkable conventions: mystery fair-play, romance beats, thriller, horror, MG/YA, sci-fi, fantasy, historical, and serial/episodic structure | *"Plan a fair-play mystery"* |
 | **research** | Investigates the real-world facts a story relies on, with quoted sources, confidence, interviews and site visits, invented-versus-accurate decisions, and qualified reviewers for legal, medical, and other risky details | *"Fact-check the sailing in chapter 4"* |
 | **chapter-writing** | Drafts chapters through an outline-first workflow that pulls from story context | *"Write the next chapter"* |
 | **discovery-drafting** | Pantsing mode: draft from a story kernel, keep post-hoc chapter notes, and reconcile the bible after each discovery-drafted chapter | *"I want to discovery-write"* |
 | **scene-craft** | Plans and checks the scene unit: Scene/Sequel structure, try/fail cycles, scene cards, dialogue subtext and voice differentiation, deep POV, exposition, flashbacks, and openings | *"Does this chapter breathe?"* |
 | **voice-style** | Keeps a copyeditor's style sheet (dialect, house spellings, dialogue punctuation, character voices, watch words) and acts on `story prose` lint findings | *"Set up a style sheet for this book"* |
 | **verse-craft** | Writes, scans, and fixes verse: limericks, sonnets, haiku, ballads, song lyrics, rhyming picture-book text, and a character's song or prophecy, with every line's stresses and the rhyme scheme shown so the author can check them | *"Does this limerick scan?"* |
+| **interactive-fiction** | Plans, drafts, and revises branching books: the choice graph, chapter `choices`, prose that holds on every path to a rejoin, endings, path continuity, and Twine and ink builds | *"Plan where the branches rejoin"* |
 | **line-editing** | Owns the prose pass without flattening the author's voice: line edits with a reason for each change, distinct character voices checked by `story voices`, a copyedit against the style sheet, and read-aloud and proof passes | *"Line edit chapter 3. Everyone sounds the same."* |
 | **revision-continuity** | Revises drafts, audits continuity, and keeps character state, timeline, and arc changes consistent | *"Continuity-check chapter 3"* |
 | **reader-panel** | Runs simulated persona reads of a chapter range (genre reader, line editor, sensitivity flags, continuity reader, first-page reader) before human readers see it, written as feedback files marked `source: simulated` for feedback-triage | *"Give me a simulated beta read of chapters 1 to 5"* |
@@ -128,12 +132,12 @@ The optional `story` CLI handles deterministic project maintenance while the ski
 
 ```shell
 npx story-skills --help
-npm install -g story-skills   # then: story --help
+npm install -g story-skills   # then: story --help (Windows too)
 ```
 
 To try unreleased changes, run it straight from GitHub with `npx --yes --package github:danjdewhurst/story-skills story --help`.
 
-**Without Node.** Releases after 0.17.0 attach a standalone `story` binary for macOS (Apple silicon and Intel), Linux (x64 and arm64), and Windows (x64). Install it with Homebrew on macOS or Linux, or download the archive for your system from the [releases page](https://github.com/danjdewhurst/story-skills/releases), check it against the release's `story-skills_<version>_checksums.txt`, and put `story` on your `PATH` ([details](docs/getting-started.md#install-the-story-cli)):
+**Without Node.** Releases after 0.17.0 attach a standalone `story` binary for macOS (Apple silicon and Intel), Linux (x64 and arm64), and Windows (x64). Install it with Homebrew on macOS or Linux, or, on any system including Windows, download the archive for your system from the [releases page](https://github.com/danjdewhurst/story-skills/releases), check it against the release's `story-skills_<version>_checksums.txt`, and put `story` on your `PATH` ([details](docs/getting-started.md#install-the-story-cli)):
 
 ```shell
 brew install danjdewhurst/tap/story-skills   # then: story --help
@@ -156,8 +160,10 @@ The CLI is for maintenance only. Agents write story content directly to markdown
 | `story add matter "Dedication"` | Add a front (default) or `--placement back` matter page such as a dedication, epigraph, or acknowledgments |
 | `story add character "李明" --id li-ming` | Give the id by hand for a name the CLI cannot slug (Cyrillic and Greek names are transliterated), so the name keeps its own script |
 | `story names "Seren" "Kestrel Row"` | Check candidate names against every name, alias, and glossary term before using them: clashes fail, look-alikes warn |
+| `story mentions character sera-voss` | List every place chapter prose names an entity (name, given name, or alias), and which chapters name it without listing it; with no entity, check every chapter's names against its frontmatter |
 | `story rename character sera-voss "Sera Vale"` | Rename an entity and update kebab-case references |
 | `story move chapter chapter-03 --number 4` | Renumber a chapter, or move a scene with `story move scene <id> --chapter <id>`, renaming the files and rewriting every reference to the old id |
+| `story split chapter-03 --at 2` | Split a chapter in two at a scene break, heading, or line, or join two with `story merge chapter-03 chapter-04`, renumbering the chapters after them and updating references |
 | `story remove promise old-setup` | Remove an entity and scrub metadata references |
 | `story migrate [path]` | Upgrade a project to the current schema |
 
@@ -168,6 +174,8 @@ The CLI is for maintenance only. Agents write story content directly to markdown
 | `story validate [path]` | Check required files, schema version, YAML frontmatter, registries, and word-count warnings |
 | `story links [path]` | Check character, location, chapter, and arc cross-references and backlinks |
 | `story continuity [path]` | Check deterministic continuity contracts: deaths, promises and payoffs, questions, casts, durable state, and travel times along location routes |
+| `story check [path] --strict` | Run validate, links, and continuity in one scan, listing each finding once; `--strict` fails on warnings too |
+| `story list chapters --where status=draft` | List the chapters, scenes, characters, or other entities whose frontmatter matches every `--where` filter (`key=value`, which also matches inside a list, `key!=value`, `key`, or `!key`), in book order; `--json` for scripts |
 | `story series [path]` | Order linked sequels and prequels by chronology and check shared canon: deaths, casts, knowledge fact ids, names, and destroyed artifacts |
 | `story reindex [path]` | Rebuild registry tables from the current markdown files |
 | `story wordcount [path] --write` | Count chapter prose and update chapter frontmatter plus the chapter registry; Chinese and Japanese books count characters (`count-unit`) |
@@ -187,9 +195,11 @@ The CLI is for maintenance only. Agents write story content directly to markdown
 | `story voices [path]` | Fingerprint each character's attributed dialogue (sentence length, contractions, questions, signature words) and flag `voice-avoid` words and characters who sound alike. Only named speech tags and single-name action beats count; pronoun tags do not |
 | `story pacing [path]` | Tabulate scenes, sequels, scene outcomes (`yes`, `no`, `yes-but`, `no-and`), and chapter hooks; flag runs of easy wins, missing sequels, flat chapter endings, and length outliers |
 | `story clues [path]` | Draw the fair-play grid of clue plants and reveals by chapter; flag late plants, unplanted reveals, and red herrings never debunked |
+| `story grid [path]` | Print the plot grid of arcs by chapter from `arcs-advanced`, with each chapter's hook and scene outcomes, as a markdown table or `--format csv`; `--from` and `--to` show a range of chapters |
 | `story diagram relationships --path .` | Print Mermaid source for the family tree and relationships, the location route map, the story-time timeline, the clue flow, or arcs by chapter |
-| `story progress [path] --log` | Report words against `target-words` (or characters against `target-characters`), the `deadline`, and chapter targets; `--log` records the day's count in `progress.md` for pace and a projected finish |
-| `story compare [path] --ref draft-1` | Compare chapters with an earlier draft (a git ref, or `--against` a copied project folder): word changes, added and removed chapters, and unchanged paragraphs; `--anchor ch03-p12` finds where a review-copy paragraph is now |
+| `story progress [path] --log` | Report words against `target-words` (or characters against `target-characters`), the `deadline`, and chapter targets; `--log` records the day's count in `progress.md` for pace, a projected finish, today's words against `daily-target-words`, a writing streak, and weekly totals |
+| `story snapshot draft-1` | Save a named copy of the project's markdown in `.snapshots/`, which every command skips, to compare with later; no git needed. `--list` shows the snapshots |
+| `story compare [path] --ref draft-1` | Compare chapters with an earlier draft (a git ref, `--snapshot` a saved snapshot, or `--against` a copied project folder): word changes, added and removed chapters, and unchanged paragraphs; `--anchor ch03-p12` finds where a review-copy paragraph is now |
 | `story similarity [path] --against ../book-one` | Find passages that share a run of eight or more words with other text (a file, a folder such as your earlier books, or a git ref), with both locations and the shared words; advisory, since shared text is not proof of copying |
 
 **Publish**
@@ -200,8 +210,9 @@ The CLI is for maintenance only. Agents write story content directly to markdown
 | `story export [path] --out dist/manuscript.md` | Combine front matter, chapters, and back matter into a single manuscript markdown file |
 | `story build [path] --format epub` | Build disposable markdown, EPUB, DOCX, or Shunn manuscript artifacts in `dist/`; EPUB builds embed the `story.md` `cover` image, publishing metadata, and accessibility metadata |
 | `story build [path] --format html` | Build a single-file review copy whose paragraphs carry citable anchors such as `ch03-p12` |
-| `story build [path] --format print --trim 6x9` | Build a print-ready paged-media HTML interior (author and chapter-title running heads, foot page numbers, raised chapter initials) to render to PDF with Paged.js, WeasyPrint, or Prince |
+| `story build [path] --format print --trim 6x9` | Build a print-ready paged-media HTML interior (author and chapter-title running heads, foot page numbers, raised chapter initials) to render to PDF with Paged.js, WeasyPrint, or Prince; add `--pdf` to run an installed engine and write the PDF |
 | `story build [path] --format narration` | Build an audiobook narration script with a pronunciation guide and runtime estimates |
+| `story build [path] --format codex` | Build the story bible as a static, cross-linked HTML site in `dist/codex/` (spoiler-safe unless `--spoilers`) |
 | `story build [path] --format metadata` | Build a retailer metadata sheet from `story.md` with a readiness checklist |
 | `story build [path] --format fountain` | Build a Fountain screenplay skeleton, one scene heading per scene record, to draft an adaptation into |
 
@@ -219,7 +230,7 @@ Every command and option is in the [CLI reference](docs/cli-reference.md). For a
 
 A story project with deterministic checks is one an agent can advance unattended. The [`templates/github/`](templates/github/) workflows turn a story repository into a self-drafting book:
 
-- [`story-checks.yml`](templates/github/story-checks.yml) runs `story validate`, `story links`, `story continuity`, and `story report --actionable` on every push and pull request, so a chapter PR can't merge with a continuity contradiction.
+- [`story-checks.yml`](templates/github/story-checks.yml) runs `story check` (validate, links, and continuity in one scan) and `story report --actionable` on every push and pull request, so a chapter PR can't merge with a continuity contradiction.
 - [`draft-next-chapter.yml`](templates/github/draft-next-chapter.yml) runs [Claude Code](https://github.com/anthropics/claude-code-action) on a schedule. It asks `story next` for the next action, drafts the next chapter with the chapter-writing skill, updates scene records and continuity state, and commits it within word, turn, and spend budgets. The agent cannot push. A second job, on a fresh runner, checks that the commit touches only the story's own markdown and holds no secret, runs the checks, pushes the branch, and opens a pull request for review: ready when the checks pass, a draft listing the failures when they do not. When `story next` suggests no chapter (the story is revising or complete, or every arc is resolved), it stops without drafting.
 
 Copy both files into `.github/workflows/` in the repository that holds your story project, add an `ANTHROPIC_API_KEY` secret, and review one chapter PR each morning.
@@ -310,6 +321,8 @@ Examples in this repository:
 - [`examples/the-fall-of-the-citadel/`](examples/the-fall-of-the-citadel/): a prequel to The Last Ember, linked with `series`, `book-number`, and `precedes`, that shares characters and places with the first book. Run `story series examples/the-last-ember` to see the chronology.
 - [`examples/harbor-of-second-light/`](examples/harbor-of-second-light/): a near-future coastal mystery with memory technology, a posthumous witness arc, populated continuity state, and a drafted first chapter.
 - [`examples/the-gull-rock-light/`](examples/the-gull-rock-light/): a short branching story whose chapters carry `choices`; `story build --format twee` turns it into a Twine story and `--format ink` into an ink story.
+- [`examples/bo-and-the-missing-moon/`](examples/bo-and-the-missing-moon/): a 32-page picture book (`form: picture-book`), one chapter per spread, each with a scene record and a page-turn `hook`, and a pagination plan with spread briefs in `adaptations/picture-book/`.
+- [`examples/the-left-luggage-office/`](examples/the-left-luggage-office/): the first three episodes of a weekly serial (`form: serial`), with a `season-goal`, an `episode-question`, `target-words`, and a cliffhanger `hook` on each episode, and a promise scheduled for an episode not yet written.
 - [`examples/the-unraveled-thread/`](examples/the-unraveled-thread/): a deliberately broken project that demonstrates the main kinds of finding the continuity engine reports.
 - [`examples/quatre-heures-dix-sept/`](examples/quatre-heures-dix-sept/): a short story in French (`language: fr`), with dialogue in guillemets and French no-break spaces, checked by the French word lists, and built with French chapter headings and labels.
 - [`examples/kirimi-eki-no-wasuremono/`](examples/kirimi-eki-no-wasuremono/): a short story in Japanese (`language: ja`), counted in characters and set in vertical columns (`writing-mode: vertical`), with dialogue in corner brackets.
@@ -448,7 +461,7 @@ Outside coding agents:
 
 ## Development and releasing
 
-To contribute, start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). User-visible changes are listed in the [changelog](CHANGELOG.md). The [Development guide](docs/development.md) covers the repository layout, CLI architecture, tests, and release process in full. Development uses Bun:
+To contribute, start with [CONTRIBUTING.md](https://github.com/danjdewhurst/story-skills/blob/main/CONTRIBUTING.md) and the [Code of Conduct](https://github.com/danjdewhurst/story-skills/blob/main/CODE_OF_CONDUCT.md). User-visible changes are listed in the [changelog](CHANGELOG.md). The [Development guide](docs/development.md) covers the repository layout, CLI architecture, tests, and release process in full. Development uses Bun:
 
 ```shell
 bun install
@@ -466,7 +479,7 @@ bun run check:fallback
 node skills/story-maintenance/scripts/story.js --help
 ```
 
-The `evals/` harness regression-tests the writing skills. Fixtures seed a drafting brief with known canon and known traps. A dependency-free checker verifies that drafts keep the canon and spring none of the traps, a model runner (requires the `claude` CLI) drafts through a real model and judges for invented canon, and a pairwise comparison measures the skill against a no-skill baseline. See [`evals/README.md`](evals/README.md).
+The `evals/` harness regression-tests the writing skills. Fixtures seed a drafting brief with known canon and known traps. A dependency-free checker verifies that drafts keep the canon and spring none of the traps, a model runner (requires the `claude` CLI) drafts through a real model and judges for invented canon, and a pairwise comparison measures the skill against a no-skill baseline. See [`evals/README.md`](https://github.com/danjdewhurst/story-skills/blob/main/evals/README.md).
 
 ```shell
 bun run check:evals      # validate fixture schemas
@@ -476,7 +489,7 @@ node evals/run-skill.js  # full model run (needs Claude Code credentials)
 
 Every published change needs a new version in `package.json`, `.codex-plugin/plugin.json` (Codex's version source), `.claude-plugin/plugin.json` (Claude Code's), and `src/version.js` (printed by `story --version`), so installed users receive updates. Marketplace entries stay unversioned to avoid duplicate version state.
 
-Don't bump these by hand. The release script bumps all four, plus the template `STORY_REF` pins and the version examples in the docs, moves the `Unreleased` entries in `CHANGELOG.md` under the new version (and refuses to run while there are none), rebuilds the fallback, runs the CI checks, commits `chore: release X.Y.Z`, tags `vX.Y.Z`, pushes, and creates a GitHub release with generated notes. The tag push runs the Publish workflow, which publishes the package to npm with provenance through trusted publishing. The script requires a clean `main` that matches `origin/main`, a logged-in `gh`, and a version that isn't already on npm:
+Don't bump these by hand. The release script bumps all four, plus the template `STORY_VERSION` pins and the version examples in the docs, moves the `Unreleased` entries in `CHANGELOG.md` under the new version (and refuses to run while there are none), rebuilds the fallback, runs the CI checks, commits `chore: release X.Y.Z`, tags `vX.Y.Z`, pushes, and creates a GitHub release with generated notes. The tag push runs the Publish workflow, which publishes the package to npm with provenance through trusted publishing. The script requires a clean `main` that matches `origin/main`, a logged-in `gh`, and a version that isn't already on npm:
 
 ```shell
 bun run release patch            # or minor, major, or an explicit version like 1.2.0

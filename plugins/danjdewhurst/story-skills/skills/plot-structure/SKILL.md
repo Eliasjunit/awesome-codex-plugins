@@ -32,7 +32,7 @@ A story project must already exist (created via the story-init skill). Verify by
    - Type (main, subplot, character, thematic)
    - Which characters are involved
    - Which themes it serves
-   - Which MICE threads the arc carries (optional `mice-threads:` frontmatter, written as a block list with one `- event` or `- character` item per line, not a `[event, character]` flow list; see `references/mice-quotient.md`)
+   - Which MICE threads the arc carries (optional `mice-threads:` frontmatter, written as a block list with one `- event` or `- character` item per line, or as a `[event, character]` flow list; see `references/mice-quotient.md`)
 5. Build the arc through conversation: setup, escalations, climax, resolution
 6. Write the file using `references/arc-template.md` (or scaffold it with `story add arc "{Name}" --type main --character {id} --theme {theme}`, then fill in the sections)
 7. Save to `plot/arcs/{arc-name-kebab}.md`
@@ -68,6 +68,7 @@ When adding events:
 When reviewing the timeline:
 - Run `story timeline .` to see written scenes in story-time order from their `date`/`time` fields, with scenes told out of order marked, and compare it with `plot/timeline.md`
 - Run `story diagram timeline` for a Mermaid timeline of dated scenes and chapters, and `story diagram arcs` for which chapters advance each arc (add `--out dist/<name>.mmd` to save either; keep generated diagrams out of entity folders)
+- Run `story grid .` for the plot grid: arcs as rows, chapters as columns, an `x` where a chapter or its scenes list the arc in `arcs-advanced`, plus each chapter's hook and scene outcomes. Use `--format csv` for a spreadsheet and `--from`/`--to` for a range of chapters. An empty row is an arc no chapter advances, a long gap is an arc the reader may forget, and an `(unknown)` row is an `arcs-advanced` id with no arc file
 - Check for chronological consistency
 - Identify pacing issues (too many events clustered, long gaps)
 - Flag arcs that haven't progressed
@@ -95,13 +96,13 @@ For mystery clues, `story clues .` prints a clue-by-chapter fair-play matrix and
 
 For durable cross-arc setup/payoff tracking, also maintain `continuity/promises/{promise-kebab}.md` with `status`, `planted`, `payoff`, `arcs`, and `characters`. For mystery or open-continuity tracking, maintain `continuity/questions/{question-kebab}.md`.
 
-Scaffold chapters and scenes with `story add chapter "{Title}" --number {N} --pov {id} --arc {arc-id}` and `story add scene "{Title}" --chapter chapter-{NN} --scene {M} --pov {id} --location {id}`, then write the prose and outline content into the created files. Set `outcome` on scene records and `hook` on chapters as the outline settles them, then run `story reindex .`, `story links .`, `story validate .`, and `story pacing .`.
+Scaffold chapters and scenes with `story add chapter "{Title}" --number {N} --pov {id} --arc {arc-id}` and `story add scene "{Title}" --chapter chapter-{NN} --scene {M} --pov {id} --location {id}`, then write the prose and outline content into the created files. Set `outcome` on scene records and `hook` on chapters as the outline settles them, then run `story reindex .`, `story wordcount . --write`, `story links .`, `story validate .`, and `story pacing .`.
 
 When pacing or the outline calls for reordering, move the files with the CLI rather than renaming them, because chapter and scene ids encode their numbers and clues, promises, questions, and the timeline point at them:
 
 - Move a scene to another chapter with `story move scene chapter-{NN}-scene-{MM} --chapter chapter-{NN} --path .` (next free number; add `--scene {M}` to place it), or reorder within its chapter with `--scene {M}` alone
 - Renumber a chapter with `story move chapter chapter-{NN} --number {N} --path .`. A taken number is refused, so to open a gap move the later chapters up one, highest first, then `story add chapter "{Title}" --number {N}`
-- `move` rewrites ids, links, and bare ids in `plot/timeline.md`, arc files, and the `plot/_index.md` Theme Tracking table, but not `Ch {N}` cells, prose, or outline beats: update those by hand, then run `story wordcount . --write`, `story validate .`, `story links .`, and `story pacing .`
+- `move` rewrites ids, links, and bare ids in `plot/timeline.md`, arc files, and the `plot/_index.md` Theme Tracking table, but not `Ch {N}` cells, prose, or outline beats: update those by hand, then run `story reindex .`, `story wordcount . --write`, `story links .`, `story validate .`, and `story pacing .`
 
 For splits, merges, and the full checklist, follow the `revision-continuity` skill's Structural Edits section.
 
@@ -128,3 +129,7 @@ Use the Story CLI when it is available. If `story` is not installed, use `bun ru
 - **`references/short-story-form.md`** - Short fiction form: one dominant change, single effect, narrow scope, and the `form` field (`story init --form short-story` or `flash`)
 - **`references/outlining-ladder.md`** - Premise → beat sheet → step outline → full outline, with exit criteria per rung (cross-links discovery-drafting)
 - **`references/snowflake.md`** - Snowflake Method: ten top-down design steps from one-sentence summary to first draft, each mapped to `story.md`, character, arc, and scene files and the CLI commands that scaffold them
+
+## Shared Conventions
+
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

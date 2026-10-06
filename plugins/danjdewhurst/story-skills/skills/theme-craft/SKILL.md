@@ -1,6 +1,6 @@
 ---
 name: theme-craft
-description: This skill should be used when the user asks to "theme", "controlling idea", "thematic argument", "moral argument", "character arc", "flat arc", "negative arc", "the lie", "antagonist design", "motif", "symbolism", "theme audit", or wants to plan, track, or revise the thematic layer of a story. NOT for finding or testing a story premise (use premise-workshop).
+description: This skill should be used when the user asks about "theme", "controlling idea", "thematic argument", "moral argument", "thematic arc", "flat arc", "negative arc", "the lie", "antagonist design", "motif", "symbolism", "theme audit", or wants to plan, track, or revise the thematic layer of a story. NOT for finding or testing a story premise (use premise-workshop), or a character's profile, relationships, or "character arc" record (use character-management).
 ---
 
 # Theme Craft
@@ -39,8 +39,8 @@ Character files (character-management) and a plot structure
    consult `references/lie-truth.md` and add to their character files:
 
    `arc-type` is one of `change-positive`, `change-negative`, or `flat`.
-   Do not put that list in an inline comment. The frontmatter parser keeps
-   the comment as part of the value.
+   Do not put that list in an inline comment: a command that rewrites the
+   field drops the comment.
 
    ```yaml
    arc-type: change-positive
@@ -110,3 +110,7 @@ theme verdict manually per `references/theme-audit.md`.
 - **`references/antagonist-design.md`** - Worthy opponent, antagonist as counter-argument, plan-the-antagonist-as-protagonist, personified institutions
 - **`references/motif-symbolism.md`** - Plant-and-vary, object-symbol resonance with the ending, motif ledger
 - **`references/theme-audit.md`** - Revision audit: ending vs. opening value-question, consequence vs. commentary, motif payoff
+
+## Shared Conventions
+
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

@@ -1,6 +1,6 @@
 ---
 name: chapter-writing
-description: This skill should be used when the user asks to "write a chapter", "next chapter", "chapter outline", "draft chapter", "continue the story", "write a scene", "outline a chapter", or wants to write prose for a story project.
+description: This skill should be used when the user asks to "write a chapter", "next chapter", "chapter outline", "draft chapter", "continue the story", "write a scene", "outline a chapter", or wants to write prose for a story project. NOT for planning a scene's structure, subtext, or outcome (use scene-craft), drafting without an outline (use discovery-drafting), or revising existing chapters (use revision-continuity).
 ---
 
 # Chapter Writing
@@ -86,7 +86,7 @@ With the approved outline, write the full prose:
 
 Save to `chapters/chapter-{NN}.md` with appropriate frontmatter.
 
-Create or update a matching scene file in `scenes/chapter-{NN}-scene-{NN}.md` for each scene. Scene frontmatter should include `title`, `chapter`, `scene`, `pov`, `location`, `characters`, `mentions`, `arcs-advanced`, `status`, `date`, `time`, and `state-changes` so continuity survives beyond prose. Set `date` (`YYYY-MM-DD`) and `time` (`"HH:MM"` or `dawn`, `morning`, `midday`, `afternoon`, `evening`, `night`) on every scene as its moment settles, and `travel-hours` (a number) when the POV character had to travel since the previous scene: undated scenes silently switch off the clock and route checks in `story continuity`, and `story timeline` lists them as undated. Set `outcome` on each goal-driven scene record to what actually happened on the page (`yes`, `no`, `yes-but`, `no-and`), and set the chapter's `hook` to how it actually ends (`cliffhanger`, `question`, `revelation`, `reversal`, `decision`, `emotional`, `resolution`).
+Create or update a matching scene file in `scenes/chapter-{NN}-scene-{NN}.md` for each scene. Scene frontmatter should include `title`, `chapter`, `scene`, `pov`, `location`, `characters`, `mentions`, `arcs-advanced`, `status`, `date`, `time`, and `state-changes` so continuity survives beyond prose. Set `date` (`YYYY-MM-DD`, or a date in the book's `calendar` when `story.md` has one, such as `3 Thaw 412 AF`) and `time` (`"HH:MM"` or `dawn`, `morning`, `midday`, `afternoon`, `evening`, `night`) on every scene as its moment settles, and `travel-hours` (a number) when the POV character had to travel since the previous scene: undated scenes silently switch off the clock and route checks in `story continuity`, and `story timeline` lists them as undated. Set `outcome` on each goal-driven scene record to what actually happened on the page (`yes`, `no`, `yes-but`, `no-and`), and set the chapter's `hook` to how it actually ends (`cliffhanger`, `question`, `revelation`, `reversal`, `decision`, `emotional`, `resolution`).
 
 Write chapter prose directly into the chapter markdown file. Do not stage prose in project-local build scripts, generator scripts, or bulk writer scripts (for example `build-*.js`) to emit chapters. If a temporary helper is truly unavoidable for mechanical file operations, keep it outside the story project and remove it before finishing.
 
@@ -138,13 +138,17 @@ story progress . --log
 
 `story pacing .` shows the new chapter's words, scene outcomes, and hook alongside the rest of the book, and warns about runs of `yes` outcomes, missing sequels, length outliers, or a missing `hook`.
 
-`story progress . --log` records the session in `progress.md` and reports words against `target-words`, the `deadline`, and chapter `target-words`; skip the `--log` flag when the user does not keep a log.
+`story progress . --log` records the session in `progress.md` and reports words against `target-words`, the `deadline`, and chapter `target-words`, plus today's words against `daily-target-words`, the writing streak (which skips days not in `writing-days`), and the last four weeks; report the streak from it rather than counting by hand. Skip the `--log` flag when the user does not keep a log.
 
 Present a summary of all updates made.
 
 ## Scene Breaks
 
 Within a chapter, separate scenes with `---`. Each scene should have a clear POV character (even if the same as the previous scene) and location.
+
+## Branching Books
+
+When any chapter has `choices` in its frontmatter, the book branches: a chapter may be reached by more than one path, and its prose must hold on each. Draft it with the `interactive-fiction` skill, which follows this workflow and adds the rules for branches, rejoins, endings, and path continuity.
 
 ## Revision Handoff
 
@@ -159,3 +163,7 @@ Use the Story CLI when it is available. If `story` is not installed, use `bun ru
 - **`references/chapter-template.md`** - Frontmatter and structure template for chapter files
 - **`references/scene-template.md`** - Machine-readable continuity template for scenes
 - **`references/writing-guidelines.md`** - Quick-reference prose craft: show-don't-tell, POV, dialogue, pacing, scene structure, continuity. For the deep reference — the Scene/Sequel unit, dialogue subtext and voice-differentiation, deep POV and psychic distance — use the `scene-craft` skill.
+
+## Shared Conventions
+
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

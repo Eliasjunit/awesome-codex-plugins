@@ -160,9 +160,10 @@ story add matter "Epigraph" --heading false
 4. Run maintenance:
 
 ```shell
-story wordcount --write
-story links
-story validate
+story reindex .
+story wordcount . --write
+story links .
+story validate .
 ```
 
 ## Reference Files
@@ -176,3 +177,7 @@ story validate
   in other languages
 - **`references/rhyme.md`** - Kinds of rhyme, scheme notation, forced-rhyme
   tells, rhymes readers have seen too often, and rhyme in other languages
+
+## Shared Conventions
+
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

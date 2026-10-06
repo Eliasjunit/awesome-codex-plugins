@@ -145,6 +145,25 @@ story build . --format metadata
 
 ### 4. Ebook
 
+First agree the look of the ebook, review copy, and print interior with
+the author. Without a `build-style` block in `story.md` they keep the
+classic look (Georgia, centred headings, indented paragraphs, `* * *`
+scene breaks). To change it, add one entry, for example:
+
+```yaml
+build-style:
+  - preset: elegant
+    scene-break: "~"
+```
+
+`preset` is `classic`, `modern`, or `elegant`; `body-font`,
+`heading-font`, `heading-style`, `scene-break`, `drop-caps`, and
+`paragraphs` override it, and `css` adds a `.css` file from the project.
+Never set a font the author has not chosen, and remind them that an
+ebook reader can replace the fonts. The Shunn manuscript and DOCX builds
+ignore the block. Run `story validate` after editing it: a bad value
+stops the EPUB, HTML, and print builds.
+
 ```shell
 story build . --format epub
 ```
@@ -167,8 +186,17 @@ Follow `references/print-interior.md`:
    story build . --format print --trim 6x9
    ```
 
-2. Render the HTML to PDF with a paged-media engine the author has
-   (`pagedjs-cli`, WeasyPrint, or Prince). The CLI bundles none.
+2. Render the PDF. If the author has a paged-media engine installed
+   (Prince, WeasyPrint, `pagedjs-cli`, or Chrome as a fallback), let the CLI
+   find and run it:
+
+   ```shell
+   story build . --format print --trim 6x9 --pdf
+   ```
+
+   It writes `dist/<story-id>.pdf`. Name an engine with
+   `--pdf-engine <name|path>`. With none installed it stops (exit 4) and lists
+   what to install; the CLI bundles none.
 3. Check the rendered PDF against the printer's file requirements; use its
    actual page count for the cover.
 4. Tell the author to get the spine width and full cover wrap template from
@@ -246,6 +274,7 @@ manuscript:
 ```shell
 story reindex .
 story wordcount . --write
+story links .
 story validate .
 story build . --format metadata
 ```
@@ -258,3 +287,7 @@ story build . --format metadata
 - **`references/launch-plan.md`** - Distribution and exclusivity, routes outside the US and UK, pricing considerations including fixed book prices, and the T-90 to T+30 launch timeline with ARCs, newsletter, and ad testing
 - **`references/contract-red-flags.md`** - Clause-by-clause red flags for publishing and rights contracts, and where to get a professional review
 - **`references/rights-one-sheet.md`** - Rights inventory template by language and territory, and one-sheets for foreign, audio, and film rights
+
+## Shared Conventions
+
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

@@ -33,7 +33,7 @@ Using OpenCode rather than the Codex CLI? The sibling project [`oc-codex-multi-a
 
 ## Install
 
-Requirements: Node.js >= 18.17, and the official Codex CLI on `PATH` (`npm i -g @openai/codex`, Homebrew, or a release binary).
+Requirements: Node.js >= 22.19, and the official Codex CLI on `PATH` (`npm i -g @openai/codex`, Homebrew, or a release binary).
 
 ```bash
 npm i -g codex-multi-auth
@@ -137,7 +137,7 @@ Common symptoms — wrong active account, OAuth callback port `1455` already bou
 
 ## Release notes
 
-- Current stable: [v2.19.0](docs/releases/v2.19.0.md) — `npm i -g codex-multi-auth`
+- Current stable: [v2.19.1](docs/releases/v2.19.1.md) — `npm i -g codex-multi-auth`
 - Earlier stable lines: [v2.6.0](docs/releases/v2.6.0.md), [v2.5.0](docs/releases/v2.5.0.md)
 - Full release archive: [docs/README.md#release-history](docs/README.md#release-history)
 

@@ -39,7 +39,8 @@ redoing the adaptation; say so if `status` is not `revising` or `complete`.
 - Nonfiction and poetry collections are outside the story project model.
   The CLI checks fiction entities (characters, chapters, scenes,
   continuity); do not force a poetry collection or nonfiction book into
-  it.
+  it. A short-story collection does fit: see `docs/series.md`, Short-story
+  collections and anthologies.
 
 ## Hard Rules
 
@@ -149,6 +150,8 @@ panels, captions, balloons, and SFX in
 Follow `references/interactive-fiction.md`. Map the linear scenes to nodes,
 choose a branching structure with the author, and record the branch map in
 `adaptations/interactive/branch-map.md`.
+Once the interactive edition project exists, draft and revise its chapters
+with the `interactive-fiction` skill.
 
 - **Twine:** make the interactive edition its own project (copy the
   source project without `dist/`, as for a translation), one chapter per
@@ -249,3 +252,7 @@ or removing `choices`, run `story links .` and rebuild the Twee or ink file.
 - **`references/comics-script.md`** - Page and panel script format, pacing per page, balloon limits, and page-turn reveals
 - **`references/interactive-fiction.md`** - Branch maps from scenes, branching structures, state, chapter `choices` and the Twee and ink builds, and Ink and Twine syntax
 - **`references/translation.md`** - Glossary as term base, per-language style sheets, name decisions, and continuity across language editions
+
+## Shared Conventions
+
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-06",
-  "total": 270,
+  "total": 271,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -2168,6 +2168,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/magichourhq/skills/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "MAQAMI Travel",
+      "url": "https://github.com/negm17111995/mcp-server",
+      "owner": "negm17111995",
+      "repo": "mcp-server",
+      "description": "Search hotels (3M+ hotels) and flights worldwide, read hotel details, then prebook and book through the hosted MAQAMI MCP server (no API key), with a booking skill that confirms with you before any reservation.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/negm17111995/mcp-server/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "MATLAB Simulink Tools",
