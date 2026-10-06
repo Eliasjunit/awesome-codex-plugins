@@ -2771,6 +2771,21 @@
       "icon": "./plugins/foklepoint/court-rules-codex-plugin/assets/icon.svg"
     },
     {
+      "name": "darkmoon",
+      "displayName": "Darkmoon",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ASCIT31/darkmoon-mcp-server"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Start authorized autonomous AI pentest runs, poll status, list campaigns and read findings on your own self-hosted Darkmoon Pro through MCP.",
+      "icon": "./plugins/ASCIT31/darkmoon-mcp-server/assets/icon.svg"
+    },
+    {
       "name": "dataproduct-builder-dbt",
       "displayName": "Data Product Builder for dbt",
       "source": {

@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-06",
-  "total": 271,
+  "total": 272,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -1878,6 +1878,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/foklepoint/court-rules-codex-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Darkmoon",
+      "url": "https://github.com/ASCIT31/darkmoon-mcp-server",
+      "owner": "ASCIT31",
+      "repo": "darkmoon-mcp-server",
+      "description": "Start authorized autonomous AI pentest runs, poll status, list campaigns and read findings on your own self-hosted Darkmoon Pro through MCP.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/ASCIT31/darkmoon-mcp-server/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Data Product Builder for dbt",
