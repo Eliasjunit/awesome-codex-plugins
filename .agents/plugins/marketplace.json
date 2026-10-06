@@ -1040,6 +1040,21 @@
       "icon": "./plugins/vinicq/falsegreen-skill/assets/icon.svg"
     },
     {
+      "name": "figma-maxxing",
+      "displayName": "Figma Maxxing",
+      "source": {
+        "source": "local",
+        "path": "./plugins/thiagoxikota/figma-maxxing"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development & Workflow",
+      "description": "Eight Agent Skills for real Figma files, with Plugin API gotchas, a read-only preflight before any write, checks after the write and before handoff, and open comments turned into fixes with evidence.",
+      "icon": "./plugins/thiagoxikota/figma-maxxing/assets/icon.png"
+    },
+    {
       "name": "frappe-agent",
       "displayName": "Frappe Agent",
       "source": {

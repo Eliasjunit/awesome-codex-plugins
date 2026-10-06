@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
-  "last_updated": "2026-10-05",
-  "total": 268,
+  "last_updated": "2026-10-06",
+  "total": 269,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -708,6 +708,16 @@
       "category": "Development & Workflow",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/vinicq/falsegreen-skill/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Figma Maxxing",
+      "url": "https://github.com/thiagoxikota/figma-maxxing",
+      "owner": "thiagoxikota",
+      "repo": "figma-maxxing",
+      "description": "Eight Agent Skills for real Figma files, with Plugin API gotchas, a read-only preflight before any write, checks after the write and before handoff, and open comments turned into fixes with evidence.",
+      "category": "Development & Workflow",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/thiagoxikota/figma-maxxing/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Frappe Agent",
