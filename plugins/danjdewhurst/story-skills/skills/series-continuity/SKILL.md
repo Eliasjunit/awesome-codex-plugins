@@ -1,6 +1,6 @@
 ---
 name: series-continuity
-description: This skill should be used when the user asks to "write a sequel", "write a prequel", "start book two", "continue the series", "companion novel", "spin-off", "link books in a series", "carry characters into the next book", "series continuity", "series bible", or needs to keep canon consistent across multiple Story Skills projects. NOT for a standalone book (use story-init) or continuity within one book (use revision-continuity).
+description: This skill should be used when the user asks to "write a sequel", "write a prequel", "start book two", "continue the series", "companion novel", "spin-off", "link books in a series", "carry characters into the next book", "series continuity", "series bible", "pitch my series", "series pitch", "multi-book pitch", or needs to plan, pitch, or keep canon consistent across multiple Story Skills projects. NOT for a standalone book (use story-init), continuity within one book (use revision-continuity), or a query, pitch, or synopsis for a single book (use submission).
 ---
 
 # Series Continuity
@@ -27,7 +27,7 @@ Links are relative paths from the book root, and every link needs a matching bac
 - Carrying characters, locations, systems, factions, artifacts, or glossary terms into another book
 - Revising a book that other books in the series depend on
 - Keeping a series bible, or planning and pitching a series of several books (see `references/series-bible.md`)
-- NOT for a single standalone book (use `story-init`) or for within-book continuity (use `revision-continuity`)
+- NOT for a single standalone book (use `story-init`), for within-book continuity (use `revision-continuity`), or for the query letter, pitch, or synopsis of a single book (use `submission`). A series pitch stays here: the series overview and the series line in book one's query (see `references/series-bible.md`)
 
 ## Starting a Linked Book
 
@@ -41,11 +41,13 @@ Links are relative paths from the book root, and every link needs a matching bac
 
 ```shell
 # Sequel: set after book one
-story init "{Title}" --follows {existing-book-dir} --synopsis "{synopsis}"
+story init '{Title}' --follows '{existing-book-dir}' --synopsis '{synopsis}'
 
 # Prequel: set before book one
-story init "{Title}" --precedes {existing-book-dir} --synopsis "{synopsis}"
+story init '{Title}' --precedes '{existing-book-dir}' --synopsis '{synopsis}'
 ```
+
+The title and synopsis are the user's own words, and a folder name can hold spaces, so wrap each value in single quotes. Never paste a value into double quotes, where `$(...)`, backticks, and `"` still take effect. A single quote inside a value depends on the shell: write it as `'\''` in a POSIX shell (bash, zsh, sh, Git Bash) and as `''` in PowerShell. Never run the command in cmd.exe, which has no single quotes and runs `&` inside a value; use PowerShell or a POSIX shell.
 
 Run `init` from the folder that contains the existing book, never from inside it: `init` refuses a new book inside another project, and a linked book outside the new book's parent folder. It also refuses a `--series` that differs from the linked book's, and a `--book-number` already used in the series. `init` checks that the linked path is a story project, writes the relative link, adds the backlink (and the new book's `series`, when the existing book has none) to the existing book's `story.md`, and inherits `series`, `genre`, `sub-genre`, `pov`, and `tense`, plus `series-title`, `author` or `authors`, and `language` when the linked book sets them. When any book in the linked series has a `book-number`, it sets `book-number` to one more than the highest whole number used anywhere in the series, so publication numbers never collide. A normal `story init` book has none, so a series with no numbered books leaves the new book unnumbered. Pass `--book-number` (or write the field on both `story.md` files) in that case. Pass `--series`, `--genre`, `--pov`, or `--tense` to override the inherited values.
 
@@ -93,8 +95,8 @@ After carrying entities, run in the new book:
 
 ```shell
 story reindex .
-story links .
-story validate .
+story wordcount . --write
+story check .
 story series .
 ```
 
@@ -135,13 +137,12 @@ After any change to series links or carried entities, run the checks in each aff
 
 ```shell
 story reindex .
-story links .
-story validate .
-story continuity .
+story wordcount . --write
+story check .
 story series .
 ```
 
-If `story` is not installed, use `bun run story --` from the Story Skills repository checkout or the bundled fallback `node ../story-maintenance/scripts/story.js` with the same arguments, resolving the path relative to this skill folder.
+If `story` is not installed, use the bundled fallback `node ../story-maintenance/scripts/story.js` with the same arguments. Use `node <checkout>/bin/story.js` instead only when the user names a Story Skills repository checkout or you are working in one. Write the script as an absolute path (resolve the fallback relative to this skill folder) and run it from the folder you would run `story` from, so `.` and other relative paths keep their meaning. Use Node, not Bun or a package script: Bun would load that folder's `bunfig.toml` (which can run code) and `.env`, and a package script runs from the checkout's root.
 
 ## Conventions
 
@@ -157,4 +158,4 @@ If `story` is not installed, use `bun run story --` from the Story Skills reposi
 
 ## Shared Conventions
 
-Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` registry tables that `story reindex` rebuilds (never edit them by hand), bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

@@ -101,7 +101,7 @@ Once a project exists, check title words and new names against the story's
 entities before adopting them:
 
 ```shell
-story names "Bell Tower" Bell "Maren" --path .
+story names 'Bell Tower' Bell 'Maren' --path .
 ```
 
 An exact clash exits 1 and must be resolved: the candidate equals an
@@ -134,10 +134,13 @@ with the brief:
 story init 'The Keeper of Skerry Light' --form novella --genre fantasy --sub-genre coastal --synopsis 'A lighthouse keeper who has never left the rock must choose between the light and her drowned brother.' --theme isolation
 ```
 
-Workshop text is the user's own words, so quote every value for the shell
-before running the command: wrap each in single quotes and write any
-single quote inside it as `'\''`. Never paste a value into double quotes,
-where `$(...)`, backticks, and `"` still take effect.
+Workshop text is the user's own words, so wrap every value in single
+quotes before running the command. Never paste a value into double
+quotes, where `$(...)`, backticks, and `"` still take effect. A single
+quote inside a value depends on the shell: write it as `'\''` in a POSIX
+shell (bash, zsh, sh, Git Bash) and as `''` in PowerShell. Never run the
+command in cmd.exe, which has no single quotes and runs `&` inside a
+value; use PowerShell or a POSIX shell.
 
 `--form` sets `form` in `story.md` and a default `target-words` for the
 form when none is given (`serial` sets none; set per-episode chapter
@@ -166,17 +169,25 @@ asks after seeing what was carried over.
   title freely before chapter one, then run `story reindex .`: the story
   id in every registry, `plot/timeline.md`, and `continuity/state.md`
   follows the `story.md` title, so `story validate` fails until they are
-  rewritten. After chapter one, rename characters with `story rename` so
-  references follow.
+  rewritten. After chapter one, rename a character with
+  `story rename character <id> '<New Name>' --prose`, so the chapter text
+  follows as well as the references: run it with `--dry-run` first, show
+  the user the replacements, and run it for real only once they approve.
+  Without `--prose` the prose keeps the old name.
 - Never present a comparable title, author, prize, or market fact as
   verified without a source.
 
 ## CLI Maintenance
 
-Use the Story CLI when it is available. If `story` is not installed, use
-`bun run story --` from the Story Skills repository checkout or the bundled
-fallback `node ../story-maintenance/scripts/story.js` with the same
-arguments, resolving the path relative to this skill folder. If no CLI is
+Use the Story CLI when it is available. If `story` is not installed, use the
+bundled fallback `node ../story-maintenance/scripts/story.js` with the same
+arguments. Use `node <checkout>/bin/story.js` instead only when the user
+names a Story Skills repository checkout or you are working in one. Write
+the script as an absolute path (resolve the fallback relative to this skill
+folder) and run it from the folder you would run `story` from, so `.` and
+other relative paths keep their meaning. Use Node, not Bun or a package
+script: Bun would load that folder's `bunfig.toml` (which can run code) and
+`.env`, and a package script runs from the checkout's root. If no CLI is
 available, create the project by hand as the `story-init` skill describes
 and check names against the registries by reading them.
 
@@ -184,11 +195,12 @@ After `story init` and the hand edits to `story.md`:
 
 ```shell
 story reindex .
-story validate .
+story wordcount . --write
+story check .
 story report .
 ```
 
-`story validate` warns when `target-words` (`target-characters` for
+`story check` warns when `target-words` (`target-characters` for
 Chinese or Japanese) sits outside the chosen form's usual range; either
 adjust the target or confirm the choice with the user.
 `story reindex .` is needed only when the title changed, but it is safe to
@@ -203,4 +215,4 @@ run every time.
 
 ## Shared Conventions
 
-Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` registry tables that `story reindex` rebuilds (never edit them by hand), bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

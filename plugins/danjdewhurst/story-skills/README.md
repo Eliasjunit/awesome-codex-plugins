@@ -98,26 +98,26 @@ Every finding is exact, file-addressed, and reproducible, and CI asserts this ou
 | **premise-workshop** | Turns a spark into a tested premise: what-ifs, logline tests, premise and counter-premise, stakes, choice of form, titles, and comparable books, then hands off to `story init --form` | *"Is there a novel in this idea?"* |
 | **story-init** | Scaffolds the story bible, folders, and registries | *"Start a new story"* |
 | **character-management** | Creates character profiles with relationships, traits, arcs, and family trees | *"Create a character"* |
-| **worldbuilding** | Builds locations and systems: magic, politics, technology, religion, and more | *"Design a magic system"* |
+| **worldbuilding** | Builds locations and systems (magic, politics, technology, religion, and more) and the glossary of invented terms | *"Design a magic system"* |
 | **plot-structure** | Plans arcs with structures like three-act, hero's journey, Save the Cat, and kishotenketsu | *"Create a plot arc"* |
 | **theme-craft** | Builds the controlling idea (value + cause premise), the moral argument, lie/truth arc types, antagonist design, and motif/symbolism audits | *"What's my story really about?"* |
-| **genre-craft** | Genre packs with checkable conventions: mystery fair-play, romance beats, thriller, horror, MG/YA, sci-fi, fantasy, historical, and serial/episodic structure | *"Plan a fair-play mystery"* |
+| **genre-craft** | Genre packs with checkable conventions: mystery fair-play, romance beats, thriller, horror, MG/YA, sci-fi, fantasy, historical, comedy, and serial/episodic structure | *"Plan a fair-play mystery"* |
 | **research** | Investigates the real-world facts a story relies on, with quoted sources, confidence, interviews and site visits, invented-versus-accurate decisions, and qualified reviewers for legal, medical, and other risky details | *"Fact-check the sailing in chapter 4"* |
 | **chapter-writing** | Drafts chapters through an outline-first workflow that pulls from story context | *"Write the next chapter"* |
 | **discovery-drafting** | Pantsing mode: draft from a story kernel, keep post-hoc chapter notes, and reconcile the bible after each discovery-drafted chapter | *"I want to discovery-write"* |
 | **scene-craft** | Plans and checks the scene unit: Scene/Sequel structure, try/fail cycles, scene cards, dialogue subtext and voice differentiation, deep POV, exposition, flashbacks, and openings | *"Does this chapter breathe?"* |
 | **voice-style** | Keeps a copyeditor's style sheet (dialect, house spellings, dialogue punctuation, character voices, watch words) and acts on `story prose` lint findings | *"Set up a style sheet for this book"* |
 | **verse-craft** | Writes, scans, and fixes verse: limericks, sonnets, haiku, ballads, song lyrics, rhyming picture-book text, and a character's song or prophecy, with every line's stresses and the rhyme scheme shown so the author can check them | *"Does this limerick scan?"* |
-| **interactive-fiction** | Plans, drafts, and revises branching books: the choice graph, chapter `choices`, prose that holds on every path to a rejoin, endings, path continuity, and Twine and ink builds | *"Plan where the branches rejoin"* |
+| **interactive-fiction** | Plans, drafts, and revises branching and choose-your-own-adventure books: the choice graph, chapter `choices`, prose that holds on every path to a rejoin, endings, path continuity, and Twine and ink builds | *"Plan where the branches rejoin"* |
 | **line-editing** | Owns the prose pass without flattening the author's voice: line edits with a reason for each change, distinct character voices checked by `story voices`, a copyedit against the style sheet, and read-aloud and proof passes | *"Line edit chapter 3. Everyone sounds the same."* |
 | **revision-continuity** | Revises drafts, audits continuity, and keeps character state, timeline, and arc changes consistent | *"Continuity-check chapter 3"* |
 | **reader-panel** | Runs simulated persona reads of a chapter range (genre reader, line editor, sensitivity flags, continuity reader, first-page reader) before human readers see it, written as feedback files marked `source: simulated` for feedback-triage | *"Give me a simulated beta read of chapters 1 to 5"* |
-| **feedback-triage** | Collects alpha/beta reader feedback per round, synthesizes convergent and divergent notes, and hands a revision plan to revision-continuity | *"Triage the beta feedback"* |
-| **editorial-review** | Handles work with other people: sensitivity and authenticity reader briefs, a real-people and defamation check, permissions for lyrics and epigraphs, the AI-use statement, rounds with human editors, review copies, and co-authoring | *"I'm quoting a song lyric as my epigraph. What do I need?"* |
-| **series-continuity** | Starts sequels and prequels as linked projects, carries characters and world forward, and checks shared canon across books | *"Start a prequel to The Last Ember"* |
+| **feedback-triage** | Sends readers a review copy (optionally on GitHub Pages with a note form), collects alpha/beta reader feedback per round, synthesizes convergent and divergent notes, and hands a revision plan to revision-continuity | *"Triage the beta feedback"* |
+| **editorial-review** | Handles work with other people: sensitivity and authenticity reader briefs, a real-people and defamation check, permissions for lyrics and epigraphs, the AI-use statement, rounds with human editors and their review copies, and co-authoring | *"I'm quoting a song lyric as my epigraph. What do I need?"* |
+| **series-continuity** | Starts sequels and prequels as linked projects, carries characters and world forward, checks shared canon across books, and pitches a series | *"Start a prequel to The Last Ember"* |
 | **submission** | Checks submission readiness, drafts the query letter, pitch, comp titles, synopsis, and blurb, builds the Shunn manuscript, and tracks queries and responses | *"Help me query agents"* |
 | **publishing** | Self-publishing production: retailer metadata, ISBNs, the copyright page, accessible EPUB and print interiors, distribution, pricing, a launch plan with ARCs and ad testing, and a rights inventory with contract red flags | *"Get my book ready for KDP and IngramSpark in 6x9"* |
-| **adaptation** | Carries the story into other forms: an audiobook narration script with a pronunciation guide, a Fountain screenplay, a picture-book spread plan with illustration briefs, a comics script, an interactive-fiction branch map, and translated editions | *"Make a narration script so I can audition narrators"* |
+| **adaptation** | Carries the story into other forms: an audiobook narration script with a pronunciation guide, a Fountain screenplay, a picture-book spread plan with illustration briefs, a comics script, an interactive edition of a linear book, and translated editions | *"Make a narration script so I can audition narrators"* |
 | **story-maintenance** | Runs deterministic CLI checks for validation, continuity, reports, indexing, links, word counts, import, and export | *"Validate my story project"* |
 
 **line-editing** owns the prose pass. For general-purpose writing checks as well, add [**better-writing**](https://github.com/forjd/better-writing). It adds voice calibration, anti-generic writing checks, and a final prose-quality pass, and installs the same way:
@@ -145,7 +145,7 @@ brew install danjdewhurst/tap/story-skills   # then: story --help
 
 The binary is the CLI only, and reports the same `story --version` as the npm package. The skills still need an agent such as Claude Code or Codex (see [Quick start](#quick-start)).
 
-From a clone, use `bun install` and then `bun run story -- --help`. Copied-skill installs don't need either: `story-maintenance` bundles a `scripts/story.js` fallback that agents run with Node.
+From a clone, run `node <clone>/bin/story.js <command>` (or `bun <clone>/bin/story.js <command>`) from your project folder, or for `init` and `import` from the folder that should hold the new project. Bun reads `bunfig.toml` and `.env` from the current folder, so use it only in projects you trust. Copied-skill installs don't need a clone: `story-maintenance` bundles a `scripts/story.js` fallback that agents run with Node.
 
 The CLI is for maintenance only. Agents write story content directly to markdown files and never create project-local build or generator scripts to emit the story.
 
@@ -175,7 +175,7 @@ The CLI is for maintenance only. Agents write story content directly to markdown
 | `story links [path]` | Check character, location, chapter, and arc cross-references and backlinks |
 | `story continuity [path]` | Check deterministic continuity contracts: deaths, promises and payoffs, questions, casts, durable state, and travel times along location routes |
 | `story check [path] --strict` | Run validate, links, and continuity in one scan, listing each finding once; `--strict` fails on warnings too |
-| `story list chapters --where status=draft` | List the chapters, scenes, characters, or other entities whose frontmatter matches every `--where` filter (`key=value`, which also matches inside a list, `key!=value`, `key`, or `!key`), in book order; `--json` for scripts |
+| `story list chapters --where status=draft` | List the chapters, scenes, characters, or other entities whose frontmatter matches every `--where` filter (`key=value`, which also matches inside a list, `key!=value`, `key`, or `!key`), in book order; `--query <name>` runs a filter set saved in `story.md` `queries`; `--json` for scripts |
 | `story series [path]` | Order linked sequels and prequels by chronology and check shared canon: deaths, casts, knowledge fact ids, names, and destroyed artifacts |
 | `story reindex [path]` | Rebuild registry tables from the current markdown files |
 | `story wordcount [path] --write` | Count chapter prose and update chapter frontmatter plus the chapter registry; Chinese and Japanese books count characters (`count-unit`) |
@@ -195,12 +195,12 @@ The CLI is for maintenance only. Agents write story content directly to markdown
 | `story voices [path]` | Fingerprint each character's attributed dialogue (sentence length, contractions, questions, signature words) and flag `voice-avoid` words and characters who sound alike. Only named speech tags and single-name action beats count; pronoun tags do not |
 | `story pacing [path]` | Tabulate scenes, sequels, scene outcomes (`yes`, `no`, `yes-but`, `no-and`), and chapter hooks; flag runs of easy wins, missing sequels, flat chapter endings, and length outliers |
 | `story clues [path]` | Draw the fair-play grid of clue plants and reveals by chapter; flag late plants, unplanted reveals, and red herrings never debunked |
-| `story grid [path]` | Print the plot grid of arcs by chapter from `arcs-advanced`, with each chapter's hook and scene outcomes, as a markdown table or `--format csv`; `--from` and `--to` show a range of chapters |
+| `story grid [path]` | Print the plot grid of arcs by chapter from `arcs-advanced`, with each chapter's beat, hook, and scene outcomes, as a markdown table or `--format csv`; `--from` and `--to` show a range of chapters |
 | `story diagram relationships --path .` | Print Mermaid source for the family tree and relationships, the location route map, the story-time timeline, the clue flow, or arcs by chapter |
 | `story progress [path] --log` | Report words against `target-words` (or characters against `target-characters`), the `deadline`, and chapter targets; `--log` records the day's count in `progress.md` for pace, a projected finish, today's words against `daily-target-words`, a writing streak, and weekly totals |
-| `story snapshot draft-1` | Save a named copy of the project's markdown in `.snapshots/`, which every command skips, to compare with later; no git needed. `--list` shows the snapshots |
+| `story snapshot draft-1` | Save a named copy of the project's markdown in `.snapshots/`, which every command skips, to compare with later; no git needed. `--list` shows the snapshots, and `--restore draft-1` puts one back after saving the project as it is |
 | `story compare [path] --ref draft-1` | Compare chapters with an earlier draft (a git ref, `--snapshot` a saved snapshot, or `--against` a copied project folder): word changes, added and removed chapters, and unchanged paragraphs; `--anchor ch03-p12` finds where a review-copy paragraph is now |
-| `story similarity [path] --against ../book-one` | Find passages that share a run of eight or more words with other text (a file, a folder such as your earlier books, or a git ref), with both locations and the shared words; advisory, since shared text is not proof of copying |
+| `story similarity [path] --against ../book-one` | Find passages that share a run of eight or more words with other text (a file, a folder such as your earlier books, a git ref, or `--snapshot` a saved snapshot), with both locations and the shared words; advisory, since shared text is not proof of copying |
 
 **Publish**
 
@@ -221,7 +221,7 @@ Behavior notes:
 - **Matter pages** from `matter/` appear in the export and in every build format except Shunn, which is a submission format.
 - **EPUB and DOCX** builds target plain prose: `*italic*` and `**bold**` become italic and bold runs, scene-break lines (`***`, `---`) become a `* * *` separator, and other markdown structure such as blockquotes, lists, and tables is flattened to text. The markdown export keeps chapter text as-is.
 - **Books not in English** get build text in their language (chapter headings, contents, copyright page, EPUB accessibility text) in 18 languages, overridable with `labels` in `story.md`. Builds set Arabic, Hebrew, Persian, and other right-to-left languages right to left, pick fonts for the script, can set Japanese, Chinese, and Korean vertically (`writing-mode: vertical`), and can print native chapter numerals (`chapter-numerals: native`, such as `第十二章`). See [Writing in other languages](docs/languages.md).
-- **`story rename`, `story move`, and `story remove`** update entity ids in frontmatter reference fields and markdown link targets. They never edit prose, so a character called "Port" can be renamed without touching the word "port" in chapter text.
+- **`story rename`, `story move`, and `story remove`** update entity ids in frontmatter reference fields and markdown link targets. They never edit prose, except `story rename --prose`, which replaces the name in chapter text as written and as whole words, so a character called "Port" can be renamed without touching the word "port".
 - A command that changes a frontmatter value rewrites only the entries that changed. Comment lines, unchanged entries, and the body keep their exact text, and files whose values don't change are left untouched.
 
 Every command and option is in the [CLI reference](docs/cli-reference.md). For a complete first session, read [Getting started](docs/getting-started.md). For the project contract, read the [Project format reference](docs/project-format.md) and [`schemas/story.schema.json`](schemas/story.schema.json).
@@ -257,7 +257,7 @@ It splits the manuscript on chapter headings (or imports a directory of chapter 
 
 `--language` sets the manuscript's language, writes it to the new `story.md`, and splits on that language's own chapter headings: `Chapter` in English (the default), `Capítulo` in Spanish, `Chapitre` in French, and `Kapitel` in German. For a manuscript in any other language, import a folder with one file per chapter.
 
-`--force` lets an import reuse an existing directory. It replaces every `chapter-NN.md` file in `chapters/`, so stale chapters from an earlier import are removed.
+`--force` lets an import reuse an existing directory. It replaces every `chapter-NN.md` file in `chapters/`, so stale chapters from an earlier import are removed. It saves the project as snapshot `before-import-<n>` first, and `story snapshot --restore before-import-<n>` puts the old chapters back.
 
 ## Project structure
 
@@ -323,6 +323,7 @@ Examples in this repository:
 - [`examples/the-gull-rock-light/`](examples/the-gull-rock-light/): a short branching story whose chapters carry `choices`; `story build --format twee` turns it into a Twine story and `--format ink` into an ink story.
 - [`examples/bo-and-the-missing-moon/`](examples/bo-and-the-missing-moon/): a 32-page picture book (`form: picture-book`), one chapter per spread, each with a scene record and a page-turn `hook`, and a pagination plan with spread briefs in `adaptations/picture-book/`.
 - [`examples/the-left-luggage-office/`](examples/the-left-luggage-office/): the first three episodes of a weekly serial (`form: serial`), with a `season-goal`, an `episode-question`, `target-words`, and a cliffhanger `hook` on each episode, and a promise scheduled for an episode not yet written.
+- [`examples/salt-and-lantern/`](examples/salt-and-lantern/): an anthology of three short stories by different writers, with the editor credited by `editor` in `story.md`, each story's writer by its chapter `author`, title-only story headings, and an acknowledgements page.
 - [`examples/the-unraveled-thread/`](examples/the-unraveled-thread/): a deliberately broken project that demonstrates the main kinds of finding the continuity engine reports.
 - [`examples/quatre-heures-dix-sept/`](examples/quatre-heures-dix-sept/): a short story in French (`language: fr`), with dialogue in guillemets and French no-break spaces, checked by the French word lists, and built with French chapter headings and labels.
 - [`examples/kirimi-eki-no-wasuremono/`](examples/kirimi-eki-no-wasuremono/): a short story in Japanese (`language: ja`), counted in characters and set in vertical columns (`writing-mode: vertical`), with dialogue in corner brackets.
@@ -489,7 +490,7 @@ node evals/run-skill.js  # full model run (needs Claude Code credentials)
 
 Every published change needs a new version in `package.json`, `.codex-plugin/plugin.json` (Codex's version source), `.claude-plugin/plugin.json` (Claude Code's), and `src/version.js` (printed by `story --version`), so installed users receive updates. Marketplace entries stay unversioned to avoid duplicate version state.
 
-Don't bump these by hand. The release script bumps all four, plus the template `STORY_VERSION` pins and the version examples in the docs, moves the `Unreleased` entries in `CHANGELOG.md` under the new version (and refuses to run while there are none), rebuilds the fallback, runs the CI checks, commits `chore: release X.Y.Z`, tags `vX.Y.Z`, pushes, and creates a GitHub release with generated notes. The tag push runs the Publish workflow, which publishes the package to npm with provenance through trusted publishing. The script requires a clean `main` that matches `origin/main`, a logged-in `gh`, and a version that isn't already on npm:
+Don't bump these by hand. The release script bumps all four, plus the template `STORY_VERSION` pins and the version examples in the docs, moves the `Unreleased` entries in `CHANGELOG.md` under the new version (and refuses to run while there are none), rebuilds the fallback, runs the local preflight checks (a subset of CI), commits `chore: release X.Y.Z`, tags `vX.Y.Z`, pushes, and creates a GitHub release with generated notes. The tag push runs the Publish workflow, which waits for CI to pass on `main` for the release commit, then publishes the package to npm with provenance through trusted publishing. The script requires a clean `main` that matches `origin/main`, a logged-in `gh`, admin rights on the repository (only admins can create `v*` tags), and a version that isn't already on npm:
 
 ```shell
 bun run release patch            # or minor, major, or an explicit version like 1.2.0

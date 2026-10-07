@@ -4,17 +4,20 @@ The copyright page sits on the verso (left-hand page) behind the title
 page in print, and near the front of an ebook. Create it with:
 
 ```shell
-story add matter "Copyright" --order 0 --heading false
+story add matter 'Copyright' --order 0 --heading=false
 ```
 
 Give it an `order` lower than every other front page (`0` works unless
-another page already uses it). `--heading false` writes `heading: false`
+another page already uses it). `--heading=false` writes `heading: false`
 (on an existing page, edit its `heading:` key rather than adding a second
 one). Then write the page
 from the template. Without this page, every build except Shunn (markdown,
 EPUB, DOCX, HTML, print, and `story export`) generates a minimal one from
 `copyright`.
 Ask the author for every name, credit, and number; never invent them.
+Write `[TODO: author to supply]` for one the author does not have yet,
+such as an ISBN not yet bought. `story validate` and every build that
+prints the page warn about it (`matter-todo-markers`) until it is filled.
 The template wording is English. For a book in another language
 (`language` in `story.md`), write the page in that language, following
 the conventions of copyright pages in the author's market.
@@ -90,7 +93,10 @@ Edited by {name}
 - Every quoted epigraph, song lyric, poem, or long passage needs a
   `permission` value on its matter page: `not-needed`, `pending`,
   `granted`, or `public-domain`. `story validate` warns about `pending` in
-  a complete story and about `granted` without `rights-holder`.
+  a complete story and about `granted` without `rights-holder`. Export
+  and the builds leave a `pending` page out, with a
+  `permission-pending-left-out` warning, unless `--include-pending` is
+  given.
 - Put the credit line the rights holder requires in `credit`, and repeat it
   on the copyright page or in back matter as the permission specifies.
 - Short lyric quotations often need permission even when very short.

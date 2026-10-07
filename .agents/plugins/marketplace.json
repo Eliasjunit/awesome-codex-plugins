@@ -1022,7 +1022,8 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Development & Workflow",
-      "description": "Full token-saving stack in one plugin - output compression, global rules, RTK hook, Caveman ultra, GitNexus config. Detects existing setup, installs only what's missing. Works on Claude Code and Codex."
+      "description": "Full token-saving stack in one plugin - output compression, global rules, RTK hook, Caveman ultra, GitNexus config. Detects existing setup, installs only what's missing. Works on Claude Code and Codex.",
+      "icon": "./plugins/mirkobozzetto/espresso/assets/icon.svg"
     },
     {
       "name": "falsegreen-skill",
@@ -1931,7 +1932,7 @@
       "icon": "./plugins/frumu-ai/tandem-codex-plugin/assets/icon.png"
     },
     {
-      "name": "tartinerlabs",
+      "name": "quality",
       "displayName": "Tartiner Labs",
       "source": {
         "source": "local",
@@ -2918,6 +2919,20 @@
       "category": "Tools & Integrations",
       "description": "Connect Codex to Feishu/Lark workflows for Docs, Messenger, Drive, Sheets, Base, Calendar, Tasks, Meetings, Mail, approvals, and more through the official Lark CLI.",
       "icon": "./plugins/zlsbksdxl/codex-lark/assets/logo.svg"
+    },
+    {
+      "name": "firecrawl",
+      "displayName": "Firecrawl",
+      "source": {
+        "source": "local",
+        "path": "./plugins/firecrawl/firecrawl-codex-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Search, scrape, crawl, and map the web from Codex with Firecrawl CLI skills for live research and extraction."
     },
     {
       "name": "flowstudio-power-automate",

@@ -16,7 +16,7 @@ Initialize a new story project with a structured markdown folder layout. Creates
 - NOT for adding to an existing story project (use the domain-specific skills instead)
 - NOT for a sequel, prequel, or companion to an existing book: use `series-continuity`, which links the projects and carries canon across
 - NOT for finding the idea itself: when the user has only a vague notion ("something about lighthouses"), several competing ideas, or no premise yet, run the `premise-workshop` skill first, then return here with the chosen premise, form, and genre
-- NOT for converting an existing manuscript or chapter drafts: run `story import <source> --title '{Title}'` instead, then build out the bible from the entity candidates it prints. Import does not accept `--form`, so afterwards set `form` and `target-words` in `story.md` by hand (see the form list and defaults below); without them `story validate` never checks length and `story progress` has no target
+- NOT for converting an existing manuscript or chapter drafts: run `story import '<source>' --title '{Title}'` instead, then build out the bible from the entity candidates it prints. Import does not accept `--form`, so afterwards set `form` and `target-words` in `story.md` by hand (see the form list and defaults below); without them `story validate` never checks length and `story progress` has no target
 
 ## Workflow
 
@@ -37,13 +37,13 @@ If the Story CLI is available, prefer using it to create the starter project, th
 story init '{Title}' --form '{form}' --genre '{genre}' --sub-genre '{sub-genre}' --setting-era '{era}' --pov '{pov-style}' --tense '{tense}' --synopsis '{synopsis}' --theme '{theme-1}' --theme '{theme-2}'
 ```
 
-The values are the user's own words, so quote each one for the shell: wrap it in single quotes and write any single quote inside it as `'\''`. Never paste a value into double quotes, where `$(...)`, backticks, and `"` still take effect.
+The values are the user's own words, so wrap each one in single quotes. Never paste a value into double quotes, where `$(...)`, backticks, and `"` still take effect. A single quote inside a value depends on the shell: write it as `'\''` in a POSIX shell (bash, zsh, sh, Git Bash) and as `''` in PowerShell. Never run the command in cmd.exe, which has no single quotes and runs `&` inside a value; use PowerShell or a POSIX shell.
 
 `--form` records `form` in `story.md` and, when no target is given, sets a default `target-words` for the form (novel 80,000, novella 30,000, novelette 12,000, short story 5,000, flash 1,000, chapter book 10,000, picture book 500; serials get no book-level default). `story validate` then warns when `target-words` is outside the form's usual range. For short forms, point the user to `references/short-story-form.md` in the `plot-structure` skill.
 
 Record the language straight after init. `story init` has no flag for it, so add `language: {tag}` to the `story.md` frontmatter by hand, with the exact tag the user gave, regional variants such as `en-GB` or `en-AU` included. Write it for English books too: it costs nothing, and a missing field only means `en`. The language is not just metadata: drafting, editing, and critique skills write and judge prose in it, `story validate` checks the tag, and builds declare it. For a book not in English, set `dialect: unspecified` in `style-sheet.md` (the British and American spelling pairs are English) and, before the first chapter, settle the dialogue punctuation with the `voice-style` skill.
 
-A Chinese (`zh`) or Japanese (`ja`) book is counted in characters, not words: `story wordcount`, `story progress`, the registries, and the form check all measure characters, against `target-characters`. Because the language is added after init, `--form` will have written a `target-words`; replace it with `target-characters` for the form (Chinese: novel 200,000, novella 60,000, short story 10,000, flash 1,500; Japanese: novel 150,000, novella 80,000, short story 20,000, flash 4,000), or a number the user names. No source sets a novelette, picture-book, or chapter-book length in characters, so those forms get no default and no range check: ask the user for a target. `story validate` warns `unused-target` until you do. Only set `count-unit: words` or `count-unit: characters` when the user asks to count the other way. Then run `story wordcount . --write` and `story validate .`.
+A Chinese (`zh`) or Japanese (`ja`) book is counted in characters, not words: `story wordcount`, `story progress`, the registries, and the form check all measure characters, against `target-characters`. Because the language is added after init, `--form` will have written a `target-words`; replace it with `target-characters` for the form (Chinese: novel 200,000, novella 60,000, short story 10,000, flash 1,500; Japanese: novel 150,000, novella 80,000, short story 20,000, flash 4,000), or a number the user names. No source sets a novelette, picture-book, or chapter-book length in characters, so those forms get no default and no range check: ask the user for a target. `story validate` warns `unused-target` until you do. Only set `count-unit: words` or `count-unit: characters` when the user asks to count the other way. Then run `story reindex .`, `story wordcount . --write`, and `story check .`.
 
 The other publishing metadata (`isbn`, `publisher`, `publication-date`, `description`, `keywords`, `subjects`, `copyright`, `cover-alt`, `ai-disclosure`) is optional and can wait until the book is ready to publish; the `publishing` skill fills it in. Do not ask for it at init.
 
@@ -51,13 +51,13 @@ The story id recorded in every registry is the kebab-case form of the title (`--
 
 `init` also writes a `.gitignore` listing `dist/` (build output), `.story.lock`, leftover `.*.story-*.tmp` and `.story-*.tmp` files, and OS and editor swap files, but only when the project has none. It never edits an existing `.gitignore`; if it prints `note: .gitignore was kept and does not ignore dist/`, tell the user and offer to add a `dist/` line (or remove a `!dist/...` negation).
 
-If `story` is not installed, use `bun run story --` from the Story Skills repository checkout or the bundled fallback `node ../story-maintenance/scripts/story.js` with the same arguments, resolving the path relative to this skill folder:
+If `story` is not installed, use the bundled fallback `node ../story-maintenance/scripts/story.js` with the same arguments. Use `node <checkout>/bin/story.js` instead only when the user names a Story Skills repository checkout or you are working in one. Write the script as an absolute path (resolve the fallback relative to this skill folder) and run it from the folder you would run `story` from, so `.` and other relative paths keep their meaning. Use Node, not Bun or a package script: Bun would load that folder's `bunfig.toml` (which can run code) and `.env`, and a package script runs from the checkout's root. Skills live in different places for each agent and install method, so do not guess a path: resolve `../story-maintenance/scripts/story.js` against the folder that holds this `SKILL.md`. With `<skills>` standing for the absolute path of the folder that holds this skill's folder, run the same `init` from the folder that will hold the new project, with each value quoted as above:
 
 ```shell
-node ../story-maintenance/scripts/story.js init "{Title}"
+node <skills>/story-maintenance/scripts/story.js init '{Title}' --form '{form}' --genre '{genre}' --sub-genre '{sub-genre}' --setting-era '{era}' --pov '{pov-style}' --tense '{tense}' --synopsis '{synopsis}' --theme '{theme-1}' --theme '{theme-2}'
 ```
 
-If neither command is available, create the files manually using the steps below.
+If no CLI is available, create the files manually using the steps below.
 
 2. Create the folder structure at the current working directory:
 
@@ -276,11 +276,10 @@ If manual initialization gets tedious, stop and ask the user to install or run t
 ```shell
 story reindex .
 story wordcount . --write
-story links .
-story validate .
+story check .
 ```
 
-If `story` is not installed, use `bun run story --` from the Story Skills repository checkout or the bundled fallback `node ../story-maintenance/scripts/story.js` with the same arguments, resolving the path relative to this skill folder.
+If `story` is not installed, use the bundled fallback `node ../story-maintenance/scripts/story.js` with the same arguments. Use `node <checkout>/bin/story.js` instead only when the user names a Story Skills repository checkout or you are working in one. Write the script as an absolute path (resolve the fallback relative to this skill folder) and run it from the folder you would run `story` from, so `.` and other relative paths keep their meaning. Use Node, not Bun or a package script: Bun would load that folder's `bunfig.toml` (which can run code) and `.env`, and a package script runs from the checkout's root.
 
 ## Reference Files
 
@@ -288,4 +287,4 @@ If `story` is not installed, use `bun run story --` from the Story Skills reposi
 
 ## Shared Conventions
 
-Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` registry tables that `story reindex` rebuilds (never edit them by hand), bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

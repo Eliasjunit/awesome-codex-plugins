@@ -1,6 +1,6 @@
 ---
 name: voice-style
-description: This skill should be used when the user asks to "create a style sheet", "style guide", "house style", "keep the voice consistent", "voice drift", "British or American spelling", "character voices", "lint the prose", "prose check", "filter words", "said-bookisms", "overused words", "repeated phrases", "similar character names", "voice fingerprints", or wants to record and enforce the voice and surface conventions of a story project. NOT for rewriting lines when everyone sounds the same (use line-editing).
+description: This skill should be used when the user asks to "create a style sheet", "style guide", "house style", "keep the voice consistent", "voice drift", "British or American spelling", "character voices", "lint the prose", "prose check", "filter words", "said-bookisms", "overused words", "repeated phrases", "similar character names", "voice fingerprints", or wants to record and enforce the voice and surface conventions of a story project. NOT for rewriting dialogue to make the voices distinct when everyone sounds the same (use line-editing), or a character's profile or arc (use character-management).
 ---
 
 # Voice & Style
@@ -18,7 +18,7 @@ across chapters, drafting sessions, and agents.
 ## Prerequisites
 
 A story project with `story.md` in the root. `story init` scaffolds
-`style-sheet.md`; older projects can add it with `story init "<title>" --dir
+`style-sheet.md`; older projects can add it with `story init '<title>' --dir
 . --force`, which only adds missing files, or by copying
 `references/style-sheet-guide.md`'s frontmatter block by hand.
 
@@ -41,9 +41,11 @@ pass by reading (see `references/prose-checks.md`, Other languages).
 - Before drafting when voice has drifted between chapters or sessions
 - When a copyedit pass needs a style decision recorded (the copyedit itself belongs to the `line-editing` skill, which reads this file)
 - When the user wants a mechanical prose check before sharing a draft
+- Recording each character's voice (the style sheet's Character Voices line, `voice-words`, `voice-avoid`) and checking it with `story voices`
 - NOT for character personality or arc (use `character-management`)
 - NOT for scene-level craft such as deep POV or subtext (use `scene-craft`)
 - NOT for the line-by-line prose pass itself (line edit, copyedit, read-aloud, proof): use the `line-editing` skill, which reads this style sheet and runs these checks
+- NOT for rewriting dialogue so the voices sound distinct when everyone sounds the same: use the `line-editing` skill's voice differentiation pass, which follows the voices recorded here
 
 ## Workflow
 
@@ -68,7 +70,10 @@ pass by reading (see `references/prose-checks.md`, Other languages).
      British book)
    - `samples`: files or folders of the author's own prose that sound right,
      relative to the project folder: an earlier book (`../book-one`) or
-     chapters the author has approved. Ask the user which; never list prose
+     chapters the author has approved, each file named on its own
+     (`chapters/chapter-01.md`, never `chapters/`, which warns
+     `style-sample-own-chapters`). A listed chapter is the measure, so
+     `story prose` does not compare it. Ask the user which; never list prose
      the agent drafted and the author has not approved, or the profile
      measures the agent's voice. With at least 2,000 words of narration,
      `story prose` compares each chapter with the samples instead of fixed
@@ -168,8 +173,12 @@ avoids saying).
 3. For uniform-rhythm warnings, revise sentence length by intent (short for
    impact, long for flow), not by formula.
 4. For similar names, ask the user before renaming; check replacements with
-   `story names "<Candidate>"`, then use
-   `story rename character <id> "<New Name>"` so references follow.
+   `story names '<Candidate>'`. Preview the rename with
+   `story rename character <id> '<New Name>' --prose --dry-run`, show the
+   user the replacements, then run it without `--dry-run`, so the chapter
+   text follows as well as the references. Without `--prose` the prose
+   keeps the old name. Check the matches it leaves as written as the
+   `character-management` skill's rename steps describe.
 5. For `story voices` warnings, revise the dialogue or update the
    character's `voice-words`/`voice-avoid` when the draft has found a
    better voice; ask the user before changing canon.
@@ -179,20 +188,25 @@ avoids saying).
 
 ## CLI Maintenance
 
-Use the Story CLI when it is available. If `story` is not installed, use
-`bun run story --` from the Story Skills repository checkout or the bundled
-fallback `node ../story-maintenance/scripts/story.js` with the same
-arguments, resolving the path relative to this skill folder. If no CLI is
+Use the Story CLI when it is available. If `story` is not installed, use the
+bundled fallback `node ../story-maintenance/scripts/story.js` with the same
+arguments. Use `node <checkout>/bin/story.js` instead only when the user
+names a Story Skills repository checkout or you are working in one. Write
+the script as an absolute path (resolve the fallback relative to this skill
+folder) and run it from the folder you would run `story` from, so `.` and
+other relative paths keep their meaning. Use Node, not Bun or a package
+script: Bun would load that folder's `bunfig.toml` (which can run code) and
+`.env`, and a package script runs from the checkout's root. If no CLI is
 available, apply the checks in `references/prose-checks.md` by reading.
 
 After editing the style sheet or revising prose:
 
 ```shell
-story validate .
+story reindex .
+story wordcount . --write
+story check .
 story prose .
 story voices .
-story wordcount . --write
-story links .
 ```
 
 ## Reference Files
@@ -203,4 +217,4 @@ story links .
 
 ## Shared Conventions
 
-Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` files as the authoritative registries, bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).
+Every story skill follows the shared conventions in [`../story-maintenance/references/conventions.md`](../story-maintenance/references/conventions.md), resolved relative to this skill folder. Read it before creating, renaming, or linking story files. If that file is missing because this skill was installed without `story-maintenance`, the essentials are: kebab-case ids and filenames, YAML frontmatter on every story-project file, `_index.md` registry tables that `story reindex` rebuilds (never edit them by hand), bidirectional links between entities, `characters` for who is on the page and `mentions` for who is only referred to, `status: deceased` plus `died-in: chapter-{NN}` for deaths, and no project-local generator or build scripts (run only the installed or bundled Story CLI).

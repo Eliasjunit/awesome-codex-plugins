@@ -135,6 +135,13 @@ bunx shadcn@4.18.0 view Xquik-dev/x-twitter-scraper/x-twitter-scraper
 bunx shadcn@4.18.0 add Xquik-dev/x-twitter-scraper/x-twitter-scraper
 ```
 
+To move app code off the official X API, add the
+[X API alternative Skill](https://github.com/Xquik-dev/x-api):
+
+```bash
+bunx skills@1.5.3 add Xquik-dev/x-api
+```
+
 ### LobeHub
 
 Use LobeHub CLI 0.0.48 or later. Sign in, install the Skills, then confirm them:
@@ -177,6 +184,7 @@ The command discovers `x-twitter-scraper`, `xquik-mcp`, and `xquik-social-resear
 | Tweets | Lookup, batch lookup, search, timelines, replies, quotes, threads, likes, reposts, and media |
 | Profiles | Lookup, batch lookup, search, followers, following, relationships, account details, and availability |
 | Other X data | Lists, communities, trends, Spaces, articles, bookmarks, notifications, and supported feeds |
+| AI analysis | Sentiment, brand mentions, news classification, market signals, viral score, and your own labels, at 2 credits per analyzed post |
 | Bulk work | 23 extraction types, estimates, result caps, multi-target jobs, cursor pages, and exports |
 | Monitoring | Account monitors, keyword monitors, stored events, and signed webhooks |
 | Delivery | JSON, CSV, Markdown, PDF, TXT, XLSX, API pages, and webhook events |

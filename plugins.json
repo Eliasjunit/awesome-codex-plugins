@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
-  "last_updated": "2026-10-06",
-  "total": 272,
+  "last_updated": "2026-10-07",
+  "total": 273,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -1317,7 +1317,7 @@
       "description": "Agent skills for git workflows, GitHub automation, security audits, code refactoring, and project tooling.",
       "category": "Development & Workflow",
       "source": "awesome-codex-plugins",
-      "install_url": "https://raw.githubusercontent.com/tartinerlabs/skills/HEAD/plugins/tartinerlabs/.codex-plugin/plugin.json"
+      "install_url": "https://raw.githubusercontent.com/tartinerlabs/skills/HEAD/plugins/quality/.codex-plugin/plugin.json"
     },
     {
       "name": "Team Skills Platform",
@@ -1978,6 +1978,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/zlsbksdxl/codex-lark/HEAD/plugins/feishu2codex/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Firecrawl",
+      "url": "https://github.com/firecrawl/firecrawl-codex-plugin",
+      "owner": "firecrawl",
+      "repo": "firecrawl-codex-plugin",
+      "description": "Search, scrape, crawl, and map the web from Codex with Firecrawl CLI skills for live research and extraction.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/firecrawl/firecrawl-codex-plugin/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Flow Studio Power Automate",

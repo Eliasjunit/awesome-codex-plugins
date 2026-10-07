@@ -40,11 +40,11 @@ It reuses the promise-ordering machinery for the clue ledger (`continuity/clues/
 
 ### Planned and planted setups
 
-- `story add clue --planted` (and `story add promise --planted`) records the chapter and sets `status: planted` when that chapter exists; with `--planted` naming a chapter not written yet, or without `--planted`, the status is `planned`, and `--status` overrides either default.
+- `story add clue --planted` (and `story add promise --planted`) records the chapter and sets `status: planted` when that chapter has a file, even an `outline` one; with `--planted` naming a chapter that has no file yet, or without `--planted`, the status is `planned`, and `--status` overrides either default. Pass `--status planned` while the planted chapter is only an outline.
 - A promise or clue with `status: planned` and a `planted` chapter warns ("records planted chapter X but status is still planned") only once chapter X has prose, so `--status planned --planted chapter-NN` schedules a setup ahead.
 - Both warnings read the named chapter's own `status`: an `outline` planted or payoff chapter does not count as drafted, even when later chapters are.
 - A recorded payoff chapter that is not drafted yet suppresses the "no payoff yet" warning.
-- `story links` accepts a scheduled `chapter-NN` that has no chapter file yet in `payoff`, in `planted` while the status is `planned`, and in a research note's `used-in`, unless its number is 0 or belongs to an existing chapter under another id (`chapter-1` beside `chapter-01` is reported as missing); once the status is `planted` or `paid-off` the planted chapter must exist, and once `paid-off` the payoff chapter must too.
+- `story links` accepts a scheduled `chapter-NN` that has no chapter file yet in `payoff`, in `planted` while the status is `planned` or `abandoned`, in an `open` or `abandoned` question's `introduced`, and in a research note's `used-in`, unless its number is 0 or belongs to an existing chapter under another id (`chapter-1` beside `chapter-01` is reported as missing); once the status is `planted`, `paid-off`, or `dropped` the planted chapter must exist, and once `paid-off` the payoff chapter must too. A question's `resolved` chapter must always exist. Cutting a planned thread needs only `status: abandoned`: leave its chapters in place. If a chapter with that number is added later, `story add chapter` and `story split` warn (`adopted-references`); clear the field then if the cut thread does not belong in that chapter. `story split` refuses to renumber an existing chapter onto a `chapter-NN` that any record names, or to give that id to its new chapter when a record other than an abandoned thread names it: point the record at the chapter it means first.
 
 ### Prop custody
 
@@ -79,7 +79,7 @@ Once any chapter has `choices`, `story continuity` (and `story check`, which rep
 - **Deaths and revivals.** A death on one branch is not a posthumous appearance on a sibling branch. At a rejoin, a death on any incoming branch counts, so listing the character in that chapter's `characters` or `pov` is a `posthumous-appearance` error. `revived-in` ends the death only when every path from the death passes through the revival chapter. Learning after death and status progressions use the same rule.
 - **Dates.** Two chapters on one path dated on different days compare by date, so a flashback reached later stays earlier. Dates in a `story.md` custom `calendar` compare the same way. Chapters on sibling branches never compare.
 - **Knowledge.** `story knowledge <id> --at <chapter>` and `story context` list a fact once it is learned on some path to the chapter. At a rejoin, a fact learned on only one incoming branch is listed as known, so check that every incoming branch teaches it before the rejoin prose uses it. One `knowledge-state` entry per branch for the same `fact` is not a `state-duplicate-fact` error.
-- **Context.** `story context` takes previous scenes, open promises, clues, and questions, and progressions only from chapters on a path to the target. At a rejoin that is every incoming branch.
+- **Context.** `story context` takes previous scenes, open promises, clues, and questions, and progressions only from chapters on a path to the target. At a rejoin that is every incoming branch. It shows the `continuity/state.md` character state only when `current-chapter` comes before the target on some path, whatever the chapter numbers; when `current-chapter` is on a sibling branch it prints a line saying the snapshot is left out.
 - **Prop custody.** A destroyed or lost artifact is gone only on paths after its `since` chapter.
 - **`continuity/state.md`.** It is checked against the chapters on a path to `current-chapter`. When those branches last set an artifact's `owner` or `location` differently, it warns `state-differs-by-path`.
 - **Loops and unreachable chapters.** Two chapters that each lead to the other, and any chapter no path reaches (`story links` warns `unreachable-chapter`), compare by date and then by number, as in a linear book.
@@ -92,8 +92,9 @@ These read the chapters in number order, so sibling branches can produce finding
 - the clock and route checks (`clock-backward`, `travel-too-fast`, `route-too-fast`, `route-same-time`), which compare every dated scene in a `strand`, whichever branch it is on
 - `story timeline`, which marks a sibling ending dated before the one numbered ahead of it as told "after later events"
 - `story grid`, whose columns are every chapter side by side in number order, whichever path reaches each
-- `story pacing` runs, `story next`, the `progression-out-of-order` list order, and `story series` and `story diagram` lifelines
-- the `continuity/state.md` lines in `story context`, included whenever `current-chapter` is numbered below the target, even on another branch. Set `current-chapter` to the passage last drafted on the target's own path.
+- `story pacing` runs, `story next`, and the `progression-out-of-order` list order
+
+`story series` and `story diagram` lifelines, and the second-death checks that read them (`revival-status-mismatch`, `deceased-without-died-in`), read every chapter in one order, not path by path: the reading order of the choices, so a chapter comes after the chapters that lead to it, with dated chapters by date. A death on one branch still counts at the end of the book.
 
 ### Sibling-ending clock warnings
 
@@ -122,7 +123,7 @@ See the `genre-craft` skill.
 
 ## add clue
 
-Run it when the user plants a new clue. `story add clue "Name" --planted chapter-02 --payoff chapter-05` creates the clue ledger entity in `continuity/clues/` with `status: planted` (`planned` when `--planted` is omitted or names a chapter not written yet; pass `--status planned` if the clue is not on the page yet). Omit `--payoff` when the payoff is not yet known, and pass `--red-herring` for a clue meant to mislead.
+Run it when the user plants a new clue. `story add clue 'Name' --planted chapter-02 --payoff chapter-05` creates the clue ledger entity in `continuity/clues/` with `status: planted` (`planned` when `--planted` is omitted or names a chapter with no file yet; pass `--status planned` if the chapter has a file but the clue is not on the page yet). Omit `--payoff` when the payoff is not yet known, and pass `--red-herring` for a clue meant to mislead.
 
 ## pacing
 
@@ -160,15 +161,15 @@ See the `voice-style` skill for acting on them.
 
 ## mentions
 
-Run `story mentions <kind> <id> --path <project>` to list every place the chapter prose names a character, location, faction, artifact, system, or glossary term, and before `story rename` or `story remove`, which never change prose.
+Run `story mentions <kind> <id> --path '<project>'` to list every place the chapter prose names a character, location, faction, artifact, system, or glossary term, and before `story remove`, which never changes prose, or `story rename` without `--prose`.
 
-- It looks for the `name`, `aliases`, a character's given name, and each without leading titles or articles (`Hollow` for `The Hollow`). Names match as written and as whole words, so `Rose` is not found in "a rose"; possessives count. Outlines, HTML comments, and code fences are skipped.
+- It looks for the `name`, `aliases`, a character's given name (not an initial such as the `J` of `J. R. Dunn`), and each without leading titles or articles (`Hollow` for `The Hollow`). Names match as written and as whole words, so `Rose` is not found in "a rose"; possessives count. Outlines, HTML comments, and code fences are skipped.
 - `story continuity` warns `named-not-listed` when a drafted chapter's prose names a character that its `pov`, `characters`, and `mentions` leave out. Add them to `characters` if they are on the page, or `mentions` if they are only talked about. A one-word name that opens a sentence is not counted when the chapter also uses it as a plain word.
 - `story mentions` with no entity also warns `mention-not-named` for a character or artifact in `mentions` that the prose never names. A chapter that refers to someone only by relationship ("her father") triggers it, so read the chapter before acting: add the name the chapter uses to the entity's `aliases`, drop a stale mention, or exempt it.
 
 ## names
 
-Run `story names <name...>` before naming a character, place, faction, artifact, system, or glossary term. It checks candidates against every existing name and alias.
+Run `story names '<name>' ...` before naming a character, place, faction, artifact, system, or glossary term. It checks candidates against every existing name and alias.
 
 - A candidate's given name (first word that is not a title or article such as `the`, `lord`, or `captain`) is compared with each character's given name, and everything else as a whole name; an exact match with either is a clash, an error (exit 1).
 - Look-alikes (the same first four letters, or the same initial within edit distance 1, or 2 when both words have five letters or more) and a given name sharing an initial with a protagonist, antagonist, deuteragonist, or narrator are warnings.
@@ -206,7 +207,7 @@ See the `revision-continuity` skill.
 
 ## compare
 
-Run `story compare . --ref <git-ref>` or `story compare . --against <project-path>` after a revision pass, or when the user asks what changed since a draft. It needs exactly one of the two.
+Run `story compare . --ref <git-ref>` or `story compare . --against '<project-path>'` after a revision pass, or when the user asks what changed since a draft. It needs exactly one of the two.
 
 - `--ref` reads chapters at a git branch, tag, or commit with `git show` (it never writes to the repository), and `--against` reads another copy of the project.
 - It reports per-chapter word changes, added and removed chapters, and the share of paragraphs unchanged.
@@ -216,7 +217,7 @@ See Draft Snapshots in the `revision-continuity` skill for taking the snapshot.
 
 ## similarity
 
-Run `story similarity . --against <source>` when the user asks whether a passage echoes another text too closely: their earlier books, a previous draft, or a source they worked from.
+Run `story similarity . --against '<source>'` when the user asks whether a passage echoes another text too closely: their earlier books, a previous draft, or a source they worked from.
 
 - `--against` takes a file, a folder (another story project's chapters, or every `.md`, `.markdown`, and `.txt` file in it), or a git ref.
 - It reports each run of `--min-words` (default 8) or more shared words, compared lowercased without punctuation, as a `similarity-shared-passage` warning with the chapter's review-copy label, the reference's location, and the shared words, then per-chapter and total shares.
