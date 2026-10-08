@@ -232,7 +232,7 @@ Every command and option is in the [CLI reference](docs/cli-reference.md). For a
 
 A story project with deterministic checks is one an agent can advance unattended. The [`templates/github/`](templates/github/) workflows turn a story repository into a self-drafting book:
 
-- [`story-checks.yml`](templates/github/story-checks.yml) runs `story check` (validate, links, and continuity in one scan) and `story report --actionable` on every push and pull request, so a chapter PR can't merge with a continuity contradiction.
+- [`story-checks.yml`](templates/github/story-checks.yml) runs `story check` (validate, links, and continuity in one scan) and `story report --actionable` on every push to `main` and every pull request, so a chapter PR can't merge with a continuity contradiction.
 - [`draft-next-chapter.yml`](templates/github/draft-next-chapter.yml) runs [Claude Code](https://github.com/anthropics/claude-code-action) on a schedule. It asks `story next` for the next action, drafts the next chapter with the chapter-writing skill, updates scene records and continuity state, and commits it within word, turn, and spend budgets. The agent cannot push. A second job, on a fresh runner, checks that the commit touches only the story's own markdown and holds no secret, runs the checks, pushes the branch, and opens a pull request for review: ready when the checks pass, a draft listing the failures when they do not. When `story next` suggests no chapter (the story is revising or complete, or every arc is resolved), it stops without drafting.
 
 Copy both files into `.github/workflows/` in the repository that holds your story project, add an `ANTHROPIC_API_KEY` secret, and review one chapter PR each morning.
@@ -490,7 +490,7 @@ bun run eval:selftest    # checker self-test against known-good drafts
 node evals/run-skill.js  # full model run (needs Claude Code credentials)
 ```
 
-Every published change needs a new version in `package.json`, `.codex-plugin/plugin.json` (Codex's version source), `.claude-plugin/plugin.json` (Claude Code's), and `src/version.js` (printed by `story --version`), so installed users receive updates. Marketplace entries stay unversioned to avoid duplicate version state.
+The release script sets a new version in `package.json`, `.codex-plugin/plugin.json` (Codex's version source), `.claude-plugin/plugin.json` (Claude Code's), and `src/version.js` (printed by `story --version`) at each release, so installed users receive updates. Marketplace entries stay unversioned to avoid duplicate version state.
 
 Don't bump these by hand. The release script bumps all four, plus the template `STORY_VERSION` pins and the version examples in the docs, moves the `Unreleased` entries in `CHANGELOG.md` under the new version (and refuses to run while there are none), rebuilds the fallback, runs the local preflight checks (a subset of CI), commits `chore: release X.Y.Z`, tags `vX.Y.Z`, pushes, and creates a GitHub release with generated notes. The tag push runs the Publish workflow, which waits for CI to pass on `main` for the release commit, then publishes the package to npm with provenance through trusted publishing. The script requires a clean `main` that matches `origin/main`, a logged-in `gh`, admin rights on the repository (only admins can create `v*` tags), and a version that isn't already on npm:
 

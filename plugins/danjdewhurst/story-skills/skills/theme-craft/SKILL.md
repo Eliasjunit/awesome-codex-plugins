@@ -98,10 +98,14 @@ story wordcount . --write
 story check .
 ```
 
-The motif ledger (`continuity/motifs.md` or the motif table in an arc file)
-and `continuity/theme-audit.md` are prose revision notes: the CLI does not
-scan, validate, link-check, or reindex them. Audit motif payoff and the
-theme verdict manually per `references/theme-audit.md`.
+The motif ledger (`continuity/motifs.md`) and `continuity/theme-audit.md`
+are prose revision notes. No check reads a motif's status or the theme
+verdict, and the CLI does not validate, link-check, or reindex them.
+`story rename` and `story move` still rewrite links in them. Keep motif rows
+only in the ledger. An arc file's `## Foreshadowing` table is read for its
+chapter ids, but a motif row there gets no status or payoff check. Audit
+motif payoff and the theme verdict manually per
+`references/theme-audit.md`.
 
 ## Reference Files
 

@@ -144,11 +144,12 @@ open, holds, entries past their window, and stories with no submission out.
 A collection gathers one author's stories; an anthology gathers several
 authors' stories, usually under an editor. The steps below fit both. Each
 story stays an ordinary Story Skills project; the book is one more project
-with each story as a chapter, titled by a `chapter-heading: "{title}"` label
-and with no `form`. In an anthology, put the editor in `story.md` `editor`
-and each story's writer in its chapter's `author` (a name, or a list for a
-co-written story), never in the prose: builds print it under the story's
-title and keep it out of the word count. Ask the user for every name; do
+with each story as a chapter and no `form`. Its `story.md` `labels:` list
+holds `chapter-heading: "{title}"`, so each heading shows the title alone. A
+`labels` entry in a chapter's frontmatter has no effect. In an anthology, put
+the editor in `story.md` `editor` and each story's writer in its chapter's
+`author` (a name, or a list for a co-written story), never in the prose:
+builds print it under the story's title and keep it out of the word count. Ask the user for every name; do
 not guess a byline. Run `story validate .` after setting them.
 `docs/series.md`, Short-story collections and anthologies, gives the
 layout, the bylines, and the builds.
@@ -179,7 +180,7 @@ layout, the bylines, and the builds.
    that need the user to confirm. Never add a credit the user has not given.
    In the collection project, put the credits on a back-matter page:
    `story add matter 'Acknowledgements' --placement back`, then write the
-   lines into `matter/acknowledgements.md` and run `story validate .`.
+   lines into `matter/acknowledgements.md`, then run `story reindex .`, `story wordcount . --write`, and `story check .`.
 5. **Check the stories against each other.** In a linked collection, run
    each story's checks (`story check .`) and compare
    shared names, dates, and facts by reading. Note contradictions for the

@@ -8748,7 +8748,7 @@ function nfc(value) {
   return String(value).normalize("NFC");
 }
 var SAME = (start, end) => [start, end];
-var CLUSTER = /\P{M}?[\p{M}\u1160-\u11FF\uD7B0-\uD7FF]+/gu;
+var CLUSTER = /\P{M}?\p{M}+|[\u1100-\u11FF\uA960-\uA97F\uAC00-\uD7A3\uD7B0-\uD7FF]+/gu;
 function composedText(text) {
   const source = String(text);
   if (nfc(source) === source) {
@@ -9865,6 +9865,7 @@ function copyrightPage(meta) {
 var DESCRIPTION_LIMIT = 4000;
 function metadataSheet(input) {
   const { title, data, meta, words, characters, pages } = input;
+  const descriptionLength = [...meta.description].length;
   const seriesName = seriesDisplayName(data);
   const series = typeof seriesName === "string" ? `${seriesName}${isBookNumber(data["book-number"]) ? `, book ${data["book-number"]}` : ""}` : "";
   const rows = [
@@ -9880,7 +9881,7 @@ function metadataSheet(input) {
     ["Form", typeof data.form === "string" ? data.form : ""],
     characters === undefined ? ["Word count", String(words)] : ["Character count", String(characters)],
     ["Estimated print pages", Object.entries(pages).map(([trim, count]) => `${count} at ${trim}`).join(", ")],
-    ["Description", meta.description === "" ? "" : `${meta.description.length} characters (limit ${DESCRIPTION_LIMIT})`],
+    ["Description", meta.description === "" ? "" : `${descriptionLength} characters (limit ${DESCRIPTION_LIMIT})`],
     ["Keywords", meta.keywords.length === 0 ? "" : `${meta.keywords.length} of ${MAX_KEYWORDS}: ${meta.keywords.join("; ")}`],
     ["BISAC subjects", meta.subjects.join("; ")],
     ["Copyright", meta.copyright],
@@ -9893,7 +9894,7 @@ function metadataSheet(input) {
     ["ISBN for this edition (`isbn`), or a retailer-assigned identifier", meta.isbn !== ""],
     ["Publisher or imprint (`publisher`)", meta.publisher !== ""],
     ["Publication date (`publication-date`)", meta.publicationDate !== ""],
-    [`Description under ${DESCRIPTION_LIMIT} characters (\`description\`)`, meta.description !== "" && meta.description.length <= DESCRIPTION_LIMIT],
+    [`Description under ${DESCRIPTION_LIMIT} characters (\`description\`)`, meta.description !== "" && descriptionLength <= DESCRIPTION_LIMIT],
     [`Keywords, up to ${MAX_KEYWORDS} (\`keywords\`)`, meta.keywords.length > 0 && meta.keywords.length <= MAX_KEYWORDS],
     ["BISAC subjects (`subjects`)", meta.subjects.length > 0],
     [`Copyright line (\`copyright\`) or copyright matter page${(input.pendingCopyright ?? []).length > 0 ? ` (pending permission: ${input.pendingCopyright.join(", ")})` : ""}`, meta.copyright !== "" || input.hasCopyrightPage],
@@ -10200,8 +10201,8 @@ var CJK = "\\p{Script=Han}\\p{Script=Hiragana}\\p{Script=Katakana}\\u30FC";
 var SOUTHEAST_ASIAN = "\\p{Script=Thai}\\p{Script=Lao}\\p{Script=Khmer}\\p{Script=Myanmar}";
 var JOINER = "\\u00AD\\u200C\\u200D";
 var UNSPACED_LETTERS = `${CJK}${SOUTHEAST_ASIAN}`;
-var UNSPACED = new RegExp(`[${CJK}]|[${SOUTHEAST_ASIAN}](?:[${SOUTHEAST_ASIAN}]|[${JOINER}]+(?=[${SOUTHEAST_ASIAN}]))*`, "gu");
-var CJK_CHARACTER = new RegExp(`^[${CJK}]$`, "u");
+var UNSPACED = new RegExp(`[${CJK}]\\p{M}*|[${SOUTHEAST_ASIAN}](?:[${SOUTHEAST_ASIAN}]|[${JOINER}]+(?=[${SOUTHEAST_ASIAN}]))*`, "gu");
+var CJK_START = new RegExp(`^[${CJK}]`, "u");
 var WINDOW = 1e4;
 var RESTART_WORDS = 4;
 var segmenter;
@@ -10228,23 +10229,28 @@ function segmentRun(run, window = WINDOW) {
   return words;
 }
 function wordSpans(text, pattern) {
-  const source = String(text);
+  const view = composedText(text);
+  const source = view.text;
   const spans = [];
+  const add = (word, start, end) => {
+    const [from, to] = view.original(start, end);
+    spans.push({ word, start: from, end: to });
+  };
   let last = 0;
   const between = (end) => {
     if (end > last) {
       for (const match of source.slice(last, end).matchAll(pattern)) {
-        spans.push({ word: match[0], start: last + match.index, end: last + match.index + match[0].length });
+        add(match[0], last + match.index, last + match.index + match[0].length);
       }
     }
   };
   for (const match of source.matchAll(UNSPACED)) {
     between(match.index);
-    if (CJK_CHARACTER.test(match[0])) {
-      spans.push({ word: match[0], start: match.index, end: match.index + match[0].length });
+    if (CJK_START.test(match[0])) {
+      add(match[0], match.index, match.index + match[0].length);
     } else {
       for (const [word, offset] of segmentRun(match[0])) {
-        spans.push({ word, start: match.index + offset, end: match.index + offset + word.length });
+        add(word, match.index + offset, match.index + offset + word.length);
       }
     }
     last = match.index + match[0].length;
@@ -10456,6 +10462,7 @@ function plainLinks(text) {
   return splitFences(String(text)).map((part) => part.fenced ? part.text : withoutLinks(part.text)).join("");
 }
 var ESCAPABLE = /[!-/:-@[-`{-~]/;
+var BACKSLASH_ESCAPE = /\\([!-/:-@[-`{-~])/g;
 var AUTOLINK = /<(?:[A-Za-z][A-Za-z0-9+.-]{1,31}:[^\0- <>\x7f\ue000\ue001]*|[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@([A-Za-z0-9.-]+))>/y;
 var DOMAIN_LABEL = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/;
 var MAX_DESTINATION_PARENS = 32;
@@ -10468,6 +10475,15 @@ function autolinkEnd(text, index) {
   return index + match[0].length;
 }
 function withoutLinks(source) {
+  let result = "";
+  let position = 0;
+  for (const [start, end] of linkCuts(source)) {
+    result += source.slice(position, start);
+    position = end;
+  }
+  return result + source.slice(position);
+}
+function linkCuts(source) {
   const cuts = [];
   for (const [start, end] of inlineBlocks(source)) {
     const openers = [];
@@ -10516,15 +10532,15 @@ function withoutLinks(source) {
     }
   }
   cuts.sort((left, right) => left[0] - right[0]);
-  let result = "";
+  const removed = [];
   let position = 0;
   for (const [start, end] of cuts) {
     if (end > position) {
-      result += source.slice(position, Math.max(start, position));
+      removed.push([Math.max(start, position), end]);
       position = end;
     }
   }
-  return result + source.slice(position);
+  return removed;
 }
 function inlineBlocks(source) {
   const blocks = [];
@@ -10654,7 +10670,7 @@ function splitWords(markdown) {
   const normalized = countedText(plainLinks(String(markdown))).replace(/\uE000/g, " ").replace(URL_OR_EMAIL, (match) => {
     urls.push(match);
     return ` ${URL_PLACEHOLDER} `;
-  }).replace(/\\([!-/:-@[-`{-~])/g, "$1").replace(EMPHASIS_UNDERSCORES, " ").replace(/[#>*~|`]/g, " ").replace(/(?<!\p{N}):|:(?!\p{N})/gu, " ");
+  }).replace(BACKSLASH_ESCAPE, "$1").replace(EMPHASIS_UNDERSCORES, " ").replace(/[#>*~|`]/g, " ").replace(/(?<!\p{N}):|:(?!\p{N})/gu, " ");
   let next = 0;
   return wordSpans(normalized, COUNTED_WORD).map(({ word }) => word === URL_PLACEHOLDER ? urls[next++] : word);
 }
@@ -10864,7 +10880,7 @@ function footnoteLines(markdownBody) {
   }
   return found;
 }
-var CJK_CHARACTER2 = /^[\u2e80-\u2fff\u3000-\u30ff\u3190-\u319f\u31c0-\u31ff\u3220-\u325f\u3280-\u33ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\ufe10-\ufe1f\ufe30-\ufe4f\uff01-\uff9f\uffe0-\uffee\u{1b000}-\u{1b16f}\u{20000}-\u{3ffff}]$/u;
+var CJK_CHARACTER = /^[\u2e80-\u2fff\u3000-\u30ff\u3190-\u319f\u31c0-\u31ff\u3220-\u325f\u3280-\u33ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\ufe10-\ufe1f\ufe30-\ufe4f\uff01-\uff9f\uffe0-\uffee\u{1b000}-\u{1b16f}\u{20000}-\u{3ffff}]$/u;
 var WIDE_PUNCTUATION = /^[\u00b7\u2014\u2015\u2018\u2019\u201c\u201d\u2025\u2026]$/u;
 var COMBINING = /^[\u0300-\u036f\u1ab0-\u1aff\u1dc0-\u1dff\u20d0-\u20ff\u302a-\u302f\u3099\u309a\ufe00-\ufe0f\ufe20-\ufe2f\u{e0100}-\u{e01ef}]$/u;
 function lastCharacter(text) {
@@ -10883,8 +10899,8 @@ function softBreak(before, after) {
   const left = lastCharacter(String(before));
   const first = String(after).codePointAt(0);
   const right = first === undefined ? "" : String.fromCodePoint(first);
-  const cjkLeft = CJK_CHARACTER2.test(left);
-  const cjkRight = CJK_CHARACTER2.test(right);
+  const cjkLeft = CJK_CHARACTER.test(left);
+  const cjkRight = CJK_CHARACTER.test(right);
   return cjkLeft && (cjkRight || WIDE_PUNCTUATION.test(right)) || cjkRight && WIDE_PUNCTUATION.test(left) ? "" : " ";
 }
 var SOURCE_SPACE = new Set([" ", "\t", `
@@ -10930,7 +10946,7 @@ function characterCount(markdown) {
   const lines = plainLinks(String(markdown).replace(/\uE000/g, " ")).split(`
 `);
   const text = countedText(lines.map((line) => isSceneBreak(line) ? "" : line).join(`
-`)).replace(/\\([!-/:-@[-`{-~])/g, "$1").replace(/[#>*_~|`\s]+/gu, "");
+`)).replace(BACKSLASH_ESCAPE, "$1").replace(/[#>*_~|`\s]+/gu, "");
   graphemes2 ??= new Intl.Segmenter("en", { granularity: "grapheme" });
   let count = 0;
   for (const _ of graphemes2.segment(text)) {
@@ -11118,28 +11134,73 @@ function countedText(markdown) {
 }
 function proseWordSpans(text) {
   const source = String(text);
-  let counted = "";
-  const starts = [];
-  const ends = [];
+  const cuts = source.includes("](") ? linkCuts(source) : [];
+  const links = editedText(source, cuts.map(([start, end]) => [start, end, ""]));
+  const markup = editedText(links.text, markupEdits(links.text));
+  const urls = editedText(markup.text, urlEdits(markup.text));
+  const escapes = editedText(urls.text, escapeEdits(urls.text));
+  return wordSpans(escapes.text, COUNTED_WORD).map(({ word, start, end }) => {
+    const [inUrls, urlsEnd] = escapes.back(start, end);
+    const [inMarkup, markupEnd] = urls.back(inUrls, urlsEnd);
+    const [inLinks, linksEnd] = markup.back(inMarkup, markupEnd);
+    const [from, to] = links.back(inLinks, linksEnd);
+    return { word: word === URL_PLACEHOLDER ? markup.text.slice(inMarkup, markupEnd) : word, start: from, end: to };
+  });
+}
+function editedText(text, edits) {
+  let result = "";
+  const runs = [];
   let position = 0;
   const copy = (end) => {
-    for (let index = position;index < end; index += 1) {
-      starts.push(index);
-      ends.push(index + 1);
+    if (end > position) {
+      runs.push({ out: result.length, from: position, to: end, copied: true });
+      result += text.slice(position, end);
     }
-    counted += source.slice(position, end);
   };
-  for (const [start, end, replacement] of markupEdits(source)) {
+  for (const [start, end, replacement] of edits) {
     copy(start);
-    counted += replacement;
-    for (let index = 0;index < replacement.length; index += 1) {
-      starts.push(start);
-      ends.push(end);
-    }
+    runs.push({ out: result.length, from: start, to: end, copied: false });
+    result += replacement;
     position = end;
   }
-  copy(source.length);
-  return wordSpans(counted, WORD_PATTERN).map(({ word, start, end }) => ({ word, start: starts[start], end: ends[end - 1] }));
+  copy(text.length);
+  const runAt = (index) => {
+    let low = 0;
+    let high = runs.length - 1;
+    while (low < high) {
+      const middle = low + high + 1 >> 1;
+      if (runs[middle].out <= index) {
+        low = middle;
+      } else {
+        high = middle - 1;
+      }
+    }
+    return runs[low];
+  };
+  const startIn = (index) => {
+    const run = runAt(index);
+    return run.copied ? run.from + (index - run.out) : run.from;
+  };
+  const endIn = (index) => {
+    const run = runAt(index);
+    return run.copied ? run.from + (index - run.out) + 1 : run.to;
+  };
+  return { text: result, back: (start, end) => [startIn(start), endIn(end - 1)] };
+}
+function escapeEdits(text) {
+  return [...text.matchAll(BACKSLASH_ESCAPE)].map((match) => [match.index, match.index + 2, match[1]]);
+}
+function urlEdits(text) {
+  const edits = [];
+  for (const match of text.matchAll(/\uE000/g)) {
+    edits.push([match.index, match.index + 1, " "]);
+  }
+  if (/:\/\/|www\.|@/i.test(text)) {
+    for (const match of text.replace(/\uE000/g, " ").matchAll(URL_OR_EMAIL)) {
+      edits.push([match.index, match.index + match[0].length, ` ${URL_PLACEHOLDER} `]);
+    }
+  }
+  return edits.sort((left, right) => left[0] - right[0]);
 }
 function markupEdits(text, code = literalSpans(text), definitions = [], defined = NO_LABELS) {
   const edits = definitions.map(([start, end]) => [start, end, text.slice(start, end).replace(/[^\r\n]/g, "")]);
@@ -11167,7 +11228,7 @@ function markupEdits(text, code = literalSpans(text), definitions = [], defined 
     position = end;
     return true;
   });
-  const autolinks = code.filter((span) => span[2] === "autolink").map(([start, end]) => [start, end, text.slice(start + 1, end - 1)]);
+  const autolinks = code.filter((span) => span[2] === "autolink").flatMap(([start, end]) => [[start, start + 1, ""], [end - 1, end, ""]]);
   return [...kept, ...autolinks].sort((left, right) => left[0] - right[0]);
 }
 function applyEdits(text, edits) {
@@ -11269,7 +11330,7 @@ function scanMarkup(text) {
     }
     if (position === 0 || text[position - 1] === `
 `) {
-      const marker = /^ {0,3}(`{3,})/.exec(text.slice(position, lineEnd));
+      const marker = /^ {0,3}(`{3,})(?=[^`]*$)/.exec(text.slice(position, lineEnd));
       if (marker) {
         fences ??= fenceCloser(text);
         const end = fences(lineEnd, marker[1].length);
@@ -11289,6 +11350,10 @@ function scanMarkup(text) {
     const open = nextOpen !== -1 && nextOpen < lineEnd ? nextOpen : -1;
     const tick = nextTick;
     if (tick !== -1 && tick < lineEnd && (open === -1 || tick < open)) {
+      if (escaped(text, tick)) {
+        position = tick + 1;
+        continue;
+      }
       let runEnd = tick;
       while (text[runEnd] === "`") {
         runEnd += 1;
@@ -11388,7 +11453,7 @@ function closedFences(lines) {
   const fences = [];
   let open = null;
   for (const [index, line] of lines.entries()) {
-    const marker = /^ {0,3}(`{3,})/.exec(line);
+    const marker = /^ {0,3}(`{3,})(?=[^`]*$)/.exec(line);
     if (!marker) {
       continue;
     }
@@ -11699,9 +11764,11 @@ var NEVER = "(?!)";
 var CONTEXT_WINDOW = 64;
 var CLOSING_MARKS = ")\\]*_";
 var OPENING_MARKS = "(\\[*_";
+var ABBREVIATION_STOP = new RegExp(`^\\.[${CLOSING_MARKS}]*$`);
 var FULL_WIDTH_CLOSERS = "」』）";
 var SPACED_CLOSERS = "»›";
 var SPACED_OPENERS = "«‹";
+var EMOJI_RUN = "(?:\\p{So}[\\p{Sk}\\p{Mn}\\u200D\\uFE0F\\u{E0020}-\\u{E007F}]* ?)*";
 var RULES = new WeakMap;
 function sentenceRules(pack) {
   if (!RULES.has(pack)) {
@@ -11728,20 +11795,20 @@ function buildRules(pack) {
   const startLetter = pack.cased === false ? "\\p{L}\\p{N}" : "\\p{Lu}\\p{Lo}\\p{N}";
   const nonNames = either(words("candidateStopwords"));
   return {
-    title: new RegExp(`(?:^|[\\s${openers}(])(?:${either(words("titleAbbreviations"))})$`),
-    initial: new RegExp(`(?:^|[\\s${openers}(])(?:${INITIALS}${pack.capitalInitials === true ? `|${CAPITAL_INITIALS}` : ""})$`, "u"),
+    title: new RegExp(`(?:^|[\\s${openers}${OPENING_MARKS}])(?:${either(words("titleAbbreviations"))})$`),
+    initial: new RegExp(`(?:^|[\\s${openers}${OPENING_MARKS}])(?:${INITIALS}${pack.capitalInitials === true ? `|${CAPITAL_INITIALS}` : ""})$`, "u"),
     nextInitial: new RegExp(`^${dashed}\\p{Lu}\\.`, "u"),
     nextNonName: new RegExp(`^${dashed}(${nonNames})(?![\\p{L}\\p{N}]|['’]\\p{Lu})( \\p{Lu})?`, "u"),
     particles: checkSet(pack, "titleWords") ?? new Set,
     dash: new RegExp(`^${anyOf(marks.dashes)}`),
-    context: new RegExp(`(?:^|[\\s${openers}(])(?:${either([...words("contextAbbreviations"), ...pack.ordinalStop === true ? ["\\d+"] : []])})$`),
+    context: new RegExp(`(?:^|[\\s${openers}${OPENING_MARKS}])(?:${either([...words("contextAbbreviations"), ...pack.ordinalStop === true ? ["\\d+"] : []])})$`),
     calendar: new RegExp(`^(?:${either(words("calendarWords"))})(?![\\p{L}\\p{N}])`, "u"),
     end: new RegExp(ends.join("|") || NEVER, "g"),
     fullWidth: new RegExp(`^${anyOf(marks.fullWidthEnds)}`),
     fullWidthCloser: new RegExp(`[${plainClosers}${CLOSING_MARKS}${FULL_WIDTH_CLOSERS}]`),
     ambiguous,
     pairs: marks.pairs,
-    start: new RegExp(`^(?:${opening}[${startLetter}]|${dashed}\\p{Lu})`, "u"),
+    start: new RegExp(`^${EMOJI_RUN}(?:${opening}[${startLetter}]|${dashed}\\p{Lu})`, "u"),
     finished: new RegExp(`${anyOf(marks.spacedEnds + marks.fullWidthEnds)}(?: ${anyOf(spacedClosers)})?[${closers})\\]${FULL_WIDTH_CLOSERS}]*$`),
     firstWord: new RegExp(`^${dashed}([\\p{L}\\p{N}'’]+)`, "u")
   };
@@ -11806,7 +11873,7 @@ function splitSentences(text, { capitalStart = true, pack = languagePack() } = {
     }
     const from = Math.max(start, match.index - CONTEXT_WINDOW);
     const before = `${from > start ? "x" : ""}${normalized.slice(from, match.index)}`;
-    const abbreviation = match[0] === "." && (rules.context.test(before) ? /^[\p{Ll}\p{N}]/u.test(next) || rules.calendar.test(next) || rules.dash.test(next) : rules.title.test(before) || rules.initial.test(before) && !loneCapitalEnds(before, next, rules, pack));
+    const abbreviation = ABBREVIATION_STOP.test(match[0]) && (rules.context.test(before) ? /^[\p{Ll}\p{N}]/u.test(next) || rules.calendar.test(next) || rules.dash.test(next) : rules.title.test(before) || rules.initial.test(before) && !loneCapitalEnds(before, next, rules, pack));
     const stammer = /^(?:…|\.\.\.)/.test(match[0]) && isStammer(before, next, rules);
     if (abbreviation || stammer) {
       continue;
@@ -12837,7 +12904,8 @@ function sentenceStats(lengths) {
   }
   const mean = lengths.reduce((sum, value) => sum + value, 0) / lengths.length;
   const variance = lengths.reduce((sum, value) => sum + (value - mean) ** 2, 0) / lengths.length;
-  return { count: lengths.length, mean, longest: Math.max(...lengths), spread: Math.sqrt(variance) };
+  const longest = lengths.reduce((most, value) => Math.max(most, value));
+  return { count: lengths.length, mean, longest, spread: Math.sqrt(variance) };
 }
 function countMatching(words, predicate, pack) {
   const counts = new Map;
@@ -13418,458 +13486,8 @@ function tweeSource(story) {
 `;
 }
 
-// src/release-schedule.js
-var RELEASE_SOON_DAYS = 3;
-var MONTHS_PATTERN = /^(\d+)\s+months?$/i;
-var MAX_RELEASE_MONTHS = 999999;
-var LAST_DAY = parseClockDate("9999-12-31").days;
-function projectRelease(project, today) {
-  return releaseSchedule({
-    data: project.story.data,
-    today,
-    chapters: project.chapters.map((chapter) => ({
-      id: chapter.id,
-      file: projectPath(project.root, chapter.file),
-      releaseDate: chapter.releaseDate,
-      drafted: chapter.wordCount > 0 || chapter.count > 0
-    }))
-  });
-}
-function releaseData(release) {
-  if (release === null) {
-    return null;
-  }
-  const { warnings, ...rest } = release;
-  return rest;
-}
-function releaseEvery(value) {
-  if (Number.isInteger(value)) {
-    return value >= 1 ? { every: value, unit: "day" } : null;
-  }
-  const months = releaseMonths(value);
-  return months !== null && months >= 1 && months <= MAX_RELEASE_MONTHS ? { every: months, unit: "month" } : null;
-}
-function releaseMonths(value) {
-  const match = typeof value === "string" ? MONTHS_PATTERN.exec(value.trim()) : null;
-  return match ? Number(match[1]) : null;
-}
-function releaseWarnDays(data) {
-  const days = data["release-warn-days"];
-  return Number.isInteger(days) && days >= 0 ? days : RELEASE_SOON_DAYS;
-}
-function releaseCadence(data) {
-  const every = releaseEvery(data["release-every"]);
-  const start = typeof data["release-start"] === "string" ? parseClockDate(data["release-start"]) : undefined;
-  if (every === null || !start) {
-    return null;
-  }
-  const date = new Date(start.days * 86400000);
-  return { ...every, start: start.text, startDays: start.days, startMonth: date.getUTCFullYear() * 12 + date.getUTCMonth(), startDay: date.getUTCDate() };
-}
-function cadenceDays(cadence, index) {
-  if (cadence.unit === "day") {
-    return cadence.startDays + index * cadence.every;
-  }
-  const month = cadence.startMonth + index * cadence.every;
-  const year = Math.floor(month / 12);
-  if (year > 9999) {
-    return Infinity;
-  }
-  const lastDay = utcDate(year, month % 12 + 1, 0).getUTCDate();
-  return utcDate(year, month % 12, Math.min(cadence.startDay, lastDay)).getTime() / 86400000;
-}
-function dueBy(cadence, days) {
-  if (days < cadence.startDays) {
-    return 0;
-  }
-  if (cadence.unit === "day") {
-    return Math.floor((days - cadence.startDays) / cadence.every) + 1;
-  }
-  const date = new Date(days * 86400000);
-  const index = Math.floor((date.getUTCFullYear() * 12 + date.getUTCMonth() - cadence.startMonth) / cadence.every);
-  return cadenceDays(cadence, index) <= days ? index + 1 : index;
-}
-function utcDate(year, month, day) {
-  const date = new Date(0);
-  date.setUTCFullYear(year, month, day);
-  return date;
-}
-function releaseSchedule({ data, chapters, today }) {
-  const cadence = releaseCadence(data);
-  const warnDays = releaseWarnDays(data);
-  const complete = data.status === "complete";
-  const todayDays = parseClockDate(today).days;
-  const episodes = [];
-  chapters.forEach((chapter, index) => {
-    let days = cadence ? cadenceDays(cadence, index) : null;
-    if (chapter.releaseDate !== undefined && chapter.releaseDate !== null) {
-      days = typeof chapter.releaseDate === "string" ? parseClockDate(chapter.releaseDate)?.days ?? null : null;
-    }
-    if (days !== null && days <= LAST_DAY) {
-      episodes.push({ episode: index + 1, chapter: chapter.id, file: chapter.file, date: formatDate(days), days, drafted: chapter.drafted });
-    }
-  });
-  if (cadence === null && episodes.length === 0) {
-    return null;
-  }
-  const projected = (index) => {
-    const days = cadenceDays(cadence, index);
-    return days > LAST_DAY ? null : { episode: index + 1, chapter: null, file: null, date: formatDate(days), days, drafted: false };
-  };
-  const candidates = episodes.filter((episode) => episode.days >= todayDays);
-  let unwritten = 0;
-  let firstUnwritten = null;
-  if (cadence !== null && !complete) {
-    const upcoming = projected(Math.max(chapters.length, dueBy(cadence, todayDays - 1)));
-    if (upcoming !== null) {
-      candidates.push(upcoming);
-    }
-    unwritten = dueBy(cadence, Math.min(todayDays + warnDays, LAST_DAY)) - chapters.length;
-    firstUnwritten = unwritten > 0 ? projected(chapters.length) : null;
-  }
-  candidates.sort((left, right) => left.days - right.days || left.episode - right.episode);
-  const next = candidates.length === 0 ? null : withDaysUntil(candidates[0], todayDays);
-  const last = complete && episodes.length > 0 && episodes.length === chapters.length ? episodes.reduce((latest, episode) => episode.days >= latest.days ? episode : latest).episode : null;
-  const warnings = [];
-  for (const episode of episodes) {
-    if (!episode.drafted && episode.days <= todayDays + warnDays) {
-      warnings.push(warn("release-undrafted", `${episode.file} (episode ${episode.episode}) ${releaseWhen(episode.date, episode.days - todayDays)} and has no prose yet`, episode.file));
-    }
-  }
-  if (firstUnwritten !== null) {
-    const more = unwritten === 1 ? "" : ` (and ${plural(unwritten - 1, "more scheduled episode")} after it)`;
-    warnings.push(warn("release-undrafted", `episode ${firstUnwritten.episode} ${releaseWhen(firstUnwritten.date, firstUnwritten.days - todayDays)} and has no chapter yet${more}`, "story.md"));
-  }
-  return {
-    every: cadence?.every ?? null,
-    unit: cadence?.unit ?? null,
-    start: cadence?.start ?? null,
-    warnDays,
-    complete,
-    last,
-    next,
-    episodes: episodes.map(({ days, ...episode }) => episode),
-    warnings
-  };
-}
-function withDaysUntil({ days, ...episode }, todayDays) {
-  return { ...episode, daysUntil: days - todayDays };
-}
-function releaseWhen(date, daysUntil) {
-  if (daysUntil === 0) {
-    return `releases today (${date})`;
-  }
-  return daysUntil > 0 ? `releases ${date}, in ${plural(daysUntil, "day")},` : `was due ${date}, ${plural(-daysUntil, "day")} ago,`;
-}
-function formatNextRelease(release) {
-  if (!release) {
-    return null;
-  }
-  if (release.next === null) {
-    const last = release.episodes.find((entry) => entry.episode === release.last);
-    return last === undefined ? "Next release: none scheduled after today" : `Next release: none, the story is complete; episode ${last.episode} (${last.chapter}) on ${last.date} was the last`;
-  }
-  const { episode, chapter, date, daysUntil, drafted } = release.next;
-  const when = daysUntil === 0 ? "today" : `in ${plural(daysUntil, "day")}`;
-  const state = chapter === null ? "no chapter yet" : drafted ? "drafted" : "not drafted";
-  return `Next release: episode ${episode}${chapter === null ? "" : ` (${chapter})`} on ${date}, ${when} (${state}${episode === release.last ? ", the last episode" : ""})`;
-}
-function formatDate(days) {
-  return new Date(days * 86400000).toISOString().slice(0, 10);
-}
-
-// src/progress.js
+// src/progress-file.js
 var PROGRESS_FILE = "progress.md";
-var PACE_SESSIONS = 7;
-var HISTORY_WEEKS = 4;
-var MAX_HISTORY_WEEKS = 52;
-function historyWeeks(options = {}) {
-  const raw = options.weeks;
-  if (raw === undefined) {
-    return HISTORY_WEEKS;
-  }
-  const text = String(raw).trim();
-  if (!/^\d+$/.test(text) || Number(text) < 1 || Number(text) > MAX_HISTORY_WEEKS) {
-    throw usageError(`--weeks must be a whole number 1 to ${MAX_HISTORY_WEEKS}, such as ${HISTORY_WEEKS}`, "weeks");
-  }
-  return Number(text);
-}
-var WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
-var WEEKDAY_NAMES = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-function weekdayName(value) {
-  if (typeof value !== "string") {
-    return null;
-  }
-  const text = value.trim().toLowerCase();
-  const index = WEEKDAY_NAMES.findIndex((name, position) => text === name || text === WEEKDAYS[position]);
-  return index === -1 ? null : WEEKDAYS[index];
-}
-function writingDays(value) {
-  const days = new Set((Array.isArray(value) ? value : []).map(weekdayName).filter((day) => day !== null));
-  return days.size === 0 ? null : WEEKDAYS.filter((day) => days.has(day));
-}
-function weekdayIndex(days) {
-  return ((days + 3) % 7 + 7) % 7;
-}
-var PROJECTION_HORIZON_DAYS = 100 * 366;
-function withSession(sessions, date, counts) {
-  let found = false;
-  const kept = (Array.isArray(sessions) ? sessions : []).map((session) => {
-    if (!found && session && typeof session === "object" && sessionDate(session) === date) {
-      found = true;
-      return { ...session, ...counts };
-    }
-    return session;
-  });
-  if (!found) {
-    kept.push({ date, ...counts });
-  }
-  return kept.sort((left, right) => sessionDate(left).localeCompare(sessionDate(right), "en"));
-}
-function sessionDate(session) {
-  return typeof session?.date === "string" ? session.date.trim() : "";
-}
-function cleanSessions(value) {
-  const sessions = [];
-  const count = (number) => Number.isInteger(number) && number >= 0;
-  for (const entry of Array.isArray(value) ? value : []) {
-    if (entry && typeof entry === "object" && parseClockDate(sessionDate(entry)) && count(entry.words)) {
-      sessions.push({ date: sessionDate(entry), words: entry.words, characters: count(entry.characters) ? entry.characters : null });
-    }
-  }
-  return sessions.sort((left, right) => left.date.localeCompare(right.date, "en"));
-}
-function computeProgress({ unit = "words", words, characters = null, target, deadline, today, chapters, sessions, dailyTarget = null, writingDays: scheduled = null, weeks = HISTORY_WEEKS }) {
-  const characterBook = unit === "characters";
-  const inUnit = (entry) => characterBook ? entry.characters ?? null : entry.words;
-  const length = characterBook ? characters : words;
-  const measured = (Array.isArray(sessions) ? sessions : []).filter((session) => inUnit(session) !== null);
-  const todayDays = parseClockDate(today).days;
-  const result = {
-    unit,
-    words,
-    characterCount: characterBook ? characters : null,
-    target: target ?? null,
-    percent: target ? length * 100 / target : null,
-    remaining: target ? Math.max(0, target - length) : null,
-    deadline: null,
-    chapters: chapters.filter((chapter) => chapter.target > 0).map((chapter) => ({
-      id: chapter.id,
-      words: chapter.words,
-      characterCount: characterBook ? chapter.characters : null,
-      target: chapter.target,
-      percent: inUnit(chapter) * 100 / chapter.target
-    })),
-    sessions: measured.length,
-    lastSession: null,
-    pace: null,
-    projected: null,
-    daily: computeDaily({ measured: measured.map((session) => ({ date: session.date, count: inUnit(session) })), length, todayDays, dailyTarget, scheduled, weeks })
-  };
-  const deadlineDate = deadline ? parseClockDate(deadline) : undefined;
-  if (deadlineDate) {
-    const daysLeft = deadlineDate.days - todayDays;
-    result.deadline = {
-      date: deadlineDate.text,
-      daysLeft,
-      perDay: result.remaining !== null && daysLeft >= 0 ? Math.ceil(result.remaining / Math.max(daysLeft, 1)) : null
-    };
-  }
-  if (measured.length > 0) {
-    const last = measured[measured.length - 1];
-    result.lastSession = { date: last.date, words: last.words, characterCount: characterBook ? last.characters : null, since: length - inUnit(last) };
-    const recent = measured.slice(-PACE_SESSIONS);
-    const span = parseClockDate(recent[recent.length - 1].date).days - parseClockDate(recent[0].date).days;
-    if (recent.length > 1 && span > 0) {
-      result.pace = (inUnit(recent[recent.length - 1]) - inUnit(recent[0])) / span;
-      const daysNeeded = Math.ceil(result.remaining / result.pace);
-      if (result.remaining > 0 && Math.round(result.pace) > 0 && daysNeeded <= PROJECTION_HORIZON_DAYS) {
-        result.projected = formatDate2(todayDays + daysNeeded);
-      }
-    }
-  }
-  return result;
-}
-function computeDaily({ measured, length, todayDays, dailyTarget, scheduled, weeks: historyLength }) {
-  const byDay = new Map;
-  for (const session of measured) {
-    const days = parseClockDate(session.date).days;
-    if (days <= todayDays) {
-      byDay.set(days, session.count);
-    }
-  }
-  const logged = [...byDay.keys()].sort((left, right) => left - right);
-  const gains = new Map;
-  for (let index = 1;index < logged.length; index += 1) {
-    gains.set(logged[index], byDay.get(logged[index]) - byDay.get(logged[index - 1]));
-  }
-  const before = logged.filter((days) => days < todayDays);
-  if (before.length > 0) {
-    gains.set(todayDays, length - byDay.get(before[before.length - 1]));
-  }
-  const scheduledDays = scheduled === null ? null : new Set(scheduled);
-  const isScheduled = (days) => scheduledDays === null || scheduledDays.has(WEEKDAYS[weekdayIndex(days)]);
-  const counts = (days) => gains.has(days) && gains.get(days) > 0 && (dailyTarget === null || gains.get(days) >= dailyTarget);
-  const first = logged.length > 0 ? logged[0] : todayDays;
-  let current = 0;
-  for (let days = counts(todayDays) ? todayDays : todayDays - 1;days >= first; days -= 1) {
-    if (counts(days)) {
-      current += 1;
-    } else if (isScheduled(days)) {
-      break;
-    }
-  }
-  let longest = 0;
-  let run = 0;
-  for (let days = first;days <= todayDays; days += 1) {
-    if (counts(days)) {
-      run += 1;
-      longest = Math.max(longest, run);
-    } else if (isScheduled(days) && days !== todayDays) {
-      run = 0;
-    }
-  }
-  const written = gains.has(todayDays) ? gains.get(todayDays) : null;
-  const monday = todayDays - weekdayIndex(todayDays);
-  const weeks = [];
-  for (let back = historyLength - 1;back >= 0; back -= 1) {
-    const start = monday - back * 7;
-    let total = 0;
-    let days = 0;
-    let planned = 0;
-    for (let day = start;day < start + 7; day += 1) {
-      if (gains.has(day)) {
-        total += gains.get(day);
-        days += gains.get(day) > 0 ? 1 : 0;
-      }
-      planned += isScheduled(day) ? 1 : 0;
-    }
-    weeks.push({ start: formatDate2(start), end: formatDate2(start + 6), written: total, days, target: dailyTarget === null ? null : dailyTarget * planned });
-  }
-  return {
-    target: dailyTarget,
-    writingDays: scheduled,
-    today: {
-      date: formatDate2(todayDays),
-      scheduled: isScheduled(todayDays),
-      written,
-      remaining: dailyTarget === null || written === null ? null : Math.max(0, dailyTarget - written),
-      met: dailyTarget === null || written === null ? null : written >= dailyTarget
-    },
-    streak: { current, longest },
-    weeks
-  };
-}
-function formatProgress(progress) {
-  const characters = progress.unit === "characters";
-  const noun = characters ? "character" : "word";
-  const count = (entry) => characters ? entry.characterCount : entry.words;
-  const lines = [];
-  if (progress.target === null) {
-    lines.push(`Progress: ${formatNumber3(count(progress))} ${noun}s (no target-${noun}s in story.md)`);
-  } else {
-    lines.push(`Progress: ${formatNumber3(count(progress))} of ${formatNumber3(progress.target)} ${noun}s (${formatPercent(progress.percent, 1)}%)`);
-    lines.push(`Remaining: ${plural2(progress.remaining, noun, formatNumber3)}`);
-  }
-  if (progress.deadline) {
-    const { date, daysLeft, perDay } = progress.deadline;
-    if (daysLeft < 0) {
-      lines.push(`Deadline: ${date} passed ${plural2(-daysLeft, "day")} ago`);
-    } else if (perDay === null) {
-      lines.push(`Deadline: ${date} (${daysLeft === 0 ? "today" : `${plural2(daysLeft, "day")} left`})`);
-    } else if (daysLeft === 0) {
-      lines.push(`Deadline: ${date} (today): ${plural2(perDay, noun, formatNumber3)} needed`);
-    } else {
-      lines.push(`Deadline: ${date} (${plural2(daysLeft, "day")} left): ${formatNumber3(perDay)} ${noun}s a day needed`);
-    }
-  }
-  const release = formatNextRelease(progress.release);
-  if (release !== null) {
-    lines.push(release);
-  }
-  if (progress.lastSession) {
-    const { date, since } = progress.lastSession;
-    lines.push(`Sessions: ${progress.sessions} logged; last ${date} (${since >= 0 ? "+" : ""}${formatNumber3(since)} ${noun}s since)`);
-  } else {
-    lines.push("Sessions: none logged (run story progress --log after a writing session)");
-  }
-  if (progress.pace !== null) {
-    lines.push(`Pace: ${formatNumber3(Math.round(progress.pace))} ${noun}s a day over the last ${Math.min(progress.sessions, PACE_SESSIONS)} sessions`);
-  }
-  if (progress.projected) {
-    lines.push(`Projected finish at this pace: ${progress.projected}`);
-  }
-  lines.push(...formatDaily(progress.daily, progress.lastSession !== null, noun));
-  if (progress.chapters.length > 0) {
-    lines.push("", "Chapter targets:");
-    for (const chapter of progress.chapters) {
-      lines.push(`- ${chapter.id}: ${formatNumber3(count(chapter))} of ${formatNumber3(chapter.target)} ${noun}s (${formatPercent(chapter.percent, 0)}%)`);
-    }
-  }
-  return `${lines.join(`
-`)}
-`;
-}
-function formatDaily(daily, hasSessions, noun) {
-  if (!hasSessions && daily.target === null) {
-    return [];
-  }
-  const lines = [];
-  const { today, target } = daily;
-  const off = today.scheduled ? "" : " (not a writing day)";
-  if (today.written === null) {
-    if (target !== null) {
-      lines.push(`Today: ${formatNumber3(target)} ${noun}s a day target (no session logged before today to measure from)${off}`);
-    }
-  } else {
-    const gained = `${today.written >= 0 ? "+" : ""}${formatNumber3(today.written)}`;
-    if (target === null) {
-      lines.push(`Today: ${gained} ${noun}s${off}`);
-    } else {
-      lines.push(`Today: ${gained} of ${formatNumber3(target)} ${noun}s (${today.met ? "target met" : `${formatNumber3(today.remaining)} to go`})${off}`);
-    }
-  }
-  if (!hasSessions) {
-    return lines;
-  }
-  const days = daily.writingDays === null ? "" : `; writing days ${daily.writingDays.join(", ")}`;
-  lines.push(`Streak: ${plural2(daily.streak.current, "day")} (longest ${formatNumber3(daily.streak.longest)}${days})`);
-  lines.push("", daily.weeks.length === 1 ? "This week:" : `Last ${daily.weeks.length} weeks:`);
-  for (const week of daily.weeks) {
-    const amount = week.target === null ? formatNumber3(week.written) : `${formatNumber3(week.written)} of ${formatNumber3(week.target)}`;
-    lines.push(`- ${week.start}: ${amount} ${noun}s on ${plural2(week.days, "day")}`);
-  }
-  return lines;
-}
-function todayOption(date, command) {
-  const today = date === undefined ? localDate() : String(date).trim();
-  const dateError = storyDateError(today);
-  if (dateError !== "" || today === "") {
-    throw usageError(`${command} --date ${dateError || "must be a YYYY-MM-DD date"}`);
-  }
-  return today;
-}
-function localDate(now = new Date) {
-  const pad = (value) => String(value).padStart(2, "0");
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-}
-function formatDate2(days) {
-  return new Date(days * 86400000).toISOString().slice(0, 10);
-}
-function plural2(count, noun, format = String) {
-  return `${format(count)} ${noun}${count === 1 ? "" : "s"}`;
-}
-function formatPercent(percent, places) {
-  const scale = 10 ** places;
-  let value = Math.round(percent * scale) / scale;
-  if (value >= 100 && percent < 100) {
-    value = Math.floor(percent * scale) / scale;
-  }
-  return value.toFixed(places);
-}
-function formatNumber3(value) {
-  return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
 
 // src/languages/style.js
 var STYLE_LISTS = {
@@ -18480,7 +18098,7 @@ function buildList(project, kindName, whereValues = [], queryName = undefined) {
     id: entity.id,
     file: path6.relative(project.root, entity.file).split(path6.sep).join("/"),
     title: String(entity[entry.title]),
-    fields: Object.fromEntries(keys.map((key) => [key, entity.frontmatter?.[key] ?? null]))
+    fields: Object.fromEntries(keys.map((key) => [key, ownField(entity.frontmatter ?? {}, key) ?? null]))
   }));
   return { kind: entry.kind, query: queryField, where: filters, total: entities.length, items, warnings };
 }
@@ -18666,8 +18284,11 @@ function shownQuery({ item, index }) {
 function isMapping2(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
+function ownField(frontmatter, key) {
+  return Object.hasOwn(frontmatter, key) ? frontmatter[key] : undefined;
+}
 function matches(frontmatter, filter) {
-  const value = frontmatter[filter.key];
+  const value = ownField(frontmatter, filter.key);
   switch (filter.op) {
     case "present":
       return isSet(value);
@@ -19243,6 +18864,461 @@ function escapeHtml(value) {
 }
 function cssString(value) {
   return String(value).replace(/\\/g, "\\\\").replace(/"/g, "\\\"").replace(/</g, "\\3C ").replace(/>/g, "\\3E ").replace(/&/g, "\\26 ").replace(/[\r\n\f]+/g, " ").replace(/[\u0000-\u001f\u007f]/g, (char) => `\\${char.charCodeAt(0).toString(16).toUpperCase()} `);
+}
+
+// src/release-schedule.js
+var RELEASE_SOON_DAYS = 3;
+var MONTHS_PATTERN = /^(\d+)\s+months?$/i;
+var MAX_RELEASE_MONTHS = 999999;
+var LAST_DAY = parseClockDate("9999-12-31").days;
+function projectRelease(project, today) {
+  return releaseSchedule({
+    data: project.story.data,
+    today,
+    chapters: project.chapters.map((chapter) => ({
+      id: chapter.id,
+      file: projectPath(project.root, chapter.file),
+      releaseDate: chapter.releaseDate,
+      drafted: chapter.wordCount > 0 || chapter.count > 0
+    }))
+  });
+}
+function releaseData(release) {
+  if (release === null) {
+    return null;
+  }
+  const { warnings, ...rest } = release;
+  return rest;
+}
+function releaseEvery(value) {
+  if (Number.isInteger(value)) {
+    return value >= 1 ? { every: value, unit: "day" } : null;
+  }
+  const months = releaseMonths(value);
+  return months !== null && months >= 1 && months <= MAX_RELEASE_MONTHS ? { every: months, unit: "month" } : null;
+}
+function releaseMonths(value) {
+  const match = typeof value === "string" ? MONTHS_PATTERN.exec(value.trim()) : null;
+  return match ? Number(match[1]) : null;
+}
+function releaseWarnDays(data) {
+  const days = data["release-warn-days"];
+  return Number.isInteger(days) && days >= 0 ? days : RELEASE_SOON_DAYS;
+}
+function releaseCadence(data) {
+  const every = releaseEvery(data["release-every"]);
+  const start = typeof data["release-start"] === "string" ? parseClockDate(data["release-start"]) : undefined;
+  if (every === null || !start) {
+    return null;
+  }
+  const date = new Date(start.days * 86400000);
+  return { ...every, start: start.text, startDays: start.days, startMonth: date.getUTCFullYear() * 12 + date.getUTCMonth(), startDay: date.getUTCDate() };
+}
+function cadenceDays(cadence, index) {
+  if (cadence.unit === "day") {
+    return cadence.startDays + index * cadence.every;
+  }
+  const month = cadence.startMonth + index * cadence.every;
+  const year = Math.floor(month / 12);
+  if (year > 9999) {
+    return Infinity;
+  }
+  const lastDay = utcDate(year, month % 12 + 1, 0).getUTCDate();
+  return utcDate(year, month % 12, Math.min(cadence.startDay, lastDay)).getTime() / 86400000;
+}
+function dueBy(cadence, days) {
+  if (days < cadence.startDays) {
+    return 0;
+  }
+  if (cadence.unit === "day") {
+    return Math.floor((days - cadence.startDays) / cadence.every) + 1;
+  }
+  const date = new Date(days * 86400000);
+  const index = Math.floor((date.getUTCFullYear() * 12 + date.getUTCMonth() - cadence.startMonth) / cadence.every);
+  return cadenceDays(cadence, index) <= days ? index + 1 : index;
+}
+function utcDate(year, month, day) {
+  const date = new Date(0);
+  date.setUTCFullYear(year, month, day);
+  return date;
+}
+function releaseSchedule({ data, chapters, today }) {
+  const cadence = releaseCadence(data);
+  const warnDays = releaseWarnDays(data);
+  const complete = data.status === "complete";
+  const todayDays = parseClockDate(today).days;
+  const episodes = [];
+  chapters.forEach((chapter, index) => {
+    let days = cadence ? cadenceDays(cadence, index) : null;
+    if (chapter.releaseDate !== undefined && chapter.releaseDate !== null) {
+      days = typeof chapter.releaseDate === "string" ? parseClockDate(chapter.releaseDate)?.days ?? null : null;
+    }
+    if (days !== null && days <= LAST_DAY) {
+      episodes.push({ episode: index + 1, chapter: chapter.id, file: chapter.file, date: formatDate(days), days, drafted: chapter.drafted });
+    }
+  });
+  if (cadence === null && episodes.length === 0) {
+    return null;
+  }
+  const projected = (index) => {
+    const days = cadenceDays(cadence, index);
+    return days > LAST_DAY ? null : { episode: index + 1, chapter: null, file: null, date: formatDate(days), days, drafted: false };
+  };
+  const candidates = episodes.filter((episode) => episode.days >= todayDays);
+  let unwritten = 0;
+  let firstUnwritten = null;
+  if (cadence !== null && !complete) {
+    const upcoming = projected(Math.max(chapters.length, dueBy(cadence, todayDays - 1)));
+    if (upcoming !== null) {
+      candidates.push(upcoming);
+    }
+    unwritten = dueBy(cadence, Math.min(todayDays + warnDays, LAST_DAY)) - chapters.length;
+    firstUnwritten = unwritten > 0 ? projected(chapters.length) : null;
+  }
+  candidates.sort((left, right) => left.days - right.days || left.episode - right.episode);
+  const next = candidates.length === 0 ? null : withDaysUntil(candidates[0], todayDays);
+  const last = complete && episodes.length > 0 && episodes.length === chapters.length ? episodes.reduce((latest, episode) => episode.days >= latest.days ? episode : latest).episode : null;
+  const warnings = [];
+  for (const episode of episodes) {
+    if (!episode.drafted && episode.days <= todayDays + warnDays) {
+      warnings.push(warn("release-undrafted", `${episode.file} (episode ${episode.episode}) ${releaseWhen(episode.date, episode.days - todayDays)} and has no prose yet`, episode.file));
+    }
+  }
+  if (firstUnwritten !== null) {
+    const more = unwritten === 1 ? "" : ` (and ${plural(unwritten - 1, "more scheduled episode")} after it)`;
+    warnings.push(warn("release-undrafted", `episode ${firstUnwritten.episode} ${releaseWhen(firstUnwritten.date, firstUnwritten.days - todayDays)} and has no chapter yet${more}`, "story.md"));
+  }
+  return {
+    every: cadence?.every ?? null,
+    unit: cadence?.unit ?? null,
+    start: cadence?.start ?? null,
+    warnDays,
+    complete,
+    last,
+    next,
+    episodes: episodes.map(({ days, ...episode }) => episode),
+    warnings
+  };
+}
+function withDaysUntil({ days, ...episode }, todayDays) {
+  return { ...episode, daysUntil: days - todayDays };
+}
+function releaseWhen(date, daysUntil) {
+  if (daysUntil === 0) {
+    return `releases today (${date})`;
+  }
+  return daysUntil > 0 ? `releases ${date}, in ${plural(daysUntil, "day")},` : `was due ${date}, ${plural(-daysUntil, "day")} ago,`;
+}
+function formatNextRelease(release) {
+  if (!release) {
+    return null;
+  }
+  if (release.next === null) {
+    const last = release.episodes.find((entry) => entry.episode === release.last);
+    return last === undefined ? "Next release: none scheduled after today" : `Next release: none, the story is complete; episode ${last.episode} (${last.chapter}) on ${last.date} was the last`;
+  }
+  const { episode, chapter, date, daysUntil, drafted } = release.next;
+  const when = daysUntil === 0 ? "today" : `in ${plural(daysUntil, "day")}`;
+  const state = chapter === null ? "no chapter yet" : drafted ? "drafted" : "not drafted";
+  return `Next release: episode ${episode}${chapter === null ? "" : ` (${chapter})`} on ${date}, ${when} (${state}${episode === release.last ? ", the last episode" : ""})`;
+}
+function formatDate(days) {
+  return new Date(days * 86400000).toISOString().slice(0, 10);
+}
+
+// src/progress.js
+var PACE_SESSIONS = 7;
+var HISTORY_WEEKS = 4;
+var MAX_HISTORY_WEEKS = 52;
+function historyWeeks(options = {}) {
+  const raw = options.weeks;
+  if (raw === undefined) {
+    return HISTORY_WEEKS;
+  }
+  const text = String(raw).trim();
+  if (!/^\d+$/.test(text) || Number(text) < 1 || Number(text) > MAX_HISTORY_WEEKS) {
+    throw usageError(`--weeks must be a whole number 1 to ${MAX_HISTORY_WEEKS}, such as ${HISTORY_WEEKS}`, "weeks");
+  }
+  return Number(text);
+}
+var WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+var WEEKDAY_NAMES = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+function weekdayName(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const text = value.trim().toLowerCase();
+  const index = WEEKDAY_NAMES.findIndex((name, position) => text === name || text === WEEKDAYS[position]);
+  return index === -1 ? null : WEEKDAYS[index];
+}
+function writingDays(value) {
+  const days = new Set((Array.isArray(value) ? value : []).map(weekdayName).filter((day) => day !== null));
+  return days.size === 0 ? null : WEEKDAYS.filter((day) => days.has(day));
+}
+function weekdayIndex(days) {
+  return ((days + 3) % 7 + 7) % 7;
+}
+var PROJECTION_HORIZON_DAYS = 100 * 366;
+function withSession(sessions, date, counts) {
+  let found = false;
+  const kept = (Array.isArray(sessions) ? sessions : []).map((session) => {
+    if (!found && session && typeof session === "object" && sessionDate(session) === date) {
+      found = true;
+      return { ...session, ...counts };
+    }
+    return session;
+  });
+  if (!found) {
+    kept.push({ date, ...counts });
+  }
+  return kept.sort((left, right) => sessionDate(left).localeCompare(sessionDate(right), "en"));
+}
+function sessionDate(session) {
+  return typeof session?.date === "string" ? session.date.trim() : "";
+}
+function cleanSessions(value) {
+  const sessions = [];
+  const count = (number) => Number.isInteger(number) && number >= 0;
+  for (const entry of Array.isArray(value) ? value : []) {
+    if (entry && typeof entry === "object" && parseClockDate(sessionDate(entry)) && count(entry.words)) {
+      sessions.push({ date: sessionDate(entry), words: entry.words, characters: count(entry.characters) ? entry.characters : null });
+    }
+  }
+  return sessions.sort((left, right) => left.date.localeCompare(right.date, "en"));
+}
+function computeProgress({ unit = "words", words, characters = null, target, deadline, today, chapters, sessions, dailyTarget = null, writingDays: scheduled = null, weeks = HISTORY_WEEKS }) {
+  const characterBook = unit === "characters";
+  const inUnit = (entry) => characterBook ? entry.characters ?? null : entry.words;
+  const length = characterBook ? characters : words;
+  const measured = (Array.isArray(sessions) ? sessions : []).filter((session) => inUnit(session) !== null);
+  const todayDays = parseClockDate(today).days;
+  const result = {
+    unit,
+    words,
+    characterCount: characterBook ? characters : null,
+    target: target ?? null,
+    percent: target ? length * 100 / target : null,
+    remaining: target ? Math.max(0, target - length) : null,
+    deadline: null,
+    chapters: chapters.filter((chapter) => chapter.target > 0).map((chapter) => ({
+      id: chapter.id,
+      words: chapter.words,
+      characterCount: characterBook ? chapter.characters : null,
+      target: chapter.target,
+      percent: inUnit(chapter) * 100 / chapter.target
+    })),
+    sessions: measured.length,
+    lastSession: null,
+    pace: null,
+    projected: null,
+    daily: computeDaily({ measured: measured.map((session) => ({ date: session.date, count: inUnit(session) })), length, todayDays, dailyTarget, scheduled, weeks })
+  };
+  const deadlineDate = deadline ? parseClockDate(deadline) : undefined;
+  if (deadlineDate) {
+    const daysLeft = deadlineDate.days - todayDays;
+    result.deadline = {
+      date: deadlineDate.text,
+      daysLeft,
+      perDay: result.remaining !== null && daysLeft >= 0 ? Math.ceil(result.remaining / Math.max(daysLeft, 1)) : null
+    };
+  }
+  if (measured.length > 0) {
+    const last = measured[measured.length - 1];
+    result.lastSession = { date: last.date, words: last.words, characterCount: characterBook ? last.characters : null, since: length - inUnit(last) };
+    const recent = measured.slice(-PACE_SESSIONS);
+    const span = parseClockDate(recent[recent.length - 1].date).days - parseClockDate(recent[0].date).days;
+    if (recent.length > 1 && span > 0) {
+      result.pace = (inUnit(recent[recent.length - 1]) - inUnit(recent[0])) / span;
+      const daysNeeded = Math.ceil(result.remaining / result.pace);
+      if (result.remaining > 0 && Math.round(result.pace) > 0 && daysNeeded <= PROJECTION_HORIZON_DAYS) {
+        result.projected = formatDate2(todayDays + daysNeeded);
+      }
+    }
+  }
+  return result;
+}
+function computeDaily({ measured, length, todayDays, dailyTarget, scheduled, weeks: historyLength }) {
+  const byDay = new Map;
+  for (const session of measured) {
+    const days = parseClockDate(session.date).days;
+    if (days <= todayDays) {
+      byDay.set(days, session.count);
+    }
+  }
+  const logged = [...byDay.keys()].sort((left, right) => left - right);
+  const gains = new Map;
+  for (let index = 1;index < logged.length; index += 1) {
+    gains.set(logged[index], byDay.get(logged[index]) - byDay.get(logged[index - 1]));
+  }
+  const before = logged.filter((days) => days < todayDays);
+  if (before.length > 0) {
+    gains.set(todayDays, length - byDay.get(before[before.length - 1]));
+  }
+  const scheduledDays = scheduled === null ? null : new Set(scheduled);
+  const isScheduled = (days) => scheduledDays === null || scheduledDays.has(WEEKDAYS[weekdayIndex(days)]);
+  const counts = (days) => gains.has(days) && gains.get(days) > 0 && (dailyTarget === null || gains.get(days) >= dailyTarget);
+  const first = logged.length > 0 ? logged[0] : todayDays;
+  let current = 0;
+  for (let days = counts(todayDays) ? todayDays : todayDays - 1;days >= first; days -= 1) {
+    if (counts(days)) {
+      current += 1;
+    } else if (isScheduled(days)) {
+      break;
+    }
+  }
+  let longest = 0;
+  let run = 0;
+  for (let days = first;days <= todayDays; days += 1) {
+    if (counts(days)) {
+      run += 1;
+      longest = Math.max(longest, run);
+    } else if (isScheduled(days) && days !== todayDays) {
+      run = 0;
+    }
+  }
+  const written = gains.has(todayDays) ? gains.get(todayDays) : null;
+  const monday = todayDays - weekdayIndex(todayDays);
+  const weeks = [];
+  for (let back = historyLength - 1;back >= 0; back -= 1) {
+    const start = monday - back * 7;
+    let total = 0;
+    let days = 0;
+    let planned = 0;
+    for (let day = start;day < start + 7; day += 1) {
+      if (gains.has(day)) {
+        total += gains.get(day);
+        days += gains.get(day) > 0 ? 1 : 0;
+      }
+      planned += isScheduled(day) ? 1 : 0;
+    }
+    weeks.push({ start: formatDate2(start), end: formatDate2(start + 6), written: total, days, target: dailyTarget === null ? null : dailyTarget * planned });
+  }
+  return {
+    target: dailyTarget,
+    writingDays: scheduled,
+    today: {
+      date: formatDate2(todayDays),
+      scheduled: isScheduled(todayDays),
+      written,
+      remaining: dailyTarget === null || written === null ? null : Math.max(0, dailyTarget - written),
+      met: dailyTarget === null || written === null ? null : written >= dailyTarget
+    },
+    streak: { current, longest },
+    weeks
+  };
+}
+function formatProgress(progress) {
+  const characters = progress.unit === "characters";
+  const noun = characters ? "character" : "word";
+  const count = (entry) => characters ? entry.characterCount : entry.words;
+  const lines = [];
+  if (progress.target === null) {
+    lines.push(`Progress: ${formatNumber3(count(progress))} ${noun}s (no target-${noun}s in story.md)`);
+  } else {
+    lines.push(`Progress: ${formatNumber3(count(progress))} of ${formatNumber3(progress.target)} ${noun}s (${formatPercent(progress.percent, 1)}%)`);
+    lines.push(`Remaining: ${plural2(progress.remaining, noun, formatNumber3)}`);
+  }
+  if (progress.deadline) {
+    const { date, daysLeft, perDay } = progress.deadline;
+    if (daysLeft < 0) {
+      lines.push(`Deadline: ${date} passed ${plural2(-daysLeft, "day")} ago`);
+    } else if (perDay === null) {
+      lines.push(`Deadline: ${date} (${daysLeft === 0 ? "today" : `${plural2(daysLeft, "day")} left`})`);
+    } else if (daysLeft === 0) {
+      lines.push(`Deadline: ${date} (today): ${plural2(perDay, noun, formatNumber3)} needed`);
+    } else {
+      lines.push(`Deadline: ${date} (${plural2(daysLeft, "day")} left): ${formatNumber3(perDay)} ${noun}s a day needed`);
+    }
+  }
+  const release = formatNextRelease(progress.release);
+  if (release !== null) {
+    lines.push(release);
+  }
+  if (progress.lastSession) {
+    const { date, since } = progress.lastSession;
+    lines.push(`Sessions: ${progress.sessions} logged; last ${date} (${since >= 0 ? "+" : ""}${formatNumber3(since)} ${noun}s since)`);
+  } else {
+    lines.push("Sessions: none logged (run story progress --log after a writing session)");
+  }
+  if (progress.pace !== null) {
+    lines.push(`Pace: ${formatNumber3(Math.round(progress.pace))} ${noun}s a day over the last ${Math.min(progress.sessions, PACE_SESSIONS)} sessions`);
+  }
+  if (progress.projected) {
+    lines.push(`Projected finish at this pace: ${progress.projected}`);
+  }
+  lines.push(...formatDaily(progress.daily, progress.lastSession !== null, noun));
+  if (progress.chapters.length > 0) {
+    lines.push("", "Chapter targets:");
+    for (const chapter of progress.chapters) {
+      lines.push(`- ${chapter.id}: ${formatNumber3(count(chapter))} of ${formatNumber3(chapter.target)} ${noun}s (${formatPercent(chapter.percent, 0)}%)`);
+    }
+  }
+  return `${lines.join(`
+`)}
+`;
+}
+function formatDaily(daily, hasSessions, noun) {
+  if (!hasSessions && daily.target === null) {
+    return [];
+  }
+  const lines = [];
+  const { today, target } = daily;
+  const off = today.scheduled ? "" : " (not a writing day)";
+  if (today.written === null) {
+    if (target !== null) {
+      lines.push(`Today: ${formatNumber3(target)} ${noun}s a day target (no session logged before today to measure from)${off}`);
+    }
+  } else {
+    const gained = `${today.written >= 0 ? "+" : ""}${formatNumber3(today.written)}`;
+    if (target === null) {
+      lines.push(`Today: ${gained} ${noun}s${off}`);
+    } else {
+      lines.push(`Today: ${gained} of ${formatNumber3(target)} ${noun}s (${today.met ? "target met" : `${formatNumber3(today.remaining)} to go`})${off}`);
+    }
+  }
+  if (!hasSessions) {
+    return lines;
+  }
+  const days = daily.writingDays === null ? "" : `; writing days ${daily.writingDays.join(", ")}`;
+  lines.push(`Streak: ${plural2(daily.streak.current, "day")} (longest ${formatNumber3(daily.streak.longest)}${days})`);
+  lines.push("", daily.weeks.length === 1 ? "This week:" : `Last ${daily.weeks.length} weeks:`);
+  for (const week of daily.weeks) {
+    const amount = week.target === null ? formatNumber3(week.written) : `${formatNumber3(week.written)} of ${formatNumber3(week.target)}`;
+    lines.push(`- ${week.start}: ${amount} ${noun}s on ${plural2(week.days, "day")}`);
+  }
+  return lines;
+}
+function todayOption(date, command) {
+  const today = date === undefined ? localDate() : String(date).trim();
+  const dateError = storyDateError(today);
+  if (dateError !== "" || today === "") {
+    throw usageError(`${command} --date ${dateError || "must be a YYYY-MM-DD date"}`);
+  }
+  return today;
+}
+function localDate(now = new Date) {
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+function formatDate2(days) {
+  return new Date(days * 86400000).toISOString().slice(0, 10);
+}
+function plural2(count, noun, format = String) {
+  return `${format(count)} ${noun}${count === 1 ? "" : "s"}`;
+}
+function formatPercent(percent, places) {
+  const scale = 10 ** places;
+  let value = Math.round(percent * scale) / scale;
+  if (value >= 100 && percent < 100) {
+    value = Math.floor(percent * scale) / scale;
+  }
+  if (value <= 0 && percent > 0) {
+    value = 1 / scale;
+  }
+  return value.toFixed(places);
+}
+function formatNumber3(value) {
+  return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // src/compare.js
@@ -27686,6 +27762,7 @@ function buildTimeline(project) {
   markToldLate(dated);
   return {
     unit,
+    hasCalendar: project.calendar?.invalid === false,
     chronology: dated,
     undated: entries.filter((entry) => entry.days === undefined),
     pov: povBalance(chapters, unit),
@@ -27846,7 +27923,8 @@ function formatTimeline(timeline, totalChapters) {
   const lines = [`Timeline: ${timeline.chronology.length} dated, ${timeline.undated.length} undated`];
   lines.push("", "Chronology (story order):");
   if (timeline.chronology.length === 0) {
-    lines.push("- None: add date (YYYY-MM-DD) and time to scenes or chapters to order them");
+    const dates = timeline.hasCalendar ? "YYYY-MM-DD, or a story calendar date" : "YYYY-MM-DD";
+    lines.push(`- None: add date (${dates}) and time to scenes or chapters to order them`);
   }
   for (const entry of timeline.chronology) {
     const when = [entry.date, entry.time].filter(Boolean).join(" ");
@@ -28834,7 +28912,7 @@ ${body.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`
       }
       continue;
     }
-    const fenceOpen = /^\s*(`{3,}|~{3,})/.exec(line);
+    const fenceOpen = /^\s*(`{3,}(?=[^`]*$)|~{3,})/.exec(line);
     if (fenceOpen) {
       flush();
       fence = { marker: fenceOpen[1], lines: [] };
@@ -30063,7 +30141,8 @@ function compareProject(root, options = {}) {
   const project = scanProject(root);
   assertProjectParses(project, "compare");
   const snapshot = given(options.snapshot) ? withFlags("snapshot", () => existingSnapshot(project.root, options.snapshot)) : null;
-  const other = hasRef ? null : snapshot !== null ? { root: snapshot.directory, label: `snapshot ${snapshot.id}`, flag: "snapshot" } : { root: path17.resolve(options.cwd ?? process.cwd(), options.against), flag: "against" };
+  const againstBase = options.againstFromProject ? project.root : options.cwd ?? process.cwd();
+  const other = hasRef ? null : snapshot !== null ? { root: snapshot.directory, label: `snapshot ${snapshot.id}`, flag: "snapshot" } : { root: path17.resolve(againstBase, options.against), flag: "against" };
   const anchors = [].concat(options.anchors ?? []);
   if (anchors.length > 0) {
     return mapProjectLabels(project, anchors, { ...options, other });
@@ -32001,7 +32080,10 @@ var COMMANDS = [
       "Check deterministic continuity contracts: deaths,",
       "casts and cut characters, promises, questions,",
       "clues, prop custody, clock and travel time,",
-      "location routes, and durable state.",
+      "location routes, durable state, chapter numbering",
+      "(chapter-numbering-start, chapter-numbering-gap), and",
+      "open promises in a complete story",
+      "(complete-with-open-promise).",
       "Findings matching continuity/exemptions.md are",
       "reported as dismissed"
     ],
@@ -32106,13 +32188,14 @@ var COMMANDS = [
     ],
     project: "positional",
     options: ["ref", "against", "snapshot", "anchor", "json"],
-    run({ parsed, io, cwd, root, overrides }) {
+    run({ parsed, io, cwd, root, overrides, defaulted }) {
       const comparison = applySeverity(compareProject(root(), {
         ref: parsed.options.ref,
         against: parsed.options.against,
         snapshot: parsed.options.snapshot,
         anchors: parsed.options.anchor,
-        cwd
+        cwd,
+        againstFromProject: defaulted.has("against")
       }), overrides);
       if (wantsJson(parsed)) {
         return reportJson(io, "compare", compareData(comparison));

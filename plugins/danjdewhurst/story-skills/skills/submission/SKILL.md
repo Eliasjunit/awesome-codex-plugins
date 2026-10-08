@@ -85,16 +85,41 @@ story prose .
 story report .
 ```
 
-Then check what the CLI cannot:
+Review the output of the commands above:
 
 1. `story check .` (validate, links, and continuity) has no errors. List
    warnings for the user to accept or fix.
 2. `story prose .` shows no avoided spellings, and the user has reviewed
    the other findings. If `style-sheet.md` is missing or still the
    scaffold, suggest the `voice-style` skill first.
-3. Every chapter has `status: revised`, `final`, or `complete`. List any
+3. No `[TODO` markers remain in chapter prose. `story validate` warns about
+   each chapter that still has one.
+4. Open questions and planted promises are resolved, or deliberately left
+   for a sequel (check `story.md` `precedes`). Once `story.md` is
+   `status: complete`, every open question and planned or planted promise
+   or clue is a `story continuity` error, which fails the story-checks CI.
+   An undecided thread stays open: a promise or clue at `planned` or
+   `planted`, or a question at `open`. Once the user confirms that a thread
+   pays off in the next book, record that decision in
+   `continuity/exemptions.md` rather than changing the thread's status:
+
+   ```yaml
+   ---
+   type: exemption-log
+   exemptions:
+     - code: complete-with-open-promise
+       pattern: "continuity/promises/the-sealed-letter.md is still planted"
+       reason: "Pays off in book two."
+   ---
+   ```
+
+   Rerun `story continuity .` and confirm the finding shows as `dismissed`.
+
+Then check what the CLI does not report:
+
+5. Every chapter has `status: revised`, `final`, or `complete`. List any
    still at `outline` or `draft`.
-4. The total word count sits inside the range for the category in
+6. The total word count sits inside the range for the category in
    `references/word-count-norms.md`. Those ranges are rough conventions
    for the English-language market only: state the number and the range,
    and ask the user to confirm current norms for their market. For a book
@@ -108,27 +133,6 @@ Then check what the CLI cannot:
    ([`../revision-continuity/references/pass-checklists.md#length-pass`](../revision-continuity/references/pass-checklists.md#length-pass)),
    which budgets the cut or expansion by chapter and arc instead of
    trimming every chapter evenly.
-5. No `[TODO` markers remain in chapter prose. `story validate` warns about
-   each chapter that still has one.
-6. Open questions and planted promises are resolved, or deliberately left
-   for a sequel (check `story.md` `precedes`). Once `story.md` is
-   `status: complete`, every open question and planned or planted promise
-   or clue is a `story continuity` error, which fails the story-checks CI.
-   No status means "pays off in the next book", so for each thread the
-   user confirms is left for a sequel, add an entry to
-   `continuity/exemptions.md` rather than changing its status:
-
-   ```yaml
-   ---
-   type: exemption-log
-   exemptions:
-     - code: complete-with-open-promise
-       pattern: "continuity/promises/the-sealed-letter.md is still planted"
-       reason: "Pays off in book two."
-   ---
-   ```
-
-   Rerun `story continuity .` and confirm the finding shows as `dismissed`.
 
 Give a verdict: `ready`, `ready-with-caveats` (list them), or `not-ready`
 (list the blockers and hand them to `revision-continuity`).
@@ -272,9 +276,12 @@ the acknowledgements from the publication history.
 
 - Package files: `submission/query.md`, `submission/comps.md`,
   `submission/synopsis-1-page.md`, `submission/synopsis-3-page.md`,
-  `submission/blurb.md`, `submission/tracker.md`.
+  `submission/blurb.md`, `submission/tracker.md`. The `series-continuity`
+  skill owns `submission/series-pitch.md`, the series overview saved in
+  book one; this skill does not draft it.
 - Each file has YAML frontmatter with a `type` (`query`, `comps`,
-  `synopsis`, `blurb`, `submission-tracker`) and `updated: YYYY-MM-DD`.
+  `synopsis`, `blurb`, `submission-tracker`, and `series-pitch` for the
+  file `series-continuity` writes) and `updated: YYYY-MM-DD`.
 - `submission/` is outside the story model: the CLI does not validate it
   and builds never include it.
 - Word counts in submission copy come from `story wordcount .`, rounded to

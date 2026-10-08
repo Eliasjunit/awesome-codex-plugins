@@ -1,6 +1,6 @@
 ---
 name: amq-remote
-version: 0.89.2 # x-release-please-version
+version: 0.92.0 # x-release-please-version
 description: Let the owner reach this running agent from Buzz, on the phone or in Buzz Desktop. Use when the user types /amq-remote (Claude Code) or $amq-remote (Codex), /amq-remote --native, /amq-remote off, or /amq-remote status, or asks to control this session from Buzz. Not for AMQ messaging between agents (use amq-cli).
 metadata:
   short-description: Reach this agent from Buzz
@@ -52,11 +52,17 @@ command's own message. Do not work around a refusal.
    `amq-remote claude install-stop-hook`. The default mailbox path never
    needs this.
    If a `native_capability` entry says the PermissionRequest hook is not
-   installed (a Claude target with `approve`, shared through a relay share),
-   tell the user: "This adds one PermissionRequest hook. It exits at once in
+   installed and there is no relay share (the usual `--native` case), tell
+   the user: "This adds one PermissionRequest hook. It exits at once in
+   sessions that are not connected. It lets Buzz deny a tool call only: ❌
+   in the DM denies, and allow stays in Claude's terminal.
+   `amq-remote claude uninstall-approval-hook` removes it." Ask once, then
+   run `amq-remote claude install-approval-hook`.
+   If the entry is for a Claude target shared through a relay share, tell
+   the user: "This adds one PermissionRequest hook. It exits at once in
    sessions that are not shared. It pins your Buzz public key and this
-   share's relay, body, DM channel and target, so only your signed ✅ in
-   this DM can allow a tool call. Do not allow Claude to edit .claude for a
+   share's relay, body, DM channel and target, so only your signed ✅, or
+   your yes in the approval's thread, in this DM can allow a tool call. Do not allow Claude to edit .claude for a
    session, use bypassPermissions mode, or allow every Bash command: each
    lets the pin be changed. The relay is trusted to return the message's
    full edit and deletion history; replacing the amq-remote binary, or a
@@ -79,14 +85,19 @@ command's own message. Do not work around a refusal.
    - `--native`: "A DM sent while this session is busy waits. Buzz Stop cannot
      interrupt a Claude turn."
    - When the approval hook was installed in step 3: "When a Buzz request
-     needs a tool approval, the DM shows it. ❌ blocks that call. ✅ allows
-     it when the DM offers ✅: a Bash command shown whole. Otherwise allow it
-     in the terminal. The first answer wins."
+     needs a tool approval, the DM shows it. ❌ blocks that call. ✅, or yes
+     replied in the approval's thread, allows it when the DM offers ✅: a
+     Bash command shown whole. Otherwise allow it in the terminal. The first answer wins." Without a relay share, say
+     instead: "When a Buzz request needs a tool approval, the DM shows it.
+     ❌ denies that call; allow it in Claude's terminal. The first answer
+     wins."
 
 Codex with `--native`: attach needs `CODEX_THREAD_ID` and a thread loaded in
 the Codex app-server daemon. A session started with plain `codex` is not in
 the daemon; start it with `codex app-server daemon start`, then
-`codex --remote unix://`.
+`codex --remote unix://`. Run `amq-remote` and `amq-acp` outside Codex's
+sandbox (request escalation): the sandbox blocks the daemon socket, and
+`amq-acp setup` writes files outside the workspace.
 
 ## Answering a Buzz DM (default mailbox)
 

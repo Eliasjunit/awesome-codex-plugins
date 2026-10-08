@@ -125,6 +125,8 @@ See the `genre-craft` skill.
 
 Run it when the user plants a new clue. `story add clue 'Name' --planted chapter-02 --payoff chapter-05` creates the clue ledger entity in `continuity/clues/` with `status: planted` (`planned` when `--planted` is omitted or names a chapter with no file yet; pass `--status planned` if the chapter has a file but the clue is not on the page yet). Omit `--payoff` when the payoff is not yet known, and pass `--red-herring` for a clue meant to mislead.
 
+After you add a clue, run `story reindex .`, `story wordcount . --write`, and `story check .`.
+
 ## pacing
 
 Run `story pacing .` when the user asks about pacing, sagging middles, or chapter endings, and after drafting or restructuring chapters. Per chapter it shows words, scene and sequel counts, scene `outcome`s (`yes`, `no`, `yes-but`, `no-and`), and the chapter `hook` (`cliffhanger`, `question`, `revelation`, `reversal`, `decision`, `emotional`, `resolution`). It warns about:
@@ -156,7 +158,7 @@ Run `story prose .` when the user asks for a prose check or before sharing a dra
 
 - Per chapter it counts sentence length and spread, filter words and -ly adverbs per 1,000 narration words, plain and said-bookism dialogue tags, echoed words, watch words, and avoided spellings from `style-sheet.md` (`dialect`, `preferred`, `watch-words`, `allow-words`).
 - Across the manuscript it lists repeated 4-word phrases and similar character first names.
-- Findings are advisory warnings. The command exits 0 unless `story.md` `severity` promotes one, or the command line is wrong, such as `--baseline` with no `samples` (exit 2).
+- Findings are advisory warnings. The command exits 0 unless a file it reads fails to read or parse, or `story.md` `severity` promotes one of its warnings to an error, or the command line is wrong, such as `--baseline` with no `samples` (exit 2). A `samples` entry that cannot be read only warns.
 - `--max-filter-words <n>` (default 10), `--max-adverbs <n>` (default 12), and `--max-bookisms <n>` (default 2) change the warning thresholds.
 
 See the `voice-style` skill for acting on them.
