@@ -311,30 +311,44 @@ function assertWriteAllowed(target) {
 var journals = [];
 function record(target, existed, action) {
   const key = path.resolve(target);
+  const planned = planning > 0;
   for (const journal of journals) {
-    const entry = journal.get(key);
+    if (journal.planned !== planned) {
+      continue;
+    }
+    const entry = journal.entries.get(key);
     if (entry) {
       entry.action = action;
     } else {
-      journal.set(key, { existed, action });
+      journal.entries.set(key, { existed, action });
+    }
+  }
+}
+function forgetChanges(target) {
+  const key = path.resolve(target);
+  for (const journal of journals) {
+    for (const file of [...journal.entries.keys()]) {
+      if (isPathInside(key, file)) {
+        journal.entries.delete(file);
+      }
     }
   }
 }
 function recordChanges(root, run) {
-  const journal = new Map;
+  const journal = { entries: new Map, planned: planning > 0 };
   journals.push(journal);
   let result;
   try {
     result = run();
   } catch (error) {
     if (error !== null && typeof error === "object") {
-      error.changes = summarizeJournal(root, journal);
+      error.changes = summarizeJournal(root, journal.entries);
     }
     throw error;
   } finally {
     journals.splice(journals.indexOf(journal), 1);
   }
-  return { result, changes: summarizeJournal(root, journal) };
+  return { result, changes: summarizeJournal(root, journal.entries) };
 }
 function planChanges(root, run) {
   planning += 1;
@@ -731,6 +745,7 @@ var FINDING_CODES = {
   "id-not-kebab": "error",
   "shared-id": "warning",
   "near-miss-key": "warning",
+  "frontmatter-id": "warning",
   "wrong-type": "error",
   "story-id-mismatch": "error",
   "substitute-story-id": "warning",
@@ -1675,6 +1690,10 @@ function parseYamlBlocks(source, firstLine = 2) {
     if (first === "&" || first === "*" || first === "!") {
       fail(index, `Anchors, aliases, and tags are not supported. Quote the value, such as note: ${JSON.stringify(value)}`);
     }
+    const unsplit = trimSpaces(text);
+    if (unsplit[0] === '"' && quoteEnd(unsplit, 0) < 0) {
+      fail(index, 'Add a closing " at the end of the value, such as title: "The Last Ember", or write a value over several lines as a block scalar, such as summary: | then the text on indented lines', "Unclosed quoted value");
+    }
     return { value: parseScalar(value), text: value, comment };
   };
   const parseFlowList = (value, index) => {
@@ -1819,7 +1838,7 @@ function parseYamlBlocks(source, firstLine = 2) {
       const before = rawLines.slice(gap, itemStart);
       const rest = match[2] ?? "";
       const itemText = trimSpaces(rest);
-      const childIndent = indent + 1 + rest.length - itemText.length;
+      const childIndent = indent + 1 + /^[ \t]*/.exec(rest)[0].length;
       const objectMatch = ITEM_KEY_PATTERN.exec(itemText);
       if (!objectMatch) {
         if (/^-([ \t]|$)/.test(itemText)) {
@@ -2138,7 +2157,7 @@ function needsQuotes(text) {
 function isPlainObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
-var FRONTMATTER_BLOCK_PATTERN = /^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
+var FRONTMATTER_BLOCK_PATTERN = /^(?:\uFEFF)?---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
 var YAML_LINE_PATTERN = /^(?:\s*$|\s*#|\s*-\s|\s*-$|\s+\S|(?:[A-Za-z0-9_][A-Za-z0-9_.-]*|"[^"\n]*"|'[^'\n]*')[ \t]*:(?:\s|$))/;
 function withoutLeadingFrontmatter(text) {
   const match = FRONTMATTER_BLOCK_PATTERN.exec(text);
@@ -2514,7 +2533,6 @@ var ar_default = {
   name: "Arabic",
   cased: false,
   script: "Arab",
-  segmentation: "space",
   narrationRate: 95,
   labels: {
     chapter: "الفصل {n}",
@@ -2663,7 +2681,6 @@ var base_default = {
   name: "Generic",
   cased: true,
   script: null,
-  segmentation: "space",
   countUnit: "words",
   sentenceEnd: [".", "!", "?", "…", "。", "！", "？", "؟", "۔", "।", "॥", "።"],
   quotes: [
@@ -5037,7 +5054,6 @@ var fa_default = {
   code: "fa",
   name: "Persian",
   cased: false,
-  segmentation: "space",
   labels: {
     chapter: "فصل {n}",
     "chapter-heading": "{chapter}: {title}",
@@ -6390,7 +6406,6 @@ var he_default = {
   name: "Hebrew",
   cased: false,
   script: "Hebr",
-  segmentation: "space",
   narrationRate: 125,
   labels: {
     chapter: "פרק {n}",
@@ -6539,7 +6554,6 @@ var hi_default = {
   name: "Hindi",
   cased: false,
   script: "Deva",
-  segmentation: "space",
   labels: {
     chapter: "अध्याय {n}",
     "chapter-heading": "{chapter}: {title}",
@@ -6833,7 +6847,6 @@ var ja_default = {
   name: "Japanese",
   cased: false,
   script: "Jpan",
-  segmentation: "character",
   quotes: [["「", "」"], ["『", "』"], ["“", "”"], ["〝", "〟"], ['"', '"']],
   dialogueDash: null,
   countUnit: "characters",
@@ -6991,7 +7004,6 @@ var ko_default = {
   name: "Korean",
   cased: false,
   script: "Kore",
-  segmentation: "space",
   narrationRate: 100,
   labels: {
     chapter: "제{n}장",
@@ -7311,7 +7323,9 @@ var pl_default = {
     by: "",
     byline: "{names}",
     "edited-by": "Redakcja: {names}",
+    "approximate-words-one": "Około {words} słowa",
     "approximate-words": "Około {words} słów",
+    "approximate-characters-one": "Około {characters} znaku",
     "approximate-characters": "Około {characters} znaków",
     "narration-opening": "{title}. Autor: {authors}. Czyta: {narrator}.",
     "narration-opening-anonymous": "{title}. Czyta: {narrator}.",
@@ -7637,7 +7651,9 @@ var ru_default = {
     by: "",
     byline: "{names}",
     "edited-by": "Составление: {names}",
+    "approximate-words-one": "Около {words} слова",
     "approximate-words": "Около {words} слов",
+    "approximate-characters-one": "Около {characters} знака",
     "approximate-characters": "Около {characters} знаков",
     "narration-opening": "{title}. Автор: {authors}. Читает {narrator}.",
     "narration-opening-anonymous": "{title}. Читает {narrator}.",
@@ -7906,8 +7922,7 @@ var th_default = {
   code: "th",
   name: "Thai",
   cased: false,
-  script: "Thai",
-  segmentation: "dictionary"
+  script: "Thai"
 };
 
 // src/languages/tr.js
@@ -8087,7 +8102,9 @@ var uk_default = {
     by: "",
     byline: "{names}",
     "edited-by": "Упорядкування: {names}",
+    "approximate-words-one": "Близько {words} слова",
     "approximate-words": "Близько {words} слів",
+    "approximate-characters-one": "Близько {characters} знака",
     "approximate-characters": "Близько {characters} знаків",
     "narration-opening": "{title}. Автор: {authors}. Читає {narrator}.",
     "narration-opening-anonymous": "{title}. Читає {narrator}.",
@@ -8208,7 +8225,6 @@ var zh_default = {
   name: "Chinese",
   cased: false,
   script: "Hans",
-  segmentation: "character",
   dialogueDash: null,
   countUnit: "characters",
   characterForms: {
@@ -8542,7 +8558,16 @@ var LANGUAGE_ALIASES = {
   swe: "sv",
   tha: "th",
   tur: "tr",
-  ukr: "uk"
+  ukr: "uk",
+  dan: "da",
+  fin: "fi",
+  div: "dv",
+  kur: "ku",
+  pus: "ps",
+  snd: "sd",
+  uig: "ug",
+  urd: "ur",
+  yid: "yi"
 };
 var GRANDFATHERED = {
   "en-gb-oed": ["en-gb-oxendict", null],
@@ -8559,7 +8584,7 @@ var GRANDFATHERED = {
 };
 function lookupTag(language) {
   const lower = language.toLowerCase();
-  if (GRANDFATHERED[lower] !== undefined) {
+  if (Object.hasOwn(GRANDFATHERED, lower)) {
     return GRANDFATHERED[lower];
   }
   const subtags = TAG_PATTERN.test(language) ? lower.split("-") : [lower.split(/[-_]/)[0]].filter((subtag) => /^[a-z]{2,3}$/.test(subtag));
@@ -8716,6 +8741,150 @@ function joinNames(names, labels) {
   const template = String(labels?.and ?? en_default.labels.and).replace(/\{([ab])\}/g, (placeholder, key) => filled.has(key) ? "" : (filled.add(key), placeholder));
   const joiner = { and: filled.size === 2 ? template : "{a}, {b}" };
   return names.length === 0 ? "" : names.reduce((joined, name) => fillLabel(joiner, "and", { a: joined, b: name }));
+}
+
+// src/unicode.js
+function nfc(value) {
+  return String(value).normalize("NFC");
+}
+var SAME = (start, end) => [start, end];
+var CLUSTER = /\P{M}?[\p{M}\u1160-\u11FF\uD7B0-\uD7FF]+/gu;
+function composedText(text) {
+  const source = String(text);
+  if (nfc(source) === source) {
+    return { text: source, original: SAME };
+  }
+  let composed = "";
+  const starts = [];
+  const sources = [];
+  const add = (from, value) => {
+    starts.push(composed.length);
+    sources.push(from);
+    composed += value;
+  };
+  const addRun = (from, run) => {
+    const value = nfc(run);
+    if (value === run || value.length === run.length && Array.from(run).every((character) => nfc(character).length === character.length)) {
+      add(from, value);
+      return;
+    }
+    let offset = from;
+    for (const character of run) {
+      add(offset, nfc(character));
+      offset += character.length;
+    }
+  };
+  let last = 0;
+  for (const match of source.matchAll(CLUSTER)) {
+    if (match.index > last) {
+      addRun(last, source.slice(last, match.index));
+    }
+    add(match.index, nfc(match[0]));
+    last = match.index + match[0].length;
+  }
+  if (last < source.length) {
+    addRun(last, source.slice(last));
+  }
+  starts.push(composed.length);
+  sources.push(source.length);
+  const piece = (offset) => {
+    let low = 0;
+    let high = starts.length - 1;
+    while (low < high) {
+      const middle = low + high + 1 >> 1;
+      if (starts[middle] <= offset) {
+        low = middle;
+      } else {
+        high = middle - 1;
+      }
+    }
+    return low;
+  };
+  const at = (offset, end) => {
+    const index = piece(offset);
+    const inside = offset - starts[index];
+    if (inside === 0) {
+      return sources[index];
+    }
+    if (starts[index + 1] - starts[index] === sources[index + 1] - sources[index]) {
+      return sources[index] + inside;
+    }
+    return sources[end ? index + 1 : index];
+  };
+  return { text: composed, original: (start, end) => [at(start, false), at(end, true)] };
+}
+var LINE_BREAK = /[\n\v\f\r\u0085\u2028\u2029]/;
+function oneLine(text) {
+  return String(text).replace(/[\s\u0085]+/g, (space) => LINE_BREAK.test(space) ? " " : space).trim();
+}
+var graphemes;
+function graphemeSegments(text) {
+  graphemes ??= new Intl.Segmenter("en", { granularity: "grapheme" });
+  return graphemes.segment(text);
+}
+function graphemeCount(text) {
+  let count = 0;
+  for (const _ of graphemeSegments(nfc(text))) {
+    count += 1;
+  }
+  return count;
+}
+var WIDE = /^(?:[\u1100-\u115f\u2e80-\u303e\u3041-\u33ff\u3400-\u4dbf\u4e00-\u9fff\ua000-\ua4cf\ua960-\ua97f\uac00-\ud7a3\uf900-\ufaff\ufe10-\ufe19\ufe30-\ufe6f\uff00-\uff60\uffe0-\uffe6\u{16fe0}-\u{16fe4}\u{17000}-\u{18cff}\u{1b000}-\u{1b2ff}\u{20000}-\u{2fffd}\u{30000}-\u{3fffd}]|\p{Emoji_Presentation})|\ufe0f/u;
+var ZERO_WIDTH = /^[\p{M}\p{Cc}\p{Cf}\u1160-\u11ff\ud7b0-\ud7ff]/u;
+function displayWidth(text) {
+  let width = 0;
+  for (const { segment } of graphemeSegments(String(text))) {
+    width += WIDE.test(segment) ? 2 : ZERO_WIDTH.test(segment) ? 0 : 1;
+  }
+  return width;
+}
+
+// src/languages/locale.js
+var COMPARERS = new Map;
+function compareText(pack = languagePack()) {
+  if (!COMPARERS.has(pack.locale)) {
+    const collator = new Intl.Collator(pack.locale);
+    COMPARERS.set(pack.locale, (left, right) => collator.compare(left, right) || (left < right ? -1 : left > right ? 1 : 0));
+  }
+  return COMPARERS.get(pack.locale);
+}
+function lowerCase(text, pack = languagePack()) {
+  return String(text).toLocaleLowerCase(pack.locale);
+}
+function upperCase(text, pack = languagePack()) {
+  return String(text).toLocaleUpperCase(pack.locale);
+}
+var DOTLESS_I = new Set(["tr", "az"]);
+function casesDotlessI(pack) {
+  return DOTLESS_I.has(pack.locale.split("-")[0].toLowerCase());
+}
+function matchingCase(phrase, pack = languagePack()) {
+  const composed = nfc(phrase);
+  return casesDotlessI(pack) ? lowerCase(composed, pack) : composed;
+}
+function matchingText(text, pack = languagePack()) {
+  const composed = composedText(text);
+  return casesDotlessI(pack) ? { ...composed, text: lowerCase(composed.text, pack) } : composed;
+}
+var NUMBER_FORMATS = new Map;
+function formatNumber2(value, pack = languagePack()) {
+  if (!NUMBER_FORMATS.has(pack.locale)) {
+    NUMBER_FORMATS.set(pack.locale, new Intl.NumberFormat(pack.locale, { numberingSystem: "latn", maximumFractionDigits: 0 }));
+  }
+  return NUMBER_FORMATS.get(pack.locale).format(value);
+}
+function pluralLabelKey(labels, key, count, pack = languagePack()) {
+  const form = `${key}-${new Intl.PluralRules(pack.locale).select(count)}`;
+  return labels?.[form] !== undefined ? form : key;
+}
+var COUNT_LABELS = Object.freeze(["approximate-words", "approximate-characters"]);
+var PLURAL_CATEGORIES = new Set(["zero", "one", "two", "few", "many", "other"]);
+function dropCountForms(labels, key) {
+  for (const name of Object.keys(labels)) {
+    if (name.startsWith(`${key}-`) && PLURAL_CATEGORIES.has(name.slice(key.length + 1))) {
+      delete labels[name];
+    }
+  }
 }
 
 // src/series.js
@@ -8960,137 +9129,6 @@ function diesAgainIn(lifeline, chapterId, bookChronology) {
 function revivedBy(lifeline, chapterId, bookChronology) {
   const chronology = orderedChronology(bookChronology);
   return chronology.numbers.has(chapterId) && lifeline.events.some((event) => event.type === "revival" && !happensAfter(chronology, event.chapter, chapterId));
-}
-
-// src/unicode.js
-function nfc(value) {
-  return String(value).normalize("NFC");
-}
-var SAME = (start, end) => [start, end];
-var CLUSTER = /\P{M}?[\p{M}\u1160-\u11FF\uD7B0-\uD7FF]+/gu;
-function composedText(text) {
-  const source = String(text);
-  if (nfc(source) === source) {
-    return { text: source, original: SAME };
-  }
-  let composed = "";
-  const starts = [];
-  const sources = [];
-  const add = (from, value) => {
-    starts.push(composed.length);
-    sources.push(from);
-    composed += value;
-  };
-  const addRun = (from, run) => {
-    const value = nfc(run);
-    if (value === run || value.length === run.length && Array.from(run).every((character) => nfc(character).length === character.length)) {
-      add(from, value);
-      return;
-    }
-    let offset = from;
-    for (const character of run) {
-      add(offset, nfc(character));
-      offset += character.length;
-    }
-  };
-  let last = 0;
-  for (const match of source.matchAll(CLUSTER)) {
-    if (match.index > last) {
-      addRun(last, source.slice(last, match.index));
-    }
-    add(match.index, nfc(match[0]));
-    last = match.index + match[0].length;
-  }
-  if (last < source.length) {
-    addRun(last, source.slice(last));
-  }
-  starts.push(composed.length);
-  sources.push(source.length);
-  const piece = (offset) => {
-    let low = 0;
-    let high = starts.length - 1;
-    while (low < high) {
-      const middle = low + high + 1 >> 1;
-      if (starts[middle] <= offset) {
-        low = middle;
-      } else {
-        high = middle - 1;
-      }
-    }
-    return low;
-  };
-  const at = (offset, end) => {
-    const index = piece(offset);
-    const inside = offset - starts[index];
-    if (inside === 0) {
-      return sources[index];
-    }
-    if (starts[index + 1] - starts[index] === sources[index + 1] - sources[index]) {
-      return sources[index] + inside;
-    }
-    return sources[end ? index + 1 : index];
-  };
-  return { text: composed, original: (start, end) => [at(start, false), at(end, true)] };
-}
-var LINE_BREAK = /[\n\v\f\r\u0085\u2028\u2029]/;
-function oneLine(text) {
-  return String(text).replace(/[\s\u0085]+/g, (space) => LINE_BREAK.test(space) ? " " : space).trim();
-}
-var graphemes;
-function graphemeSegments(text) {
-  graphemes ??= new Intl.Segmenter("en", { granularity: "grapheme" });
-  return graphemes.segment(text);
-}
-function graphemeCount(text) {
-  let count = 0;
-  for (const _ of graphemeSegments(nfc(text))) {
-    count += 1;
-  }
-  return count;
-}
-var WIDE = /^(?:[\u1100-\u115f\u2e80-\u303e\u3041-\u33ff\u3400-\u4dbf\u4e00-\u9fff\ua000-\ua4cf\ua960-\ua97f\uac00-\ud7a3\uf900-\ufaff\ufe10-\ufe19\ufe30-\ufe6f\uff00-\uff60\uffe0-\uffe6\u{16fe0}-\u{16fe4}\u{17000}-\u{18cff}\u{1b000}-\u{1b2ff}\u{20000}-\u{2fffd}\u{30000}-\u{3fffd}]|\p{Emoji_Presentation})|\ufe0f/u;
-var ZERO_WIDTH = /^[\p{M}\p{Cc}\p{Cf}\u1160-\u11ff\ud7b0-\ud7ff]/u;
-function displayWidth(text) {
-  let width = 0;
-  for (const { segment } of graphemeSegments(String(text))) {
-    width += WIDE.test(segment) ? 2 : ZERO_WIDTH.test(segment) ? 0 : 1;
-  }
-  return width;
-}
-
-// src/languages/locale.js
-var COMPARERS = new Map;
-function compareText(pack = languagePack()) {
-  if (!COMPARERS.has(pack.locale)) {
-    const collator = new Intl.Collator(pack.locale);
-    COMPARERS.set(pack.locale, (left, right) => collator.compare(left, right) || (left < right ? -1 : left > right ? 1 : 0));
-  }
-  return COMPARERS.get(pack.locale);
-}
-function lowerCase(text, pack = languagePack()) {
-  return String(text).toLocaleLowerCase(pack.locale);
-}
-function upperCase(text, pack = languagePack()) {
-  return String(text).toLocaleUpperCase(pack.locale);
-}
-var DOTLESS_I = new Set(["tr", "az"]);
-function casesDotlessI(pack) {
-  return DOTLESS_I.has(pack.locale.split("-")[0].toLowerCase());
-}
-function matchingCase(phrase, pack = languagePack()) {
-  const composed = nfc(phrase);
-  return casesDotlessI(pack) ? lowerCase(composed, pack) : composed;
-}
-function matchingText(text, pack = languagePack()) {
-  const composed = composedText(text);
-  return casesDotlessI(pack) ? { ...composed, text: lowerCase(composed.text, pack) } : composed;
-}
-var NUMBER_FORMATS = new Map;
-function formatNumber2(value, pack = languagePack()) {
-  if (!NUMBER_FORMATS.has(pack.locale)) {
-    NUMBER_FORMATS.set(pack.locale, new Intl.NumberFormat(pack.locale, { numberingSystem: "latn", maximumFractionDigits: 0 }));
-  }
-  return NUMBER_FORMATS.get(pack.locale).format(value);
 }
 
 // src/series.js
@@ -9635,7 +9673,7 @@ var RTL_SCRIPTS = new Set(["adlm", "arab", "hebr", "mand", "nkoo", "rohg", "samr
 function textDirection(language) {
   const [lookup, macrolanguage] = lookupTag(String(language ?? "").trim() || DEFAULT_LANGUAGE);
   const [primary, ...subtags] = lookup.split("-");
-  const script = subtags.find((subtag) => /^[a-z]{4}$/.test(subtag));
+  const script = /^[a-z]{4}$/.test(subtags[0] ?? "") ? subtags[0] : undefined;
   if (script !== undefined) {
     return RTL_SCRIPTS.has(script) ? "rtl" : "ltr";
   }
@@ -9695,15 +9733,16 @@ function buildLabels(data, pack = languagePack(projectLanguage(data))) {
   const labels = { ...languagePack("en").labels, ...pack.labels };
   const set = (key, value) => {
     if (typeof value !== "string" || isPlaceholder(value) || isBlankLabel(key, value)) {
-      return;
+      return false;
     }
     labels[key] = key !== "chapter" ? value : value.includes("{n}") ? value.trim() : `${value.trim()} {n}`;
+    return true;
   };
   set("chapter", data["chapter-label"]);
   set("contents", typeof data["contents-label"] === "string" ? data["contents-label"].trim() : undefined);
   for (const [key, value] of labelEntries(data.labels)) {
-    if (LABEL_KEYS.includes(key)) {
-      set(key, value);
+    if (LABEL_KEYS.includes(key) && set(key, value) && COUNT_LABELS.includes(key)) {
+      dropCountForms(labels, key);
     }
   }
   return labels;
@@ -20410,13 +20449,16 @@ function shunnParagraphXml(script, runXml, centered, quote = false) {
 function shunnChapterHeadingXml(script, text) {
   return `<w:p><w:pPr>${script.bidi}${SHUNN_PARAGRAPH_SPACING}<w:ind w:firstLine="0"/><w:jc w:val="center"/></w:pPr><w:r>${script.rtl === "" ? "" : `<w:rPr>${script.rtl}</w:rPr>`}<w:br w:type="page"/></w:r>${shunnRunXml(script, text, { strong: true })}</w:p>`;
 }
-function shunnWordCount(words, pack = languagePack()) {
-  const step = words < 1000 ? 1 : words < 40000 ? 100 : 1000;
-  const rounded = Math.round(words / step) * step;
-  return formatNumber2(rounded, pack);
+function shunnRounded(count) {
+  const step = count < 1000 ? 1 : count < 40000 ? 100 : 1000;
+  return Math.round(count / step) * step;
 }
 function shunnLength(meta) {
-  return meta.characters === undefined ? fillLabel(meta.labels, "approximate-words", { words: shunnWordCount(meta.words, meta.pack) }) : fillLabel(meta.labels, "approximate-characters", { characters: shunnWordCount(meta.characters, meta.pack) });
+  const pack = meta.pack ?? languagePack();
+  const characters = meta.characters !== undefined;
+  const count = shunnRounded(characters ? meta.characters : meta.words);
+  const key = pluralLabelKey(meta.labels, characters ? "approximate-characters" : "approximate-words", count, pack);
+  return fillLabel(meta.labels, key, { [characters ? "characters" : "words"]: formatNumber2(count, pack) });
 }
 function shunnByline(meta) {
   const lines = [];
@@ -22046,6 +22088,9 @@ function interruptedChange(root) {
   return { command: commandName(header) };
 }
 function assertNoInterruptedChange(root, command) {
+  if (!isLogFile(path12.resolve(root))) {
+    return;
+  }
   const interrupted = interruptedChange(root);
   if (interrupted !== null && interrupted.command !== command) {
     throw refusedError(`${interrupted.command} stopped part way, and ${UNDO_LOG} holds what it changed, so ${command} would build on a change made only in part; nothing was changed. Run story doctor --fix to put those files back first, or run ${interrupted.command} again to finish it`);
@@ -22102,6 +22147,9 @@ function logExists(file) {
   } catch {
     return false;
   }
+}
+function isLogFile(projectRoot) {
+  return lstatIfExists(path12.join(projectRoot, UNDO_LOG))?.isFile() === true;
 }
 function readUndoLog(logFile, visit) {
   const seen = new Set;
@@ -22861,6 +22909,9 @@ function readValidationData(file, root, label, errors) {
 function readEntityData(file, root, label, errors, warnings, kind) {
   const data = readValidationData(file, root, label, errors);
   if (data) {
+    if (Object.hasOwn(data, "id")) {
+      warnings.push(warn("frontmatter-id", `${label} has an id field, which is ignored: the file name sets the id, so remove the id line`, label));
+    }
     warnNearMissKeys(data, FRONTMATTER_KEYS[kind], label, warnings);
   }
   return data;
@@ -25072,6 +25123,11 @@ function computeWordCounts(root, options = {}) {
   assertProjectParses(project, "count words");
   const characters = project.unit.name === "characters";
   const chapters = [];
+  const needsCount = (chapter) => chapter.declaredWordCount !== chapter.wordCount || chapter.declaredCount !== chapter.count;
+  if (options.write) {
+    assertWritable(project.root, project.chapters.filter(needsCount).map((chapter) => chapter.file));
+    planChanges(project.root, () => reindexProject(project.root));
+  }
   for (const chapter of project.chapters) {
     chapters.push({
       number: chapter.number,
@@ -25080,7 +25136,7 @@ function computeWordCounts(root, options = {}) {
       wordCount: chapter.wordCount,
       ...characters ? { characterCount: chapter.count } : {}
     });
-    if (options.write && (chapter.declaredWordCount !== chapter.wordCount || chapter.declaredCount !== chapter.count)) {
+    if (options.write && needsCount(chapter)) {
       const markdown = readMarkdown(chapter.file, project.root);
       const prose = chapterProse(markdown.body);
       writeFile(chapter.file, replaceFrontmatter(markdown.rawMarkdown, {
@@ -25177,11 +25233,13 @@ function runRepair(root, repair, repairs) {
       return caught;
     }
   });
-  const stopped = error === null ? null : projectErrorMessage(error);
   if (error === null || changes.length > 0) {
     repairs.push({ command: repair.command, codes: repair.codes, changes });
   }
-  return stopped;
+  if (error !== null && typeof error === "object" && error.exitCode !== EXIT_CODES.project) {
+    error.repairs = repairs;
+  }
+  return error === null ? null : projectErrorMessage(error);
 }
 function assertRepairable(root) {
   const project = scanProject(root);
@@ -27182,6 +27240,7 @@ function snapshotProject(root, options = {}) {
         fs9.rmdirSync(folder);
       } catch {}
     }
+    forgetChanges(madeFolder ? folder : target);
     throw error;
   } finally {
     if (backup !== null) {
@@ -31798,7 +31857,7 @@ var COMMANDS = [
         precedes: parsed.options.precedes,
         force: isTruthy(parsed.options.force)
       });
-      const { result, changes } = dryRun ? planChanges(base, make) : recordNewProject(base, make);
+      const { result, changes } = dryRun ? planChanges(base, make) : recordWrites(base, make);
       if (wantsJson(parsed)) {
         return writeFilesJson(io, "init", base, {
           data: { ...newProjectData(result), linkedBooks: result.linkedBooks },
@@ -31852,7 +31911,7 @@ var COMMANDS = [
         force: isTruthy(parsed.options.force)
       };
       const base = newProjectRoot({ title: options.title, cwd, dir: options.dir }) ?? cwd;
-      const { result, changes } = dryRun ? previewImport(options) : recordNewProject(base, () => importManuscript(options));
+      const { result, changes } = dryRun ? previewImport(options) : recordWrites(base, () => importManuscript(options));
       if (wantsJson(parsed)) {
         return writeFilesJson(io, "import", base, { data: importData(result), diagnostics: importDiagnostics(result), dryRun, changes });
       }
@@ -32171,6 +32230,9 @@ var COMMANDS = [
       const kind = parsed.positionals[1];
       const dryRun = outputDryRun(parsed, "diagram");
       const projectRoot = root();
+      if (parsed.options.out !== undefined) {
+        assertNoInterruptedChange(projectRoot, "story diagram");
+      }
       const { result, changes } = runOrPlan(dryRun, projectRoot, () => diagramProject(projectRoot, { kind, out: parsed.options.out }));
       if (wantsJson(parsed)) {
         const outFile = result.outFile ?? null;
@@ -32647,6 +32709,7 @@ ${choiceChanges(result, false)}`, (result) => choiceChanges(result, true));
     run({ parsed, io, root, overrides }) {
       const dryRun = isTruthy(parsed.options["dry-run"]);
       const projectRoot = root();
+      assertNoInterruptedChange(projectRoot, "story export");
       const { result, changes } = runOrPlan(dryRun, projectRoot, () => exportManuscript(projectRoot, { out: parsed.options.out, includePending: isTruthy(parsed.options["include-pending"]) }));
       const findings = checkedWarnings(result.warnings, overrides);
       if (wantsJson(parsed)) {
@@ -32683,6 +32746,7 @@ ${choiceChanges(result, false)}`, (result) => choiceChanges(result, true));
       const pdf = isTruthy(parsed.options.pdf);
       const dryRun = isTruthy(parsed.options["dry-run"]);
       const projectRoot = root();
+      assertNoInterruptedChange(projectRoot, "story build");
       const { result, changes } = runOrPlan(dryRun, projectRoot, () => buildBook(projectRoot, {
         out: parsed.options.out,
         format: parsed.options.format,
@@ -32724,6 +32788,7 @@ ${choiceChanges(result, false)}`, (result) => choiceChanges(result, true));
     run({ parsed, io, root }) {
       const dryRun = outputDryRun(parsed, "synopsis");
       const projectRoot = root();
+      assertNoInterruptedChange(projectRoot, "story synopsis");
       const { result, changes } = runOrPlan(dryRun, projectRoot, () => synopsisBook(projectRoot, { pages: parsed.options.pages, out: parsed.options.out }));
       if (wantsJson(parsed)) {
         const outFile = result.outFile ?? null;
@@ -32836,10 +32901,10 @@ function undoneNote({ command, files }, dryRun) {
 `;
 }
 function runOrPreview(dryRun, projectRoot, write) {
-  return dryRun ? previewChanges(projectRoot, write) : recordChanges(projectRoot, () => write(projectRoot));
+  return dryRun ? previewChanges(projectRoot, write) : recordWrites(projectRoot, () => write(projectRoot));
 }
 function runOrPlan(dryRun, base, run) {
-  return dryRun ? planChanges(base, run) : recordChanges(base, run);
+  return dryRun ? planChanges(base, run) : recordWrites(base, run);
 }
 function outputDryRun(parsed, command) {
   const dryRun = isTruthy(parsed.options["dry-run"]);
@@ -32893,7 +32958,16 @@ function runDoctorFix({ parsed, io, cwd, root }, options) {
   const projectRoot = root();
   const dryRun = isTruthy(parsed.options["dry-run"]);
   const fix = (target) => fixProject(target, options);
-  const { result: report, changes } = runOrPreview(dryRun, projectRoot, fix);
+  let outcome;
+  try {
+    outcome = runOrPreview(dryRun, projectRoot, fix);
+  } catch (error) {
+    if (Array.isArray(error?.repairs) && error.repairs.length > 0 && !wantsJson(parsed)) {
+      io.stdout.write(formatRepairs(error.repairs, null, error.changes, dryRun, false));
+    }
+    throw error;
+  }
+  const { result: report, changes } = outcome;
   const ok = report.validation.ok && report.links.ok && report.continuity.ok;
   const { repairs, stopped, ...rest } = report;
   const diagnosis = withWorkflowPins(rest, projectRoot, cwd);
@@ -32915,7 +32989,7 @@ function withWorkflowPins(report, projectRoot, cwd) {
   const actions = report.actions.filter((item) => item.title !== "Project is mechanically healthy");
   return { ...report, actions: [...actions, ...pins] };
 }
-function formatRepairs(repairs, stopped, changes, dryRun) {
+function formatRepairs(repairs, stopped, changes, dryRun, diagnosed = true) {
   const lines = [dryRun ? "Repairs (dry run; nothing was written):" : "Repairs:"];
   if (repairs.length === 0 && stopped === null) {
     lines.push("- No safe repairs needed");
@@ -32931,13 +33005,13 @@ function formatRepairs(repairs, stopped, changes, dryRun) {
     lines.push(`- Stopped: ${stopped}`);
   }
   if (dryRun) {
-    lines.push(`Dry run: story doctor --fix would make ${changes.length === 0 ? "no changes" : `${changes.length} ${changes.length === 1 ? "change" : "changes"}`}; the checks below are what would remain`);
+    lines.push(`Dry run: story doctor --fix would make ${changes.length === 0 ? "no changes" : `${changes.length} ${changes.length === 1 ? "change" : "changes"}`}${diagnosed ? "; the checks below are what would remain" : ""}`);
   }
   return `${lines.join(`
 `)}
 `;
 }
-function recordNewProject(base, run) {
+function recordWrites(base, run) {
   try {
     return recordChanges(base, run);
   } catch (error) {
