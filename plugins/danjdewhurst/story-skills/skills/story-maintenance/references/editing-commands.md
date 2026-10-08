@@ -1,6 +1,6 @@
 # Editing Commands
 
-How the commands that create, rename, move, split, merge, and remove entity files behave, and what to check after them. `SKILL.md` says when to run each command; read the matching section here before running one or explaining its result. Run any of them with `--dry-run` first when the change touches many files. `docs/cli-reference.md` lists every flag.
+How the commands that create, rename, move, split, merge, and remove entity files, and the `import` that builds a project from a manuscript, behave, and what to check after them. `SKILL.md` says when to run each command; read the matching section here before running one or explaining its result. Run any of them with `--dry-run` first when the change touches many files. `docs/cli-reference.md` lists every flag.
 
 ## add, rename, and remove
 
@@ -19,7 +19,7 @@ How the commands that create, rename, move, split, merge, and remove entity file
 - A taken number is refused (`chapter-05 already exists: move it first. To make room, renumber from the highest chapter down`), so to insert a chapter move the later chapters up one, highest first, then `add chapter --number <n>`.
 - `story move scene <id> --chapter <chapter-id>` moves a scene to the next free number in that chapter (`--scene <n>` picks the number, and `--scene` alone reorders within the chapter) and adds its location and characters to the new chapter; give at least one of the two.
 - `move` works only on chapters and scenes (use `rename` for other ids), never edits prose or outline beats that mention a chapter number, and reindexes.
-- References are written before the files move, so rerun an interrupted move.
+- References are written before the files move, so rerun an interrupted move: it first puts back what the stopped move changed.
 
 ## split and merge
 
@@ -27,9 +27,9 @@ How the commands that create, rename, move, split, merge, and remove entity file
 
 - `story split <chapter-id> --at '<marker>'` keeps the text before the marker and makes the rest the next chapter (`--title` names it; default `<title> (continued)`), moving the later chapters up one. The marker is a scene break number (`--at 2`), a heading, or a unique line of the chapter text. Scene records after the split move with their text, by order.
 - `story merge <chapter-id> <next-chapter-id>` appends the second chapter's prose after a scene break, adds its outline beats, notes, scenes, and list fields to the first, points every reference to it at the first, and moves the later chapters down one.
-- Both refuse a branching book (one with `choices`).
+- In a branching book (one with `choices`), both work only on chapters with no choices, and `merge` only when no choice leads to the second chapter; anything else is refused, naming the choices in the way. The renumbering points every choice at the new ids, and a split gives the first half a `Continue` choice that leads to the rest, so ask the user whether to reword it. Both list each choice they add or point elsewhere, under `--dry-run` too.
 - `split` also refuses when it would give a chapter (the last one it renumbers, or the new one when none follows) a `chapter-NN` that a file already names, such as a payoff scheduled for a chapter not written yet. Only abandoned threads naming the new chapter's id are let through, with an `adopted-references` warning. Ask the user which chapter those references mean, point them where the message says (the chapter they belong to, or the next id), then run it again.
-- Run `--dry-run` first and show the user the list: a split or merge stopped part way cannot be finished by a rerun.
+- Run `--dry-run` first and show the user the list. A split or merge stopped part way (`interrupted-change` from `story validate`) is put back by running it again, which then splits or merges, or by `story doctor --fix`; until then every other write command is refused.
 - Then work through the warnings: `split-references` lists files that still name the split chapter (a clue, death, or progression there may now belong to the new chapter, which the CLI cannot tell), `split-scenes` says scene records were assigned by order, and `merge-conflicts` lists fields the two chapters set differently, including `numbered: false` on only one of them (the merged chapter keeps the first chapter's numbering).
 - Neither edits prose, so reread for chapter numbers in the text.
 
@@ -53,3 +53,12 @@ See the `editorial-review` skill.
 `validate` warns when a final chapter relies on open or disputed research (invented notes never trigger this), and when a note with a `risk` is used in a final or complete chapter with no `reviewed-by`.
 
 See the `research` skill.
+
+## import
+
+`import` when the user has an existing manuscript or chapter drafts and wants a Story Skills project built from them.
+
+- Follow up by creating character and location files from the printed entity candidates, and by setting `form` and `target-words` in `story.md` (import refuses `--form`; without them `story validate` never checks length and `story progress` has no target).
+- Directory sources import in natural file-name order (`chapter-2` before `chapter-10`).
+- `import --force` into an existing directory deletes every `chapter-NN.md` in `chapters/` before writing the imported chapters, so confirm with the user before forcing an import over a project with drafted chapters. It first saves the project as snapshot `before-import-<n>` and prints `story snapshot --restore before-import-<n>`; tell the user that name, since that restore puts the old chapters back.
+- A Story Skills chapter file keeps its `author`; for a collection or anthology of other files, add `--bylines` to set each chapter's `author` from the by-line opening its prose (`By Ben Other`, taken out of the prose) or its file's frontmatter `author`. A line that is not clearly a by-line stays in the prose, so check the chapters left without `author` and set it by hand.

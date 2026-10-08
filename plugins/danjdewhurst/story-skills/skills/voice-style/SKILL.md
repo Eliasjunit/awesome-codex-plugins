@@ -104,9 +104,11 @@ and spread; filter words and -ly adverbs per 1,000 narration words
 (dialogue is excluded); plain and said-bookism dialogue tags; words echoed
 within 30 words; watch-word counts; and avoided spellings. Across the
 manuscript it lists repeated 4-word phrases and character first names that
-readers could confuse. Warnings are advisory and the command exits 0 unless
-a file cannot be read. See `references/prose-checks.md` for what each
-count means and how to respond.
+readers could confuse. Warnings are advisory. The command exits 0 unless a
+file cannot be read, a `story.md` `severity` entry promotes a warning to an
+error, or the command line is wrong, such as `--baseline` with no `samples`
+(exit 2). See `references/prose-checks.md` for what each count means and how
+to respond.
 
 When the style sheet lists `samples`, the report opens with a profile of
 the author's own prose, and chapters that drift from it warn
@@ -129,29 +131,17 @@ same for dialogue.
 story voices .
 ```
 
-`story voices` attributes a quoted line (straight `"..."`, curly `“...”`,
-or British `‘...’`) when the narration names the speaker next to a speech
-verb. A name before the verb wins over a name after it: in `"...," Sera
-told Kael` the line is Sera's, and `said Kael` gives it to Kael. With no
-speech-verb tag, a paragraph whose narration names exactly one character
-(an action beat) gives the line to that character. Names and aliases match
-case-sensitively as proper nouns, and titles are skipped for the given
-name (`Lord Maren` also matches `Maren`). Pronoun tags (`she said`,
-`said he`) are never attributed, and a paragraph with one is left
-unattributed even when its narration names another character. Only a
-pronoun and verb right after a closing quote or right before an opening
-one count as a tag; `She said nothing more` elsewhere is narration and
-does not block an action beat. In close third person the POV character
-is often under-counted; when that matters, name the tags in a sample chapter and
-rerun. Per character it reports lines, words, mean sentence length,
-contraction, question, and exclamation rates, and signature words used
-more by them than by others. It warns when a character says one of their
-`voice-avoid` words, when two characters with five or more lines each have
-close fingerprints ("X and Y may sound alike: similar sentence length,
-contractions, questions, and exclamations"), and when a character with
-five or more lines never says a `voice-words` entry. Unattributed dialogue
-is not counted, so a low line count may mean few named tags rather than
-few lines.
+`story voices` fingerprints each character's attributed dialogue and
+warns about a `voice-avoid` word said, a `voice-words` entry never said,
+and two characters who may sound alike. A line counts only when the
+narration names its speaker by a speech verb, or names one character in
+the paragraph. Pronoun tags (`she said`) are never attributed, so in
+close third person the POV character is often under-counted; when that
+matters, name the tags in a sample chapter and rerun.
+`story voices --help` describes the command and, when `story-maintenance`
+is installed, the voices section of
+[`../story-maintenance/references/continuity-checks.md`](../story-maintenance/references/continuity-checks.md#voices)
+gives the full attribution rules and thresholds.
 
 When two voices blur, differentiate them on more than one axis (sentence
 length, contractions, vocabulary, what they ask about) and see

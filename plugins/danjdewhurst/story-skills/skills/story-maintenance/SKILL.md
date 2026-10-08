@@ -37,91 +37,9 @@ story check .
 
 `reindex` rebuilds the registries, `wordcount --write` updates chapter counts (and reindexes again), and `check` then runs `validate`, `links`, and `continuity` over the settled files. `check` exits 1 only on errors; warnings print but do not fail it (`--strict` makes them fail). Every skill ends its edits with this block, followed by any skill-specific checks such as `story clues .` or `story pacing .`.
 
-The full command set:
+For the full command set, run `story --help` (every command) or `story <command> --help` (its flags), or read `references/commands.md`, which gives an example of each.
 
-<!-- command-reference -->
-```shell
-story reindex .
-story wordcount . --write
-story check .
-story check . --strict
-story validate .
-story links .
-story continuity .
-story prose .
-story voices .
-story pacing .
-story clues .
-story timeline .
-story passes .
-story passes . --init
-story passes . --start structure
-story passes . --done structure
-story names 'Mira' 'Kelvos'
-story diagram relationships
-story diagram locations --out dist/locations.mmd
-story diagram timeline
-story diagram clues
-story diagram arcs
-story progress . --log
-story compare . --ref draft-1
-story compare . --against ../book-draft-1
-story snapshot draft-1 --path .
-story snapshot --list --path .
-story compare . --snapshot draft-1
-story snapshot --restore draft-1 --dry-run --path .
-story compare . --ref beta-round-1 --anchor ch03-p12
-story similarity . --against ../book-one
-story similarity . --snapshot draft-1
-story series .
-story import draft.md --title 'Title'
-story report .
-story report . --actionable
-story next .
-story doctor .
-story doctor . --fix --dry-run
-story doctor . --fix
-story migrate .
-story add character 'Name'
-story add character 'Пётр'
-story add character '李明' --id li-ming
-story add matter 'Dedication'
-story add research 'Tidal bore timing' --source 'Tide tables 2024' --used-in chapter-03
-story add research 'Night shift on a cardiac ward' --method interview --accuracy must-be-accurate --confidence medium --risk medical
-story add matter 'Acknowledgments' --placement back
-story rename character old-id 'New Name'
-story rename character old-id 'New Name' --prose --dry-run
-story rename character petr 'Пётр Иванов'
-story rename character li-ming '李明华' --id li-minghua
-story move chapter chapter-04 --number 5 --dry-run
-story move chapter chapter-04 --number 5
-story move scene chapter-03-scene-02 --chapter chapter-05
-story move scene chapter-03-scene-02 --scene 1
-story split chapter-07 --at 2 --dry-run
-story split chapter-07 --at 'The ferry came at noon.' --title 'The Crossing'
-story merge chapter-07 chapter-08
-story remove promise old-promise
-story export . --out dist/manuscript.md
-story build . --format markdown
-story build . --format epub
-story build . --format docx
-story build . --format shunn
-story build . --format docx --shunn
-story build . --format html
-story build . --format print --trim 6x9
-story build . --format narration
-story build . --format metadata
-story build . --format twee
-story build . --format ink
-story knowledge sera-voss --at chapter-04
-story continuity . --json
-story context chapter-04 --budget 6000
-story add clue 'The silver locket' --planted chapter-02 --payoff chapter-05
-story synopsis --pages 1
-story synopsis --pages 3 --out dist/synopsis.md
-```
-
-The check commands' detailed rules live in `references/continuity-checks.md`, one section per command. Read the matching section before explaining or acting on a finding. The editing commands' detail (`add`, `rename`, `move`, `remove`, `split`, `merge`) lives in `references/editing-commands.md`, and each build format's in `references/builds.md`.
+The check commands' detailed rules live in `references/continuity-checks.md`, one section per command. Read the matching section before explaining or acting on a finding. The editing commands' detail (`add`, `rename`, `move`, `remove`, `split`, `merge`, `import`) lives in `references/editing-commands.md`, and each build format's in `references/builds.md`.
 
 Use:
 
@@ -146,11 +64,11 @@ Use:
 - `diagram` when the user wants a picture of the story's structure: `story diagram <kind>` prints Mermaid source generated from frontmatter, or writes it with `--out <file>` (`--path <project>` sets the project). Kinds: `relationships` (character graph, family edges styled distinctly: the family tree), `locations` (map-graph from location `routes`, edges labelled with hours), `timeline` (dated scenes and chapters in story-time order), `clues` (clue plant to reveal flow per chapter), and `arcs` (arcs to the chapters that advance them). GitHub, many editors, and mermaid.live render it; regenerate rather than hand-edit
 - `timeline` when the user asks what happens when, how flashbacks sit against the main line, whose POV dominates, or where a character drops out. It is read-only; `continuity` owns clock errors. Rules: `references/continuity-checks.md` (timeline).
 - `prose` when the user asks for a prose check or before sharing a draft: advisory per-chapter and manuscript-wide prose metrics against `style-sheet.md`. Rules: `references/continuity-checks.md` (prose).
-- `series` when `story.md` has `follows` or `precedes` links to other books; it orders the linked sequels and prequels by chronology and checks shared canon (characters deceased in an earlier book, cast listings, facts relearned across books, dead characters learning facts, name and pronunciation drift, destroyed artifacts and their later use). Use `init --follows <path>` or `init --precedes <path>` to start a linked book, and see the `series-continuity` skill for carrying canon across
-- `import` when the user has an existing manuscript or chapter drafts and wants a Story Skills project built from them; follow up by creating character and location files from the printed entity candidates, and by setting `form` and `target-words` in `story.md` (import refuses `--form`; without them `story validate` never checks length and `story progress` has no target). Directory sources import in natural file-name order (`chapter-2` before `chapter-10`). `import --force` into an existing directory deletes every `chapter-NN.md` in `chapters/` before writing the imported chapters, so confirm with the user before forcing an import over a project with drafted chapters. It first saves the project as snapshot `before-import-<n>` and prints `story snapshot --restore before-import-<n>`; tell the user that name, since that restore puts the old chapters back. A Story Skills chapter file keeps its `author`; for a collection or anthology of other files, add `--bylines` to set each chapter's `author` from the by-line opening its prose (`By Ben Other`, taken out of the prose) or its file's frontmatter `author`. A line that is not clearly a by-line stays in the prose, so check the chapters left without `author` and set it by hand
+- `series` when `story.md` has `follows` or `precedes` links to other books; it orders the linked sequels and prequels by chronology and checks shared canon. Use `init --follows <path>` or `init --precedes <path>` to start a linked book, and see the `series-continuity` skill for carrying canon across. Rules: `references/continuity-checks.md` (series).
+- `import` when the user has an existing manuscript or chapter drafts and wants a Story Skills project built from them. `import --force` deletes every `chapter-NN.md` in `chapters/` first, so confirm with the user before forcing an import over drafted chapters. Rules: `references/editing-commands.md` (import).
 - `report` when the user asks for project status, inventory, progress, or a quick health summary
 - `next` before a drafting session to identify the next deterministic action
-- `doctor` when the user asks what is stale, broken, or inconsistent. `doctor --fix` applies only the mechanical repairs the checks call for (`migrate` for missing registries or an old `schema-version`, `wordcount --write` for stale counts, `reindex` for stale registries), never touches prose, then reports what remains; it exits 1 while any check still has an error. Use it to clear mechanical findings in one step, then work through the remaining actions yourself or with the user
+- `doctor` when the user asks what is stale, broken, or inconsistent. `doctor --fix` applies only the mechanical repairs the checks call for (putting back a `split`, `merge`, `move`, `rename`, or `remove` that stopped part way, `migrate` for missing registries or an old `schema-version`, `wordcount --write` for stale counts, `reindex` for stale registries), never touches prose, then reports what remains; it exits 1 while any check still has an error. Use it to clear mechanical findings in one step, then work through the remaining actions yourself or with the user
 - `migrate` when a project has an older schema version or missing v2 paths
 - `--dry-run` on `add`, `rename`, `move`, `split`, `merge`, `remove`, `reindex`, `migrate`, `wordcount --write`, `doctor --fix`, `snapshot`, `passes`, `progress --log`, `diagram --out`, `synopsis --out`, `export`, `build`, `init`, or `import` before a change that touches many files, or when the user wants to see what a command will change first: it lists each file it would create, update, or delete and changes nothing (`--json` gives the list as `data.changes`). Show the user the list, then run the command without `--dry-run`
 - `add`, `rename`, `move`, and `remove` for deterministic entity file operations when they fit the requested change. `add` takes ids, not names, for reference options, and ids stay ASCII kebab-case (`--id` sets one by hand). Rules: `references/editing-commands.md` (add, rename, and remove).

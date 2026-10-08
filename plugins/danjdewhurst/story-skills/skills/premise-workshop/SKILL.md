@@ -60,11 +60,9 @@ for the user unless asked; do say which ones already imply conflict.
 
 For each chosen what-if, draft a logline with the recipe in
 `../story-init/references/title-logline.md` (protagonist + want + obstacle
-+ stakes). Then run the stress tests in `references/premise-tests.md`:
-active protagonist, opposition that can win, a choice at the end, stakes
-that are personal, and a situation that can sustain the chosen length.
-Report each test as pass, weak, or fail with one sentence of why, and
-offer one revision per weak or failed test.
++ stakes). Then run every logline stress test in
+`references/premise-tests.md`. Report each test as pass, weak, or fail
+with one sentence of why, and offer one revision per weak or failed test.
 
 ### 4. Draft premise and counter-premise
 
@@ -104,14 +102,12 @@ entities before adopting them:
 story names 'Bell Tower' Bell 'Maren' --path .
 ```
 
-An exact clash exits 1 and must be resolved: the candidate equals an
-existing name, alias, or term, or its given name (first word that is not
-a title such as `Lord` or `The`) equals a character's given name.
-Look-alike warnings (same first four letters, or same initial and one
-letter apart, two for longer words) and a shared initial with a major
-character are the user's call. Multi-word names are only checked for
-exact clashes, so pass a multi-word title's distinctive word separately,
-as `Bell` is above.
+An exact clash exits 1 and must be resolved; look-alike warnings and a
+shared initial with a major character are the user's call. Multi-word
+names are only checked for exact clashes, so pass a multi-word title's
+distinctive word separately, as `Bell` is above. The "Check names
+against the project" section of `references/title-and-comps.md` says what
+each finding means and how to resolve a clash.
 
 ### 8. Sanity-check against comparable books
 

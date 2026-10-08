@@ -3186,6 +3186,21 @@
       "icon": "./plugins/linkmcp-io/linkmcp/assets/logo-512.png"
     },
     {
+      "name": "local-mcp",
+      "displayName": "LMCP",
+      "source": {
+        "source": "local",
+        "path": "./plugins/colibird-ai/local-mcp-releases"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Local tools that let Codex use Mail, Calendar, Contacts, Teams, Slack, WhatsApp (Mac), OneDrive, Google Drive, Notion, Outlook (Windows) and Office files on Mac and Windows.",
+      "icon": "./plugins/colibird-ai/local-mcp-releases/assets/logo.png"
+    },
+    {
       "name": "loomaly",
       "displayName": "Loomaly",
       "source": {

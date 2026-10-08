@@ -188,6 +188,10 @@ the back-cover copy (150-200 words), and, for self-publishing, a retailer
 description with the same copy plus a comp line if the user wants one. The
 blurb never reveals the ending.
 
+This skill owns the retailer description: `submission/blurb.md` is its
+only draft, and the `publishing` skill reads it there. Keep it and the
+`description` field in `story.md` in step when the user self-publishes.
+
 ### 7. Build the manuscript
 
 For agents and short-fiction markets, build Shunn manuscript format:
@@ -198,6 +202,13 @@ story build . --format shunn
 ```
 
 These write `dist/<story-id>.shunn.docx` and `dist/<story-id>.shunn.md`.
+The DOCX has a running head on every page after the first: the author's
+surname, a short title, and the page number (`Writer / The Last Ember / 2`).
+The build takes the last word of the first author's name (the first word
+in a Chinese, Japanese, Korean, or Hungarian book) and the title before
+any subtitle, and cuts a long one to fit. When either is wrong, such as
+`Le Guin`, set `surname` or `short-title` in `story.md`; the build uses
+them whole.
 For a market that takes PDF, add `--pdf` to the `shunn` build: it renders
 `dist/<story-id>.shunn.pdf` (US Letter, Courier, double-spaced, running
 head) with a paged-media engine the user has installed, and stops with
@@ -228,8 +239,6 @@ keywords, BISAC subjects, and missing fields), run:
 story build . --format metadata
 ```
 
-Keep the retailer description in `submission/blurb.md` and the
-`description` field in `story.md` in step when the user self-publishes.
 If `story.md` has an `ai-disclosure`, check each agent's or market's
 policy on AI-assisted work and disclose as they require; see the
 `editorial-review` skill.
@@ -253,8 +262,8 @@ short-fiction tracker columns (submission type, rights offered) and the
 publication history section from that reference, and check the tracker
 before suggesting a market: a story with an open exclusive submission goes
 nowhere else, and an exclusive market needs a story with no open
-submissions. For a market that reads anonymously, tell the user to strip
-the name, contact block, and byline from the Shunn build.
+submissions. For a market that reads anonymously, add `--anonymous` to the Shunn
+build, which leaves out every name, the running head's surname included.
 To assemble a collection, follow its "Assemble a collection" section:
 choose the stories, find the linking threads, propose an order, and draft
 the acknowledgements from the publication history.

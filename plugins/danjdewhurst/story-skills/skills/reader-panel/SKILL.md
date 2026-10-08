@@ -54,10 +54,10 @@ the panel.
    and which personas to run (default: all five). Take genre, form, POV,
    and tense from the `story context` output in step 2 (its Story
    essentials section), not from `story.md`, whose Synopsis may describe
-   the ending. The genre reader needs the genre. Take `language` from the
-   same section (or from `story.md` frontmatter only, where a missing
-   field means `en`): it is no spoiler, and every persona reads the book as a reader of that
-   language would.
+   the ending. The genre reader needs the genre. Take `language` only from
+   the Language contract in that same `story context` output: it is no
+   spoiler, and every persona reads the book as a reader of that language
+   would.
 2. Pick the round number: the next `N` that is free under `feedback/`
    and not yet the name of a tag or snapshot `panel-round-{N}`
    (`git tag --list 'panel-round-*'` and `story snapshot --list --path .`
@@ -136,9 +136,13 @@ the genre, not from the outline.
 
 1. Run one persona at a time. If you can start subagents, give each
    persona its own subagent with only its reference file, the chapters in
-   range, the `story context` output, and the book's language, so no persona reads another's
-   notes. Otherwise finish and save one persona's file before starting the
-   next, and do not revise earlier files after reading later ones.
+   range, the `story context` output, and the book's language, so no
+   persona reads another's notes. The line editor's subagent also gets
+   `style-sheet.md` (when the project has one) and the `story prose .`
+   findings for the chapters in range. Run `story prose .` first, and keep
+   only its per-chapter findings for chapters in range. Otherwise finish and
+   save one persona's file before starting the next, and do not revise
+   earlier files after reading later ones.
 2. Follow the persona's reference file. Read the whole range before
    writing any note.
 3. Every problem cites evidence: the paragraph label, the quoted first
