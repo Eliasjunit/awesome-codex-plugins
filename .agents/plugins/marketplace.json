@@ -2328,6 +2328,21 @@
       "icon": "./plugins/jerryfane/agentgram/assets/agentgram-logo.svg"
     },
     {
+      "name": "aident-loadout",
+      "displayName": "Aident Loadout",
+      "source": {
+        "source": "local",
+        "path": "./plugins/Aident-AI/aident-skill"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Remote MCP server connecting Codex, Claude Code, Cursor, ChatGPT and other MCP clients to 1,000+ apps and 400+ Skills through one reusable setup, with Vault-protected credentials and Audit logging. Website: https://aident.ai",
+      "icon": "./plugins/Aident-AI/aident-skill/assets/aident-icon.png"
+    },
+    {
       "name": "aient",
       "displayName": "Aient",
       "source": {

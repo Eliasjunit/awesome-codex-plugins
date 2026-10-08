@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-08",
-  "total": 275,
+  "total": 276,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -1578,6 +1578,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/jerryfane/agentgram/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Aident Loadout",
+      "url": "https://github.com/Aident-AI/aident-skill",
+      "owner": "Aident-AI",
+      "repo": "aident-skill",
+      "description": "Remote MCP server connecting Codex, Claude Code, Cursor, ChatGPT and other MCP clients to 1,000+ apps and 400+ Skills through one reusable setup, with Vault-protected credentials and Audit logging. Website: https://aident.ai",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/Aident-AI/aident-skill/HEAD/aident-loadout/.codex-plugin/plugin.json"
     },
     {
       "name": "Aient",
