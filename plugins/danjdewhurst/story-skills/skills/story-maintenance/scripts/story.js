@@ -959,6 +959,7 @@ var FINDING_CODES = {
   "folder-not-removed": "warning",
   "kept-story-options": "warning",
   "unsplit-chapter-lines": "warning",
+  "unused-chapter-text": "warning",
   "usage-error": "error",
   "unusable-project": "error",
   "write-refused": "error",
@@ -967,7 +968,7 @@ var FINDING_CODES = {
 function codesAt(level) {
   return Object.keys(FINDING_CODES).filter((code) => FINDING_CODES[code] === level);
 }
-var PROJECTLESS_CODES = ["kept-story-options", "unsplit-chapter-lines"];
+var PROJECTLESS_CODES = ["kept-story-options", "unsplit-chapter-lines", "unused-chapter-text"];
 function severityCodes() {
   return codesAt("warning").filter((code) => !PROJECTLESS_CODES.includes(code));
 }
@@ -16044,7 +16045,7 @@ var RENAME_COLLECTIONS = {
   system: ["systems", "name"],
   term: ["glossaryTerms", "term"]
 };
-var NAME_GAP = /([^\S\n]+|[^\S\n]*\n[^\S\n]*)/u;
+var NAME_GAP = /([^\S\n]*\n[^\S\n]*|[^\S\n]+)/u;
 function renameForms(project, kind, id, newName, pack, titles) {
   const [collection, field] = RENAME_COLLECTIONS[kind];
   const entity = project[collection].find((entry) => entry.id === id);
@@ -21459,21 +21460,34 @@ function sameHostAlive(pid, recorded, written, modified) {
     return !foreignLockStale(written, modified);
   }
   if (pid !== process.pid) {
-    return processAlive(pid);
+    if (!processAlive(pid)) {
+      return false;
+    }
+    const current = comparable ? processStartTime(pid) : null;
+    return current === null || current === started;
   }
   return comparable ? started === ownStarted : !foreignLockStale(written, modified);
 }
 var IDENTITY_PATTERN = /^[0-9a-f-]+ pid:\[\d+\] \d+$/;
 function processIdentity(proc = "/proc") {
   try {
-    const stat = readTextFile(path10.join(proc, "self", "stat"));
-    const started = stat.slice(stat.lastIndexOf(")") + 2).split(" ")[19];
+    const started = startTimeField(readTextFile(path10.join(proc, "self", "stat")));
     const boot = readTextFile(path10.join(proc, "sys", "kernel", "random", "boot_id")).trim();
     const identity = `${boot} ${fs5.readlinkSync(path10.join(proc, "self", "ns", "pid"))} ${started}`;
     return IDENTITY_PATTERN.test(identity) ? identity : null;
   } catch {
     return null;
   }
+}
+function processStartTime(pid, proc = "/proc") {
+  try {
+    return startTimeField(readTextFile(path10.join(proc, String(pid), "stat"))) ?? null;
+  } catch {
+    return null;
+  }
+}
+function startTimeField(stat) {
+  return stat.slice(stat.lastIndexOf(")") + 2).split(" ")[19];
 }
 var identityRead;
 function ownIdentity() {
@@ -25491,9 +25505,13 @@ function renameNow(root, options) {
     assertWritable(project.root, [oldFile, ...proseFiles.keys()]);
     commitWrites(() => {
       for (const [file, { original, next }] of proseFiles) {
-        writeFile(file, next, { root: project.root, unchangedFrom: original });
+        if (next !== original) {
+          writeFile(file, next, { root: project.root, unchangedFrom: original });
+        }
       }
-      writeFile(oldFile, retitled, { root: project.root, unchangedFrom: markdown.rawMarkdown });
+      if (retitled !== markdown.rawMarkdown) {
+        writeFile(oldFile, retitled, { root: project.root, unchangedFrom: markdown.rawMarkdown });
+      }
     });
   } else {
     const overrides = new Map([[oldFile, retitled]]);
@@ -30818,8 +30836,13 @@ function importManuscript(options) {
 }
 function replacedChapters(root) {
   const folder = path18.join(root, "chapters");
-  if (lstatIfExists(folder)?.isDirectory() !== true) {
+  const stats = lstatIfExists(folder);
+  if (stats === null) {
     return [];
+  }
+  if (!stats.isDirectory()) {
+    const problem = stats.isSymbolicLink() ? "is a symlink" : "is not a folder";
+    throw refusedError(`Cannot import: chapters ${problem}, so --force cannot save its chapters in a snapshot before replacing them. Replace it with a folder of chapter files, then import again. Nothing was changed`);
   }
   const entries = fs13.readdirSync(folder, { withFileTypes: true }).filter((entry) => /^chapter-\d+\.md$/i.test(entry.name));
   for (const entry of entries) {
@@ -31025,6 +31048,11 @@ function splitChapters(documents, warnings, rules, bylines) {
 `);
     const own = storySkillsChapter(source);
     if (own) {
+      if (own.skipped.length > 0) {
+        const [first] = own.skipped;
+        const count = own.skipped.length === 1 ? "1 line above ## Chapter Text was" : `${own.skipped.length} lines above ## Chapter Text were`;
+        warnings.push({ ...warn("unused-chapter-text", `${shownText2(document.name)}: ${count} not imported (first "${shownText2(first.text)}" at line ${first.line}): a chapter file's prose is only the text under ## Chapter Text. Keep any other text below that heading`), source: document.path });
+      }
       chapters.push(bylines === null || own.authors.length > 0 ? own : withBylines([own], [], bylines)[0]);
       continue;
     }
@@ -31036,26 +31064,57 @@ function splitChapters(documents, warnings, rules, bylines) {
     if (unused.length > 0) {
       const count = unused.length === 1 ? "1 plain-text chapter line was" : `${unused.length} plain-text chapter lines were`;
       const why = markdown ? "the file has markdown chapter headings, which take precedence, so make these headings too (## Chapter 1)" : "a chapter line splits only when it stands alone between blank lines, so add a blank line after each";
-      warnings.push({ ...warn("unsplit-chapter-lines", `${document.name}: ${count} not used to split chapters (first "${unused[0].text}" at line ${unused[0].index + 1 + offset}): ${why}. See "How chapters are split" in docs/manuscripts.md`), source: document.path });
+      warnings.push({ ...warn("unsplit-chapter-lines", `${shownText2(document.name)}: ${count} not used to split chapters (first "${shownText2(unused[0].text)}" at line ${unused[0].index + 1 + offset}): ${why}. See "How chapters are split" in docs/manuscripts.md`), source: document.path });
     }
     const found = sections.length > 0 ? sections : [singleChapter(text, document)];
     chapters.push(...bylines === null ? found : withBylines(found, authors.length > 0 ? authors : frontmatterAuthors(source, body), bylines));
   }
   return chapters.filter((chapter) => chapter.prose !== "" || chapter.bylined);
 }
+function shownText2(text) {
+  return text.replace(/[\u0000-\u001f\u007f-\u009f؜‎‏‪-‮⁦-⁩]/gu, (character) => `\\u${character.charCodeAt(0).toString(16).padStart(4, "0")}`);
+}
+var CHAPTER_KEYS = ["number", "numbered", "pov", "locations", "characters", "arcs-advanced", "status"];
 function storySkillsChapter(text) {
   const heading = /^## Chapter Text[ \t]*$/m.exec(text);
   if (!heading) {
     return null;
   }
-  let data;
+  let parsed;
   try {
-    data = parseFrontmatter(text).data;
+    parsed = parseFrontmatter(text);
   } catch {
     return null;
   }
-  const title = typeof data.title === "string" || typeof data.title === "number" ? String(data.title).trim() : "";
-  return { title, prose: text.slice(heading.index + heading[0].length).trim(), unnumbered: data.numbered === false, authors: importedNames(data.author) };
+  const { data } = parsed;
+  if (!CHAPTER_KEYS.some((key) => Object.hasOwn(data, key))) {
+    return null;
+  }
+  const title = typeof data.title === "string" || typeof data.title === "number" ? String(data.title).replace(/\s+/g, " ").trim() : "";
+  const bodyStart = text.length - parsed.body.length;
+  const firstLine = text.slice(0, bodyStart).split(`
+`).length;
+  const lines = text.slice(bodyStart, heading.index).split(`
+`).map((line, index) => ({ text: line.trim(), line: firstLine + index })).filter((line) => line.text !== "");
+  const outline = outlineLines(lines);
+  const own = lines.find((line) => isOwnHeading(line.text, title));
+  const skipped = lines.filter((line) => line !== own && !outline.has(line));
+  return { title, prose: text.slice(heading.index + heading[0].length).trim(), unnumbered: data.numbered === false, authors: importedNames(data.author), skipped };
+}
+function isOwnHeading(text, title) {
+  if (!/^#[ \t]/.test(text)) {
+    return false;
+  }
+  const heading = text.replace(/^#+[ \t]*/, "").replace(/\s+/g, " ");
+  return title === "" ? /\d/.test(heading) : heading.includes(title);
+}
+function outlineLines(lines) {
+  const start = lines.findIndex((line) => /^##[ \t]+Outline$/i.test(line.text));
+  if (start === -1) {
+    return new Set;
+  }
+  const divider = lines.findIndex((line, index) => index > start && line.text === "---");
+  return new Set(lines.slice(start, divider === -1 ? lines.length : divider + 1));
 }
 function importedNames(value) {
   return nameList(value).map((name) => name.replace(/\s+/g, " "));

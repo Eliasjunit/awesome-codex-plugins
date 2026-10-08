@@ -510,6 +510,21 @@
       "icon": "./plugins/grapefruit0205/click/assets/icon.svg"
     },
     {
+      "name": "clueless",
+      "displayName": "Clueless",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ADanMan/clueless"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development & Workflow",
+      "description": "Responsibility-flip mode for when the user cannot review the output: irreversible steps first, one verification step, every default named with its alternative, at most three questions only the user can answer.",
+      "icon": "./plugins/ADanMan/clueless/assets/icon.svg"
+    },
+    {
       "name": "codebase-recon",
       "displayName": "Codebase Recon",
       "source": {

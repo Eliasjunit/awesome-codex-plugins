@@ -3,7 +3,7 @@
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
   "last_updated": "2026-10-08",
-  "total": 274,
+  "total": 275,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -348,6 +348,16 @@
       "category": "Development & Workflow",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/grapefruit0205/click/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Clueless",
+      "url": "https://github.com/ADanMan/clueless",
+      "owner": "ADanMan",
+      "repo": "clueless",
+      "description": "Responsibility-flip mode for when the user cannot review the output: irreversible steps first, one verification step, every default named with its alternative, at most three questions only the user can answer.",
+      "category": "Development & Workflow",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/ADanMan/clueless/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Codebase Recon",
