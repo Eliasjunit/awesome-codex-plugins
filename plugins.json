@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "awesome-codex-plugins",
   "version": "1.0.0",
-  "last_updated": "2026-10-08",
-  "total": 278,
+  "last_updated": "2026-10-09",
+  "total": 280,
   "categories": [
     "Development & Workflow",
     "Tools & Integrations"
@@ -758,6 +758,16 @@
       "category": "Development & Workflow",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/blackwell-systems/gcf-codex-plugin/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Generative Media Skills",
+      "url": "https://github.com/SamurAIGPT/Generative-Media-Skills",
+      "owner": "SamurAIGPT",
+      "repo": "Generative-Media-Skills",
+      "description": "13 skills for image, video, and audio generation using 100+ models - FLUX, Midjourney v7, Veo3, Kling 3.0, Suno, and HunyuanVideo via muapi.ai.",
+      "category": "Development & Workflow",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/SamurAIGPT/Generative-Media-Skills/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Goal Progress",
@@ -1978,6 +1988,16 @@
       "category": "Tools & Integrations",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/GarethManning/education-agent-skills/HEAD/.codex-plugin/plugin.json"
+    },
+    {
+      "name": "Equibles",
+      "url": "https://github.com/daniel3303/stock-market-mcp-server",
+      "owner": "daniel3303",
+      "repo": "stock-market-mcp-server",
+      "description": "SEC filings, financial statements, earnings call transcripts, insider trades and 13F holdings for US stocks through the hosted Equibles MCP server.",
+      "category": "Tools & Integrations",
+      "source": "awesome-codex-plugins",
+      "install_url": "https://raw.githubusercontent.com/daniel3303/stock-market-mcp-server/HEAD/.codex-plugin/plugin.json"
     },
     {
       "name": "Exa Web Search",

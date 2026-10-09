@@ -1116,6 +1116,21 @@
       "icon": "./plugins/blackwell-systems/gcf-codex-plugin/assets/icon.svg"
     },
     {
+      "name": "generative-media-skills",
+      "displayName": "Generative Media Skills",
+      "source": {
+        "source": "local",
+        "path": "./plugins/SamurAIGPT/Generative-Media-Skills"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development & Workflow",
+      "description": "13 skills for image, video, and audio generation using 100+ models - FLUX, Midjourney v7, Veo3, Kling 3.0, Suno, and HunyuanVideo via muapi.ai.",
+      "icon": "./plugins/SamurAIGPT/Generative-Media-Skills/assets/icon.svg"
+    },
+    {
       "name": "codex-goal-progress",
       "displayName": "Goal Progress",
       "source": {
@@ -2919,6 +2934,21 @@
       "category": "Tools & Integrations",
       "description": "131 evidence-based education skills for curriculum design, lesson planning, and assessment, with transparent evidence ratings and MCP server.",
       "icon": "./plugins/GarethManning/education-agent-skills/assets/education-agent-skills-icon.svg"
+    },
+    {
+      "name": "equibles",
+      "displayName": "Equibles",
+      "source": {
+        "source": "local",
+        "path": "./plugins/daniel3303/stock-market-mcp-server"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "SEC filings, financial statements, earnings call transcripts, insider trades and 13F holdings for US stocks through the hosted Equibles MCP server.",
+      "icon": "./plugins/daniel3303/stock-market-mcp-server/assets/equibles-logo-400.png"
     },
     {
       "name": "exa",

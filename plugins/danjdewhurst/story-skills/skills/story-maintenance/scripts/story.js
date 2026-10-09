@@ -9668,14 +9668,16 @@ var SCALAR_FIELDS = ["author", "surname", "short-title", "language", "isbn", "pu
 function isPlaceholder(value) {
   return typeof value === "string" && /^\[TODO\b/i.test(value.trim());
 }
-var RTL_LANGUAGES = new Set(["ar", "arc", "ckb", "dv", "fa", "he", "iw", "ji", "ks", "ku", "ps", "sd", "syr", "ug", "ur", "yi"]);
+var RTL_LANGUAGES = new Set(["ar", "arc", "ckb", "dv", "fa", "he", "iw", "ji", "ks", "ps", "sd", "syr", "ug", "ur", "yi"]);
 var RTL_SCRIPTS = new Set(["adlm", "arab", "hebr", "mand", "nkoo", "rohg", "samr", "syrc", "thaa"]);
+var ARABIC_SCRIPT_KURDISH_REGIONS = new Set(["ir", "iq", "lb"]);
 function textDirection(language) {
-  const [lookup, macrolanguage] = lookupTag(String(language ?? "").trim() || DEFAULT_LANGUAGE);
-  const [primary, ...subtags] = lookup.split("-");
-  const script = /^[a-z]{4}$/.test(subtags[0] ?? "") ? subtags[0] : undefined;
-  if (script !== undefined) {
-    return RTL_SCRIPTS.has(script) ? "rtl" : "ltr";
+  const { primary, macrolanguage, script, region } = parseTag(String(language ?? "").trim() || DEFAULT_LANGUAGE);
+  if (script !== null) {
+    return RTL_SCRIPTS.has(script.toLowerCase()) ? "rtl" : "ltr";
+  }
+  if (primary === "ku" && ARABIC_SCRIPT_KURDISH_REGIONS.has(region)) {
+    return "rtl";
   }
   return RTL_LANGUAGES.has(primary) || RTL_LANGUAGES.has(macrolanguage) ? "rtl" : "ltr";
 }
@@ -31636,7 +31638,7 @@ import path19 from "node:path";
 import { fileURLToPath } from "node:url";
 
 // src/version.js
-var VERSION = "0.23.0";
+var VERSION = "0.23.1";
 
 // src/workflows.js
 var ENV_LINE = /^\s*(STORY_VERSION|STORY_REF|STORY_PACKAGE)\s*:\s*["']?([^"'\s#]*)/;
